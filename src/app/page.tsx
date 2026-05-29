@@ -3,7 +3,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import LenisProvider from '@/components/ui/LenisProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 import TopBar from '@/components/ui/TopBar';
-import ErrorBoundary from '@/components/ui/ErrorBoundary';
 import Sections from '@/components/ui/Sections';
 import MatrixRain from '@/components/ui/MatrixRain';
 import LoadingScreen from '@/components/ui/LoadingScreen';

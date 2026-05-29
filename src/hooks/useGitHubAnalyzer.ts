@@ -88,34 +88,6 @@ const LANGUAGE_CATEGORY_MAP: Record<string, 'Language' | 'Framework' | 'Tool' | 
 };
 
 /**
- * Extract skills from GitHub repository languages
- * GitHub returns languages as an object with language names as keys
- */
-function extractSkillsFromLanguages(languages: Record<string, number>): AnalyzedSkill[] {
-  const skillMap = new Map<string, { endorsements: number; repos: string[] }>();
-
-  Object.entries(languages).forEach(([lang, bytes]) => {
-    if (bytes === 0) return; // Skip zero-byte languages
-    
-    const category = LANGUAGE_CATEGORY_MAP[lang] || 'Language';
-    
-    if (!skillMap.has(lang)) {
-      skillMap.set(lang, { endorsements: 0, repos: [] });
-    }
-
-    const skill = skillMap.get(lang)!;
-    skill.endorsements += 1;
-  });
-
-  return Array.from(skillMap.entries()).map(([name, data]) => ({
-    name,
-    category: LANGUAGE_CATEGORY_MAP[name] || 'Language',
-    endorsements: data.endorsements,
-    repos: data.repos,
-  }));
-}
-
-/**
  * GitHub analyzer hook - fetches all user repos and analyzes skills
  * @param username GitHub username
  * @param isInView Whether the component is in view (for lazy loading)

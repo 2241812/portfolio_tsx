@@ -46,7 +46,7 @@ const Sections = memo(function Sections() {
         <AboutSection />
         <GitHubStats />
         <ProjectsSection pinnedRepos={pinnedRepos} reposLoading={isLoading} reposError={isError} onRetry={retry} />
-        <SkillsSection allProjects={allProjects} pinnedRepos={pinnedRepos} />
+        <SkillsSection allProjects={allProjects} />
         <BlogSection />
         <ContactSection />
       </div>

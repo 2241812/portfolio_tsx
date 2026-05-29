@@ -11,7 +11,6 @@ import {
   headingVariants,
   langColors,
   SKILL_KEYWORD_MAP,
-  type PinnedRepo,
   type UnifiedProject,
 } from './shared';
 
@@ -283,10 +282,9 @@ const RelatedProjectsPanel = memo(function RelatedProjectsPanel({
 // ── Main Skills Section ──
 interface SkillsSectionProps {
   allProjects: UnifiedProject[];
-  pinnedRepos: PinnedRepo[];
 }
 
-const SkillsSection = memo(function SkillsSection({ allProjects, pinnedRepos }: SkillsSectionProps) {
+const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSectionProps) {
   const [activeSkill, setActiveSkill] = useState<string | null>(null);
   const { ref: sectionRef, isInView } = useInView({ rootMargin: '200px', once: false });
 

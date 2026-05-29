@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useCallback, useState } from 'react';
-import { Achievement, GameDifficulty, ACHIEVEMENTS } from '@/constants/gameConstants';
+import { Achievement, GameDifficulty } from '@/constants/gameConstants';
 
 export interface GameStats {
   totalGamesPlayed: number;

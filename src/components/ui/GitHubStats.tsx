@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { motion, Variants } from 'framer-motion';
 import ContributionCalendar from './ContributionCalendar';
 import { useInView } from '@/hooks/useInView';
@@ -264,29 +265,7 @@ const fadeInVariants: Variants = {
   },
 };
 
-// ── Skeleton Loader ──
-const StatCardSkeleton = memo(function StatCardSkeleton() {
-  return (
-    <div className="group relative bg-neutral-950/70 backdrop-blur-xl border border-cyan-900/30 rounded-xl p-5 flex flex-col items-center text-center cursor-default overflow-hidden">
-      <div className="w-10 h-10 rounded-lg bg-cyan-900/20 animate-pulse mb-3" />
-      <div className="h-8 w-16 bg-neutral-800 rounded animate-pulse mb-1" />
-      <div className="h-3 w-20 bg-neutral-800/60 rounded animate-pulse" />
-    </div>
-  );
-});
-
 // ── Streak Card (interactive, no external images) ──
-const StreakCard = memo(function StreakCard({ streak, loading }: { streak: StreakData | null; loading: boolean }) {
-  const [hoveredStat, setHoveredStat] = useState<string | null>(null);
-
-  if (loading) {
-    return (
-      <motion.div
-        variants={fadeInVariants}
-        className="bg-neutral-950/60 backdrop-blur-xl border border-cyan-900/30 rounded-2xl p-5 flex flex-col"
-      >
-        <div className="flex items-center gap-2 mb-4">
-          <svg className="w-4 h-4 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
           </svg>
           <h3 className="text-sm font-bold text-cyan-400 uppercase tracking-widest">Streak</h3>
@@ -525,9 +504,11 @@ const GitHubStats = memo(function GitHubStats() {
               <div className="flex flex-col gap-4">
                 {/* Centered profile image + name + bio */}
                 <div className="flex flex-col items-center gap-2">
-                  <img
+                  <Image
                     src={userData.avatar_url}
                     alt={userData.name || 'GitHub avatar'}
+                    width={64}
+                    height={64}
                     className="w-16 h-16 rounded-full border-2 border-cyan-900/40 shadow-[0_0_20px_rgba(34,211,238,0.15)]"
                   />
                   <div className="text-lg font-bold text-neutral-100" style={{ fontFamily: 'var(--font-orbitron)' }}>
@@ -642,7 +623,7 @@ const GitHubStats = memo(function GitHubStats() {
               className="px-4 py-2 text-xs font-mono text-cyan-400 border border-cyan-500/50 bg-cyan-900/20 rounded-lg hover:bg-cyan-900/40 hover:border-cyan-400 transition-all duration-300 cursor-pointer"
               title="Typing Speed Test"
             >
-              // typing
+              typing
             </button>
             <button
               onClick={() => contributionCalendarRef.current?.toggleGame()}
@@ -653,7 +634,7 @@ const GitHubStats = memo(function GitHubStats() {
               }`}
               title={isGameActive ? 'Stop Game' : 'Start Game'}
             >
-              // break
+              break
             </button>
           </div>
           <div className="flex items-center gap-2 mb-6">

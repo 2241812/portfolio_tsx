@@ -211,7 +211,7 @@ export const FEATURES = {
   GITHUB_INTEGRATION_ENABLED: true,
 };
 
-export default {
+const appConfig = {
   API_CONFIG,
   GITHUB_CONFIG,
   GAME_CONFIG,
@@ -228,3 +228,5 @@ export default {
   DEV_CONFIG,
   FEATURES,
 };
+
+export default appConfig;
