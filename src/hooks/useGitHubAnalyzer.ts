@@ -235,6 +235,10 @@ function extractKeywordsFromDescription(description: string): string[] {
     /mongodb|postgresql|mysql|redis|elasticsearch|dynamodb|firestore/gi,
     // Other tools
     /typescript|python|java|go|rust|graphql|rest api|microservice/gi,
+    // Game development
+    /game dev|gamedev|game development|game mechanic|player experience|unity engine|game design|gameplay/gi,
+    // Documentation & automation
+    /technical writing|documentation|workflow automation|system automation/gi,
   ];
 
   patterns.forEach((pattern) => {
@@ -261,6 +265,12 @@ function extractKeywordsFromDescription(description: string): string[] {
           normalized = 'Microservices';
         } else if (normalized.includes('rest api') || normalized === 'rest') {
           normalized = 'REST';
+        } else if (normalized.includes('game') || normalized === 'gamedev' || normalized === 'gameplay') {
+          normalized = 'Game Development';
+        } else if (normalized.includes('documentation') || normalized.includes('technical writing')) {
+          normalized = 'Technical Documentation';
+        } else if (normalized.includes('workflow automation') || normalized.includes('system automation')) {
+          normalized = 'System Automation';
         } else {
           // Capitalize first letter
           normalized = normalized.charAt(0).toUpperCase() + normalized.slice(1);
@@ -279,7 +289,7 @@ function extractKeywordsFromDescription(description: string): string[] {
 /**
  * Type definitions for GitHub API
  */
-interface GitHubRepo {
+export interface GitHubRepo {
   id: number;
   name: string;
   description: string | null;

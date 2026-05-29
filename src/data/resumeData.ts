@@ -1,3 +1,9 @@
+export const credentials = [
+  { icon: '🎓', title: 'B.S. Computer Science', description: `Saint Louis University | GPA: 3.53` },
+  { icon: '⭐', title: 'Smart City Challenge', description: 'Certified Participant - 2024' },
+  { icon: '🏆', title: 'AI Development', description: 'Industry Specialization Certificate' },
+];
+
 export const resumeData = {
   personalInfo: {
     name: "Narciso III Javier",

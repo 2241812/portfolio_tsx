@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { resumeData } from '@/data/resumeData';
 import { saveContentOverrides, resetContentOverrides, type ContentOverrides } from '@/hooks/useContent';
 
@@ -167,12 +168,12 @@ export default function AdminPage() {
           >
             Reset to Defaults
           </button>
-          <a
+          <Link
             href="/"
             className="px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-400 rounded-lg font-mono text-sm transition-all inline-block"
           >
             Back to Portfolio
-          </a>
+          </Link>
         </div>
       </div>
     </div>

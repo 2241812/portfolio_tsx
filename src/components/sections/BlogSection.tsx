@@ -15,13 +15,6 @@ const BlogSection = memo(function BlogSection() {
     gist.description.toLowerCase().includes('blog')
   ).slice(0, 4);
 
-  // Debug: Log all gists and filter info
-  if (gists.length > 0) {
-    console.log('Total gists fetched:', gists.length);
-    console.log('Gists:', gists);
-    console.log('Filtered blog gists:', blogGists.length);
-  }
-
   return (
     <section id="blog" ref={ref} className="min-h-screen py-24 flex items-center justify-center relative z-10 px-8 md:px-12 w-full">
       <motion.div

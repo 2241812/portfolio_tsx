@@ -25,7 +25,8 @@ npm ci --legacy-peer-deps           # Install for Vercel deploy
 - **All interactive components** use `"use client"` — sections, 3D, game, chat, etc.
 - **Every section** wrapped with `memo()` — don't skip this.
 - **Framer Motion variants** live in `src/components/sections/shared.ts` — always import from there, never inline variants.
-- **Data source**: `src/data/resumeData.ts` is the single source of truth. **Content can be overridden at runtime** via `localStorage['resume-content-overrides']` — the `/admin` page and `useContent` hook handle this.
+- **Data source**: `src/data/resumeData.ts` is the single source of truth. Also exports `credentials` array used by ContactSection and FooterSection. **Content can be overridden at runtime** via `localStorage['resume-content-overrides']` — the `/admin` page and `useContent` hook handle this.
+- **Loading screen** extracted to `src/components/ui/LoadingScreen.tsx` — manages own state and calls `onComplete` callback when settled. `page.tsx` only coordinates settled content.
 - **Chatbot system prompt** is built dynamically in `src/app/api/chat/route.ts:buildPortfolioContext()` from `resumeData`. If you change resume data, the chatbot personality changes too.
 - **3D Canvas** uses `frameloop="demand"` — only renders on frame changes. Don't change to `"always"`.
 - **SWR pattern**: Data fetching hooks (`useGitHubData`) pass `isInView ? url : null` to defer fetching until the section scrolls into view.
@@ -50,6 +51,7 @@ npm ci --legacy-peer-deps           # Install for Vercel deploy
 
 - `src/components/ui/GlitchTitle.tsx` — never imported anywhere
 - `src/hooks/useContributionGame.ts` — never imported (`ContributionCalendar.tsx` uses its own inline state)
+- `src/hooks/useCustomHooks.ts` — never imported anywhere (all 11 hooks were dead code)
 
 ## AchievementToast Bug Pattern
 

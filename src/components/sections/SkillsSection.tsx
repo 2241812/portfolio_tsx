@@ -3,7 +3,7 @@ import React, { memo, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { resumeData } from '@/data/resumeData';
 import { useInView } from '@/hooks/useInView';
-import { useGitHubAnalyzer } from '@/hooks/useGitHubAnalyzer';
+import { useGitHubAnalyzer, type GitHubRepo } from '@/hooks/useGitHubAnalyzer';
 import { mergeSkillsWithGitHub, type EnhancedSkill } from '@/utils/skillsAnalyzer';
 import {
   containerVariants,
@@ -172,42 +172,91 @@ const ProjectResultCard = memo(function ProjectResultCard({
 const RelatedProjectsPanel = memo(function RelatedProjectsPanel({
   activeSkill,
   allProjects,
-  pinnedRepos,
+  analyzedRepos,
+  isLoading,
 }: {
   activeSkill: string | null;
   allProjects: UnifiedProject[];
-  pinnedRepos: PinnedRepo[];
+  analyzedRepos: GitHubRepo[];
+  isLoading: boolean;
 }) {
-  const relatedProjects = activeSkill
-    ? (() => {
-        const keywords = SKILL_KEYWORD_MAP[activeSkill] || [activeSkill.toLowerCase()];
-        const matches = allProjects.filter((project) => {
-          const searchable = `${project.title} ${project.description} ${project.language || ''} ${project.role || ''}`.toLowerCase();
-          return keywords.some((kw) => searchable.includes(kw.toLowerCase()));
-        });
+  const relatedProjects = useMemo(() => {
+    if (!activeSkill) return [];
 
-        if (matches.length > 0) return matches;
+    const keywords = SKILL_KEYWORD_MAP[activeSkill] || [activeSkill.toLowerCase()];
+    const kwLower = keywords.map((k) => k.toLowerCase());
 
-        return pinnedRepos
-          .filter((repo) => {
-            const searchable = `${repo.name} ${repo.description} ${repo.language || ''}`.toLowerCase();
-            return keywords.some((kw) => searchable.includes(kw.toLowerCase()));
-          })
-          .map((repo) => ({
-            title: repo.name,
-            description: repo.description,
-            language: repo.language,
-            url: repo.url,
-            stars: repo.stars,
-            forks: repo.forks,
-            source: 'github' as const,
-          }));
-      })()
-    : [];
+    // First: search allProjects (resume + pinned repos)
+    const matches = allProjects.filter((project) => {
+      const searchable = `${project.title} ${project.description} ${project.language || ''} ${project.role || ''}`.toLowerCase();
+      return kwLower.some((kw) => searchable.includes(kw));
+    });
+
+    if (matches.length > 0) return matches;
+
+    // Second: search all analyzed repos with keyword + direct language match
+    return analyzedRepos
+      .filter((repo) => {
+        const searchable = `${repo.name} ${repo.description || ''} ${repo.language || ''}`.toLowerCase();
+        const matchesKeyword = kwLower.some((kw) => searchable.includes(kw));
+        const matchesLanguage = repo.language !== null && kwLower.includes(repo.language.toLowerCase());
+        return matchesKeyword || matchesLanguage;
+      })
+      .map((repo) => ({
+        title: repo.name,
+        description: repo.description || '',
+        language: repo.language || undefined,
+        url: repo.html_url,
+        stars: repo.stargazers_count,
+        forks: repo.forks_count,
+        source: 'github' as const,
+      }));
+  }, [activeSkill, allProjects, analyzedRepos]);
+
+  const panelContent = () => {
+    if (!activeSkill) {
+      return (
+        <motion.p
+          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-xs font-mono text-neutral-600 text-center"
+        >
+          [ SELECT A DATABANK TO VIEW RELATED PROTOCOLS ]
+        </motion.p>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.5 }}
+          className="text-xs font-mono text-neutral-600 text-center"
+        >
+          [ QUERYING REPOSITORIES... ]
+        </motion.p>
+      );
+    }
+
+    if (relatedProjects.length === 0) {
+      return (
+        <p className="text-xs font-mono text-neutral-600 text-center">
+          [ NO RELATED PROTOCOLS FOUND FOR &quot;{activeSkill}&quot; ]
+        </p>
+      );
+    }
+
+    return (
+      <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 thin-scrollbar">
+        {relatedProjects.map((project, idx) => (
+          <ProjectResultCard key={project.title + idx} project={project} index={idx} />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="relative min-h-[350] sm:min-h-[400px] bg-neutral-900/30 border border-cyan-900/20 rounded-xl p-4 sm:p-6 overflow-hidden">
-      {/* Terminal header */}
       <div className="flex items-center gap-2 mb-3 sm:mb-4 pb-2 sm:pb-3 border-b border-cyan-900/20">
         <span className="text-cyan-400 text-lg leading-none">—</span>
         <span className="text-[11px] sm:text-xs font-mono text-neutral-500 truncate">
@@ -216,50 +265,16 @@ const RelatedProjectsPanel = memo(function RelatedProjectsPanel({
       </div>
 
       <AnimatePresence mode="wait">
-        {!activeSkill ? (
-          <motion.div
-            key="empty"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center justify-center h-64"
-          >
-            <motion.p
-              animate={{ opacity: [0.4, 0.8, 0.4] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="text-xs font-mono text-neutral-600 text-center"
-            >
-              [ SELECT A DATABANK TO VIEW RELATED PROTOCOLS ]
-            </motion.p>
-          </motion.div>
-        ) : relatedProjects.length === 0 ? (
-          <motion.div
-            key="no-match"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center justify-center h-64"
-          >
-            <p className="text-xs font-mono text-neutral-600 text-center">
-              [ NO RELATED PROTOCOLS FOUND FOR &quot;{activeSkill}&quot; ]
-            </p>
-          </motion.div>
-        ) : (
-          <motion.div
-            key={activeSkill}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-4 max-h-[400px] overflow-y-auto pr-2 thin-scrollbar"
-          >
-            {relatedProjects.map((project, idx) => (
-              <ProjectResultCard key={project.title + idx} project={project} index={idx} />
-            ))}
-          </motion.div>
-        )}
+        <motion.div
+          key={activeSkill || 'empty'}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3 }}
+          className="flex items-center justify-center h-64"
+        >
+          {panelContent()}
+        </motion.div>
       </AnimatePresence>
     </div>
   );
@@ -276,7 +291,7 @@ const SkillsSection = memo(function SkillsSection({ allProjects, pinnedRepos }: 
   const { ref: sectionRef, isInView } = useInView({ rootMargin: '200px', once: false });
 
   // Fetch and analyze GitHub repos
-  const { analysis, isLoading: isLoadingGitHub } = useGitHubAnalyzer('2241812', isInView);
+  const { analysis, isLoading: isLoadingGitHub, repos: analyzedRepos } = useGitHubAnalyzer('2241812', isInView);
 
   // Merge GitHub-analyzed skills with hardcoded skills
   const enhancedSkills = useMemo(() => {
@@ -340,7 +355,7 @@ const SkillsSection = memo(function SkillsSection({ allProjects, pinnedRepos }: 
             enhancedSkills={enhancedSkills}
             isLoadingGitHub={isLoadingGitHub}
           />
-          <RelatedProjectsPanel activeSkill={activeSkill} allProjects={allProjects} pinnedRepos={pinnedRepos} />
+          <RelatedProjectsPanel activeSkill={activeSkill} allProjects={allProjects} analyzedRepos={analyzedRepos} isLoading={isLoadingGitHub} />
         </div>
       </motion.div>
     </section>

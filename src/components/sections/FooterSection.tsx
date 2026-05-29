@@ -3,28 +3,10 @@ import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { AchievementBadge } from '@/components/ui/cards/MetricCards';
 import { containerVariants } from './shared';
-import { resumeData } from '@/data/resumeData';
+import { resumeData, credentials } from '@/data/resumeData';
 
 // ── Main Footer Section (Minimalist) ──
 const FooterSection = memo(function FooterSection() {
-  const credentials = [
-    {
-      icon: '🎓',
-      title: 'B.S. Computer Science',
-      description: `Saint Louis University | GPA: ${resumeData.education.gpa}`,
-    },
-    {
-      icon: '⭐',
-      title: 'Smart City Challenge',
-      description: 'Certified Participant - 2024',
-    },
-    {
-      icon: '🏆',
-      title: 'AI Development',
-      description: 'Industry Specialization Certificate',
-    },
-  ];
-
   return (
     <footer className="relative py-12 overflow-hidden bg-neutral-950 border-t border-cyan-900/30">
       {/* Subtle Background */}

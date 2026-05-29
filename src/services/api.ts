@@ -62,23 +62,18 @@ export async function fetchWithRetry<T>(
     try {
       const controller = createTimeoutController(timeout);
 
-      const response = await Promise.race([
-        fetch(url, {
-          method,
-          headers: {
-            'Content-Type': 'application/json',
-            ...(typeof window !== 'undefined' && { origin: window.location.origin }),
-            ...headers,
-          },
-          signal: controller.signal,
-          body: body ? JSON.stringify(body) : undefined,
-          mode: 'cors' as RequestMode,
-          credentials: 'omit',
-        }),
-        new Promise<Response>((_, reject) =>
-          setTimeout(() => reject(new Error('Request timeout')), timeout)
-        ),
-      ]);
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(typeof window !== 'undefined' && { origin: window.location.origin }),
+          ...headers,
+        },
+        signal: controller.signal,
+        body: body ? JSON.stringify(body) : undefined,
+        mode: 'cors' as RequestMode,
+        credentials: 'omit',
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -93,17 +88,13 @@ export async function fetchWithRetry<T>(
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
 
-      // Don't retry on client errors (4xx)
-      if (lastError instanceof TypeError && lastError.message === 'Request timeout') {
-        if (attempt < retries) {
-          const delay = getBackoffDelay(attempt, retryDelay);
-          await new Promise(resolve => setTimeout(resolve, delay));
-          continue;
-        }
+      const isTimeout = lastError.name === 'AbortError' || lastError.message === 'The operation was aborted';
+
+      if (!isTimeout && !lastError.message.includes('Failed to fetch')) {
+        break;
       }
 
-      // Retry on network errors and timeouts
-      if (attempt < retries && (lastError.message.includes('Failed to fetch') || lastError.message === 'Request timeout')) {
+      if (attempt < retries) {
         const delay = getBackoffDelay(attempt, retryDelay);
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;

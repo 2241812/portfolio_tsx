@@ -81,6 +81,9 @@ export function mergeSkillsWithGitHub(gitHubSkills: AnalyzedSkill[]): Record<str
     'GitHub': 'Infrastructure & Tooling',
     'GitLab': 'Infrastructure & Tooling',
     'Microservices': 'Infrastructure & Tooling',
+    'Game Development': 'Core Competencies',
+    'Technical Documentation': 'Core Competencies',
+    'System Automation': 'Core Competencies',
   };
 
   gitHubSkills.forEach((gitHubSkill) => {

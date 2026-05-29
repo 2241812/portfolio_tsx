@@ -1,28 +1,10 @@
 ﻿"use client";
 import React, { memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { resumeData } from '@/data/resumeData';
+import { resumeData, credentials } from '@/data/resumeData';
 import { containerVariants, cardVariants, headingVariants, fireConfetti } from './shared';
 import { GlitchSocialLink, CopyableField } from '@/components/ui/cards/ContactFields';
 import { AchievementBadge } from '@/components/ui/cards/MetricCards';
-
-const credentials = [
-  {
-    icon: '🎓',
-    title: 'B.S. Computer Science',
-    description: `Saint Louis University | GPA: ${resumeData.education.gpa}`,
-  },
-  {
-    icon: '⭐',
-    title: 'Smart City Challenge',
-    description: 'Certified Participant - 2024',
-  },
-  {
-    icon: '🏆',
-    title: 'AI Development',
-    description: 'Industry Specialization Certificate',
-  },
-];
 
 // ── Contact Section Component ──
 const ContactSection = memo(function ContactSection() {

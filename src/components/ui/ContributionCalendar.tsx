@@ -28,8 +28,6 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
   const [scrollOffset, setScrollOffset] = useState(0);
   const [gameSpeed, setGameSpeed] = useState(1);
   const [gameOver, setGameOver] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [showHint, setShowHint] = useState(false);
   const [particles, setParticles] = useState<{ id: number; x: number; y: number; points: number }[]>([]);
   const [gameStartTime, setGameStartTime] = useState(0);
   
@@ -208,13 +206,9 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
     };
   }, [gameMode, gameOver, totalWidth]);
 
-  // Show hint after entering game mode
   useEffect(() => {
     if (gameMode) {
-      setShowHint(true);
       onGameModeChange?.(true);
-      const t = setTimeout(() => setShowHint(false), 4000);
-      return () => clearTimeout(t);
     } else {
       onGameModeChange?.(false);
     }

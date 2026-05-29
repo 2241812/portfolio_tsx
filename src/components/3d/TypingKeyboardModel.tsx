@@ -4,12 +4,25 @@ import { useGLTF, Center } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
+interface GLTFResult {
+  scene: THREE.Group;
+  nodes: Record<string, THREE.Object3D>;
+  materials: Record<string, THREE.Material>;
+}
+
+function meshMaterial(node: THREE.Object3D): THREE.MeshStandardMaterial | null {
+  if ('material' in node) {
+    return (node as unknown as THREE.Mesh).material as THREE.MeshStandardMaterial || null;
+  }
+  return null;
+}
+
 const KEY_MAP: Record<string, string> = {
   'Digit1': 'Object_104', 'Digit2': 'Object_106', 'Digit3': 'Object_108', 'Digit4': 'Object_110', 'Digit5': 'Object_112', 'Digit6': 'Object_114', 'Digit7': 'Object_116', 'Digit8': 'Object_118', 'Digit9': 'Object_120', 'Digit0': 'Object_122', 'Minus': 'Object_124', 'Backspace': 'Object_98', 'KeyQ': 'Object_74', 'KeyW': 'Object_166', 'KeyE': 'Object_168', 'KeyR': 'Object_170', 'KeyT': 'Object_172', 'KeyY': 'Object_174', 'KeyU': 'Object_176', 'KeyI': 'Object_178', 'KeyO': 'Object_180', 'KeyP': 'Object_182', 'KeyA': 'Object_68', 'KeyS': 'Object_128', 'KeyD': 'Object_130', 'KeyF': 'Object_132', 'KeyG': 'Object_134', 'KeyH': 'Object_136', 'KeyJ': 'Object_138', 'KeyK': 'Object_140', 'KeyL': 'Object_142', 'Enter': 'Object_100', 'KeyZ': 'Object_70', 'KeyX': 'Object_148', 'KeyC': 'Object_150', 'KeyV': 'Object_152', 'KeyB': 'Object_154', 'KeyN': 'Object_156', 'KeyM': 'Object_158', 'Comma': 'Object_160', 'Period': 'Object_162', 'Slash': 'Object_164', 'Space': 'Object_80'
 };
 
 const TypingKeyboardModel = memo(function TypingKeyboardModel({ isSettled, modelScale = 1 }: { isSettled: boolean; modelScale?: number }) {
-  const { scene, nodes } = useGLTF('/models/keyboard.glb') as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  const { scene, nodes } = useGLTF('/models/keyboard.glb') as GLTFResult;
   const groupRef = useRef<THREE.Group>(null);
   const targetRotY = useRef<number | null>(null);
   
@@ -37,8 +50,9 @@ const TypingKeyboardModel = memo(function TypingKeyboardModel({ isSettled, model
         if (!node) return;
 
         let maxHeight = 0;
-        node.traverse((child: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
-          if (child.isMesh && child.geometry) {
+        node.traverse((child: THREE.Object3D) => {
+          const mesh = child as THREE.Mesh;
+          if (mesh.isMesh && mesh.geometry) {
             const geom = child.geometry as THREE.BufferGeometry;
             if (!geom.boundingBox) geom.computeBoundingBox();
             const box = geom.boundingBox!;
@@ -105,11 +119,12 @@ const TypingKeyboardModel = memo(function TypingKeyboardModel({ isSettled, model
       currentIndex++;
     };
 
+    const keys = pressedKeys.current;
     typingInterval = setInterval(typeNextKey, 250);
 
     return () => {
       if (typingInterval) clearInterval(typingInterval);
-      pressedKeys.current.clear();
+      keys.clear();
     };
   }, [isSettled]);
 
@@ -154,16 +169,18 @@ const TypingKeyboardModel = memo(function TypingKeyboardModel({ isSettled, model
         const isPressed = pressedKeys.current.has(keyCode);
         
         if (isPressed) {
-          if ((node as any).material) { // eslint-disable-line @typescript-eslint/no-explicit-any
-            ((node as any).material as THREE.MeshStandardMaterial).color.setHex(0x22d3ee); // eslint-disable-line @typescript-eslint/no-explicit-any
-            ((node as any).material as THREE.MeshStandardMaterial).emissive.setHex(0x22d3ee); // eslint-disable-line @typescript-eslint/no-explicit-any
-            ((node as any).material as THREE.MeshStandardMaterial).emissiveIntensity = 0.8; // eslint-disable-line @typescript-eslint/no-explicit-any
+          const matPressed = meshMaterial(node);
+          if (matPressed) {
+            matPressed.color.setHex(0x22d3ee);
+            matPressed.emissive.setHex(0x22d3ee);
+            matPressed.emissiveIntensity = 0.8;
           }
         } else {
-          if ((node as any).material) { // eslint-disable-line @typescript-eslint/no-explicit-any
-            ((node as any).material as THREE.MeshStandardMaterial).color.setHex(0xffffff); // eslint-disable-line @typescript-eslint/no-explicit-any
-            ((node as any).material as THREE.MeshStandardMaterial).emissive.setHex(0x000000); // eslint-disable-line @typescript-eslint/no-explicit-any
-            ((node as any).material as THREE.MeshStandardMaterial).emissiveIntensity = 0; // eslint-disable-line @typescript-eslint/no-explicit-any
+          const matReleased = meshMaterial(node);
+          if (matReleased) {
+            matReleased.color.setHex(0xffffff);
+            matReleased.emissive.setHex(0x000000);
+            matReleased.emissiveIntensity = 0;
           }
         }
         

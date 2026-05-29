@@ -4,6 +4,19 @@ import { useGLTF, Center } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
+interface GLTFResult {
+  scene: THREE.Group;
+  nodes: Record<string, THREE.Object3D>;
+  materials: Record<string, THREE.Material>;
+}
+
+function meshMaterial(node: THREE.Object3D): THREE.MeshStandardMaterial | null {
+  if ('material' in node) {
+    return (node as unknown as THREE.Mesh).material as THREE.MeshStandardMaterial || null;
+  }
+  return null;
+}
+
 const KEY_CENTER_X: Record<string, number> = {
   'Digit1': -0.35, 'Digit2': -0.3, 'Digit3': -0.25, 'Digit4': -0.2, 'Digit5': -0.15, 'Digit6': -0.1, 'Digit7': -0.05, 'Digit8': 0, 'Digit9': 0.05, 'Digit0': 0.1,
   'KeyQ': -0.25, 'KeyW': -0.2, 'KeyE': -0.15, 'KeyR': -0.1, 'KeyT': -0.05, 'KeyY': 0, 'KeyU': 0.05, 'KeyI': 0.1, 'KeyO': 0.15, 'KeyP': 0.2,
@@ -17,7 +30,7 @@ const KEY_MAP: Record<string, string> = {
 };
 
 const KeyboardModel = memo(function KeyboardModel({ isSettled, modelScale = 1 }: { isSettled: boolean; modelScale?: number }) {
-  const { scene, nodes } = useGLTF('/models/keyboard.glb') as any;
+  const { scene, nodes } = useGLTF('/models/keyboard.glb') as GLTFResult;
   const groupRef = useRef<THREE.Group>(null);
   const targetRotY = useRef<number | null>(null);
   
@@ -50,8 +63,9 @@ const KeyboardModel = memo(function KeyboardModel({ isSettled, modelScale = 1 }:
         if (!node) return;
 
         let maxHeight = 0;
-        node.traverse((child: any) => {
-          if (child.isMesh && child.geometry) {
+        node.traverse((child: THREE.Object3D) => {
+          const mesh = child as THREE.Mesh;
+          if (mesh.isMesh && mesh.geometry) {
             const geom = child.geometry as THREE.BufferGeometry;
             if (!geom.boundingBox) geom.computeBoundingBox();
             const box = geom.boundingBox!;
@@ -117,11 +131,12 @@ const KeyboardModel = memo(function KeyboardModel({ isSettled, modelScale = 1 }:
       currentIndex++;
     };
 
+    const keys = pressedKeys.current;
     typingInterval = setInterval(typeNextKey, 300);
 
     return () => {
       if (typingInterval) clearInterval(typingInterval);
-      pressedKeys.current.clear();
+      keys.clear();
     };
   }, [isSettled]);
 
@@ -174,17 +189,19 @@ const KeyboardModel = memo(function KeyboardModel({ isSettled, modelScale = 1 }:
           const keyX = KEY_CENTER_X[keyCode] || 0;
           tiltZ -= keyX * MAX_TILT;
           tiltX += MAX_TILT * 0.3;
-          
-          if ((node as any).material) {
-            ((node as any).material as THREE.MeshStandardMaterial).color.setHex(0x22d3ee);
-            ((node as any).material as THREE.MeshStandardMaterial).emissive.setHex(0x22d3ee);
-            ((node as any).material as THREE.MeshStandardMaterial).emissiveIntensity = 0.8;
+
+          const mat = meshMaterial(node);
+          if (mat) {
+            mat.color.setHex(0x22d3ee);
+            mat.emissive.setHex(0x22d3ee);
+            mat.emissiveIntensity = 0.8;
           }
         } else {
-          if ((node as any).material) {
-            ((node as any).material as THREE.MeshStandardMaterial).color.setHex(0xffffff);
-            ((node as any).material as THREE.MeshStandardMaterial).emissive.setHex(0x000000);
-            ((node as any).material as THREE.MeshStandardMaterial).emissiveIntensity = 0;
+          const mat = meshMaterial(node);
+          if (mat) {
+            mat.color.setHex(0xffffff);
+            mat.emissive.setHex(0x000000);
+            mat.emissiveIntensity = 0;
           }
         }
         
