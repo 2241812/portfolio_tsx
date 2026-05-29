@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { resumeData } from '@/data/resumeData';
+import { generateResponse } from '@/services/chatbot';
 
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -79,11 +80,12 @@ export async function POST(request: NextRequest) {
 
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
-      console.error('OPENROUTER_API_KEY not set');
-      return NextResponse.json(
-        { error: 'API key not configured' },
-        { status: 500 }
-      );
+      const fallbackResponse = generateResponse(userMessage);
+      return NextResponse.json({
+        success: true,
+        message: fallbackResponse,
+        mode: 'local',
+      });
     }
 
     // Build conversation history with portfolio context
@@ -118,12 +120,14 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({}));
       console.error('OpenRouter API error:', errorData);
-      return NextResponse.json(
-        { error: 'Failed to generate response', details: errorData },
-        { status: response.status }
-      );
+      const fallbackResponse = generateResponse(userMessage);
+      return NextResponse.json({
+        success: true,
+        message: fallbackResponse,
+        mode: 'local',
+      });
     }
 
     const data = await response.json();
