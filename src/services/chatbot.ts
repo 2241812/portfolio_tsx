@@ -48,7 +48,7 @@ export const CHATBOT_RULES = [
     patterns: ['who are you', 'your name', 'tell me about yourself', 'introduce yourself', 'who is this', 'what is your name'],
     responses: [
       `I'm ${CHATBOT_TRAINING_DATA.personality.name}, a ${CHATBOT_TRAINING_DATA.personality.title}. I'm based in ${CHATBOT_TRAINING_DATA.personality.location} and passionate about AI development, web technologies, and solving real-world problems through code.`,
-      `I'm ${CHATBOT_TRAINING_DATA.personality.name}. I'm a student at ${CHATBOT_TRAINING_DATA.education.university.split('|')[0].trim()} studying ${CHATBOT_TRAINING_DATA.education.degree}, and I'm currently working as an AI Development Intern. Expected graduation: ${CHATBOT_TRAINING_DATA.education.classOf}.`,
+      `I'm ${CHATBOT_TRAINING_DATA.personality.name}. I'm a student at ${CHATBOT_TRAINING_DATA.education.university.split('|')[0].trim()} studying ${CHATBOT_TRAINING_DATA.education.degree}, with career interests in AI development, game dev, and systems engineering. Expected graduation: ${CHATBOT_TRAINING_DATA.education.classOf}.`,
     ],
   },
 
@@ -100,14 +100,14 @@ export const CHATBOT_RULES = [
   {
     patterns: ['artificial intelligence', 'ai', 'machine learning', 'ml', 'tensorflow', 'pytorch', 'neural network', 'deep learning'],
     responses: [
-      `I'm experienced in AI and machine learning workflows. I work with frameworks like TensorFlow and PyTorch for building models, including computer vision and NLP projects.`,
-      `AI/ML is a key area of expertise. I've built systems ranging from hand sign recognition to AI workflow integration in production environments.`,
+      `I'm exploring AI and machine learning workflows. I've built projects like a hand sign recognition system using CNN and computer vision.`,
+      `AI/ML is an area I'm actively working in. I've built systems ranging from hand sign recognition to AI workflow automation.`,
     ],
   },
   {
     patterns: ['game development', 'unity', '3d', 'ar', 'augmented reality', 'game', 'graphics'],
     responses: [
-      () => `${CHATBOT_TRAINING_DATA.skillDescriptions['Unity 3D']} I also have experience with ${CHATBOT_TRAINING_DATA.skillDescriptions['AR Foundation']}`,
+      `I've explored game development concepts and AR through personal projects, including work with ${CHATBOT_TRAINING_DATA.skillDescriptions['AR Foundation']}.`,
     ],
   },
   {
@@ -176,8 +176,8 @@ export const CHATBOT_RULES = [
   {
     patterns: ['experience', 'work', 'job', 'intern', 'professional', 'employment', 'background'],
     responses: [
-      `I'm working as an AI Development Intern right now, which has been an amazing learning experience. I work on AI workflows, development, and infrastructure—basically a bit of everything!`,
-      `My background spans AI development, full-stack web development, containerization with Docker, and system automation. I love building projects that solve real problems!`,
+      `My background spans AI development projects, full-stack web development, containerization with Docker, and system automation. I'm always building projects that solve real problems!`,
+      `I've worked on projects across AI, web development, and automation. I'm currently studying Computer Science and building my portfolio with hands-on projects.`,
     ],
   },
 

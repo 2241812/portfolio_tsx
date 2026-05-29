@@ -2,7 +2,7 @@ export const resumeData = {
   personalInfo: {
     name: "Narciso III Javier",
     title: "Computer Science Student",
-    titleAnimated: ["DevOps Intern", "Game Dev Intern", "AI Development Intern"],
+    titleAnimated: ["Full-Stack Developer", "Game Developer", "AI Engineer"],
     location: "Baguio City, Philippines",
     phone: "+63-976-451-1638",
     email: "2241812@slu.edu.ph",
@@ -16,7 +16,6 @@ export const resumeData = {
   },
   skills: {
     programming: [
-      "C#",
       "Python",
       "Go",
       "JavaScript (ES6+)",
@@ -28,11 +27,9 @@ export const resumeData = {
       "CSS"
     ],
     frameworks: [
-      "Unity 3D",
       "PyQt6",
       "AR Foundation",
-      "AI Frameworks",
-      "OpenCode"
+      "AI Frameworks"
     ],
     infrastructure: [
       "Docker",
@@ -59,15 +56,12 @@ export const resumeData = {
     "Node.js": "JavaScript runtime built on Chrome's V8 engine for building scalable server-side applications.",
     "PHP": "Server-side scripting language designed for web development but also used as a general-purpose programming language.",
     "C++": "Powerful systems programming language with object-oriented features, used for game development, operating systems, and performance-critical applications.",
-    "C#": "Modern, object-oriented language developed by Microsoft for building Windows applications, web services, and games with Unity.",
     "Java": "Platform-independent, object-oriented language widely used for enterprise applications, Android development, and big data processing.",
     "HTML": "Standard markup language for creating web pages and web applications.",
     "CSS": "Style sheet language used for describing the presentation of a document written in HTML or XML.",
     "PyQt6": "Python binding of the cross-platform GUI toolkit Qt, used for creating desktop applications with Python.",
-    "Unity 3D": "Cross-platform game engine used to develop video games for consoles, mobile devices, and personal computers.",
     "AR Foundation": "Unity's cross-platform framework for building augmented reality experiences for iOS and Android devices.",
-    "AI Frameworks": "Collection of libraries and tools like TensorFlow, PyTorch, and scikit-learn for building artificial intelligence models.",
-    "OpenCode": "AI-powered development assistant that helps with coding tasks through natural language interactions.",
+    "AI Frameworks": "Collection of libraries and tools for building artificial intelligence models and pipelines.",
     "Docker": "Platform for developing, shipping, and running applications in containers for consistent environments across systems.",
     "Docker Compose": "Tool for defining and running multi-container Docker applications using YAML configuration files.",
     "VSCode Remote Containers": "Extension that allows you to use a Docker container as a full-featured development environment.",
@@ -86,9 +80,9 @@ export const resumeData = {
   projects: [
     {
       title: "Unity 3D Game Projects",
-      role: "Game Developer",
+      role: "Game Developer (Learning)",
       description:
-        "Developed game systems and mechanics using C# and Unity 3D, building gameplay sensibilities through hands-on personal projects. Focused on player-centric design and iterating on mechanics based on playability and user experience.",
+        "Personal game development projects exploring Unity 3D mechanics and player-centric design through hands-on experimentation and iterative prototyping.",
     },
     {
       title: "MultiTask_ContextSwitch",
@@ -106,14 +100,14 @@ export const resumeData = {
     },
     {
       title: "OpenCode-VSCode-Setup",
-      role: "Environment Architect",
+      role: "Dev Environment Setup",
       description:
-        "Engineered a quick setup guide and containerized configuration for running an OpenCode AI development environment directly inside a VSCode terminal, using Docker and VSCode Remote Containers for isolated, reproducible sandboxes.",
+        "Created a setup guide and Docker-based configuration for running OpenCode inside a VSCode terminal using Remote Containers, providing an isolated and reproducible development sandbox.",
     },
     {
       title: "Basic Hand Sign Recognition System",
       role: "AI Engineer",
-      description: "Built an end-to-end computer vision pipeline using a CNN model to interpret hand signs via real-time webcam feed.",
+      description:         "Built a computer vision prototype using a CNN model to interpret hand signs from a webcam feed. Developed as a learning project to explore AI and image classification.",
       link: "https://colab.research.google.com/drive/1JtmdmGKfQzO4xnSUnl4rRVXulx5v6TJG?usp=sharing"
     }
   ]

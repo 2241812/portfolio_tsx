@@ -78,10 +78,10 @@ const AboutSection = memo(function AboutSection() {
               {resumeData.personalInfo.name}
             </h3>
             <p className="text-base sm:text-lg text-cyan-400/80 font-mono mb-4 sm:mb-6">
-              AI Development Intern | Full-Stack Engineer
+              CS Student | Aspiring AI & Game Developer
             </p>
             <p className="text-sm sm:text-base md:text-lg leading-relaxed text-neutral-400 font-light">
-              Computer Science student at Saint Louis University focusing on scalable system architecture, containerization, and AI workflow automation. I enjoy building reproducible AI development environments and multi-service applications that feel reliable and easy to extend.
+              Computer Science student at Saint Louis University exploring systems architecture, containerization, and AI workflows. I enjoy building projects that bridge software development with automation and game design.
             </p>
           </motion.div>
 

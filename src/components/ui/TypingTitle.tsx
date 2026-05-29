@@ -8,7 +8,7 @@ interface TypingTitleProps {
 }
 
 const TypingTitle: React.FC<TypingTitleProps> = ({ 
-  jobTitles = ['DevOps Intern', 'Game Dev Intern', 'AI Development Intern'],
+  jobTitles = ['Full-Stack Developer', 'Game Developer', 'AI Engineer'],
   className = '' 
 }) => {
   const [displayedText, setDisplayedText] = useState('');

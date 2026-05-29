@@ -207,13 +207,6 @@ The app can be deployed to any platform that supports Node.js:
 - **`Enter`**: Select highlighted card
 - **`type commands`**: Navigate sections (e.g., "about me", "skills")
 
-## 📈 Performance
-
-- **Lighthouse Score**: 85+ (Performance), 95+ (Accessibility)
-- **Core Web Vitals**: All green (LCP, FID, CLS)
-- **Build Size**: ~250KB (gzipped)
-- **3D Rendering**: GPU-optimized with demand-based frame rendering
-
 ## 🐛 Troubleshooting
 
 ### Issue: "Failed to fetch" error in console

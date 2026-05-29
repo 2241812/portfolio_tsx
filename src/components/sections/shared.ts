@@ -132,7 +132,6 @@ export const SKILL_KEYWORD_MAP: Record<string, string[]> = {
   'Node.js': ['node.js', 'node', 'javascript', 'express'],
   'PHP': ['php'],
   'C++': ['c++', 'computer vision', 'opencv'],
-  'C#': ['c#', 'unity', 'ar foundation'],
   'Java': ['java'],
   'HTML': ['html', 'web', 'frontend'],
   'CSS': ['css', 'tailwind', 'styling'],
@@ -142,8 +141,6 @@ export const SKILL_KEYWORD_MAP: Record<string, string[]> = {
   'CI/CD Pipelines': ['ci/cd', 'pipeline', 'deploy'],
   'Git/GitHub': ['git', 'github'],
   'PyQt6': ['pyqt6', 'qt', 'desktop'],
-  'Unity 3D': ['unity', 'unity 3d', 'ar'],
   'AR Foundation': ['ar foundation', 'augmented reality', 'ar'],
   'AI Frameworks': ['ai', 'cnn', 'model', 'computer vision'],
-  'OpenCode': ['opencode', 'ai development'],
 };

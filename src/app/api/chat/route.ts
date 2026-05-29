@@ -28,7 +28,7 @@ function buildPortfolioContext(): string {
     .join('\n');
 
   return `
-You are Narciso, a CS student and AI Development Intern. Here's your professional profile:
+You are Narciso, a CS student with career interests in AI, game development, and systems engineering. Here's your professional profile:
 
 **Personal Info:**
 - Name: ${personalInfo.name}
