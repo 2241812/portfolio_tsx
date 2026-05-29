@@ -51,9 +51,9 @@ const TypingKeyboardModel = memo(function TypingKeyboardModel({ isSettled, model
 
         let maxHeight = 0;
         node.traverse((child: THREE.Object3D) => {
-          const mesh = child as THREE.Mesh;
+            const mesh = child as THREE.Mesh;
           if (mesh.isMesh && mesh.geometry) {
-            const geom = child.geometry as THREE.BufferGeometry;
+            const geom = mesh.geometry as THREE.BufferGeometry;
             if (!geom.boundingBox) geom.computeBoundingBox();
             const box = geom.boundingBox!;
             const size = new THREE.Vector3();
