@@ -20,18 +20,35 @@ export default function AdminPage() {
     } catch {}
   }, []);
 
-  const updateField = (path: string, value: string) => {
-    setFormData((prev) => {
-      const next = structuredClone(prev);
-      const parts = path.split('.');
-      let obj: Record<string, unknown> = next;
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!obj[parts[i]]) obj[parts[i]] = {};
-        obj = obj[parts[i]] as Record<string, unknown>;
-      }
-      obj[parts[parts.length - 1]] = value;
-      return next;
-    });
+  const updatePersonalInfo = (field: keyof typeof resumeData.personalInfo, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      personalInfo: {
+        ...(prev.personalInfo ?? resumeData.personalInfo),
+        [field]: value,
+      },
+    }));
+  };
+
+  const updateEducation = (field: keyof typeof resumeData.education, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      education: {
+        ...(prev.education ?? resumeData.education),
+        [field]: value,
+      },
+    }));
+  };
+
+  const updateSkills = (field: 'programming' | 'frameworks' | 'infrastructure', value: string) => {
+    const list = value.split(',').map((s) => s.trim()).filter(Boolean);
+    setFormData((prev) => ({
+      ...prev,
+      skills: {
+        ...(prev.skills ?? resumeData.skills),
+        [field]: list,
+      },
+    }));
   };
 
   const handleSave = () => {
@@ -99,32 +116,32 @@ export default function AdminPage() {
               <Field
                 label="Name"
                 value={formData.personalInfo?.name ?? resumeData.personalInfo.name}
-                onChange={(v) => updateField('personalInfo.name', v)}
+                onChange={(v) => updatePersonalInfo('name', v)}
               />
               <Field
                 label="Title"
                 value={formData.personalInfo?.title ?? resumeData.personalInfo.title}
-                onChange={(v) => updateField('personalInfo.title', v)}
+                onChange={(v) => updatePersonalInfo('title', v)}
               />
               <Field
                 label="Location"
                 value={formData.personalInfo?.location ?? resumeData.personalInfo.location}
-                onChange={(v) => updateField('personalInfo.location', v)}
+                onChange={(v) => updatePersonalInfo('location', v)}
               />
               <Field
                 label="Email"
                 value={formData.personalInfo?.email ?? resumeData.personalInfo.email}
-                onChange={(v) => updateField('personalInfo.email', v)}
+                onChange={(v) => updatePersonalInfo('email', v)}
               />
               <Field
                 label="Phone"
                 value={formData.personalInfo?.phone ?? resumeData.personalInfo.phone}
-                onChange={(v) => updateField('personalInfo.phone', v)}
+                onChange={(v) => updatePersonalInfo('phone', v)}
               />
               <Field
                 label="LinkedIn URL"
                 value={formData.personalInfo?.linkedin ?? resumeData.personalInfo.linkedin}
-                onChange={(v) => updateField('personalInfo.linkedin', v)}
+                onChange={(v) => updatePersonalInfo('linkedin', v)}
               />
             </div>
           )}
@@ -137,15 +154,7 @@ export default function AdminPage() {
                   formData.skills?.programming?.join(', ') ??
                   resumeData.skills.programming.join(', ')
                 }
-                onChange={(v) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    skills: {
-                      ...prev.skills,
-                      programming: v.split(',').map((s) => s.trim()).filter(Boolean),
-                    },
-                  }))
-                }
+                onChange={(v) => updateSkills('programming', v)}
               />
               <TextareaField
                 label="Frameworks (comma separated)"
@@ -153,15 +162,7 @@ export default function AdminPage() {
                   formData.skills?.frameworks?.join(', ') ??
                   resumeData.skills.frameworks.join(', ')
                 }
-                onChange={(v) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    skills: {
-                      ...prev.skills,
-                      frameworks: v.split(',').map((s) => s.trim()).filter(Boolean),
-                    },
-                  }))
-                }
+                onChange={(v) => updateSkills('frameworks', v)}
               />
               <TextareaField
                 label="Infrastructure (comma separated)"
@@ -169,15 +170,7 @@ export default function AdminPage() {
                   formData.skills?.infrastructure?.join(', ') ??
                   resumeData.skills.infrastructure.join(', ')
                 }
-                onChange={(v) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    skills: {
-                      ...prev.skills,
-                      infrastructure: v.split(',').map((s) => s.trim()).filter(Boolean),
-                    },
-                  }))
-                }
+                onChange={(v) => updateSkills('infrastructure', v)}
               />
             </div>
           )}
@@ -187,22 +180,22 @@ export default function AdminPage() {
               <Field
                 label="University"
                 value={formData.education?.university ?? resumeData.education.university}
-                onChange={(v) => updateField('education.university', v)}
+                onChange={(v) => updateEducation('university', v)}
               />
               <Field
                 label="Degree"
                 value={formData.education?.degree ?? resumeData.education.degree}
-                onChange={(v) => updateField('education.degree', v)}
+                onChange={(v) => updateEducation('degree', v)}
               />
               <Field
                 label="GPA"
                 value={formData.education?.gpa ?? resumeData.education.gpa}
-                onChange={(v) => updateField('education.gpa', v)}
+                onChange={(v) => updateEducation('gpa', v)}
               />
               <Field
                 label="Class Of"
                 value={formData.education?.classOf ?? resumeData.education.classOf}
-                onChange={(v) => updateField('education.classOf', v)}
+                onChange={(v) => updateEducation('classOf', v)}
               />
             </div>
           )}

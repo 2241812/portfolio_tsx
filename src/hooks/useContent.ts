@@ -5,7 +5,15 @@ import { resumeData as baseData } from '@/data/resumeData';
 
 const STORAGE_KEY = 'resume-content-overrides';
 
-export type ContentOverrides = Partial<typeof baseData>;
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends (infer U)[]
+    ? U[]
+    : T[P] extends object
+    ? DeepPartial<T[P]>
+    : T[P];
+};
+
+export type ContentOverrides = DeepPartial<typeof baseData>;
 
 export function useContent() {
   const merged = useMemo(() => {
@@ -14,7 +22,7 @@ export function useContent() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return baseData;
       const overrides: ContentOverrides = JSON.parse(raw);
-      return deepMerge(baseData, overrides);
+      return deepMerge(baseData, overrides as Partial<typeof baseData>);
     } catch {
       return baseData;
     }
@@ -27,7 +35,7 @@ export function saveContentOverrides(overrides: ContentOverrides) {
   try {
     const existing = localStorage.getItem(STORAGE_KEY);
     const current = existing ? JSON.parse(existing) : {};
-    const merged = deepMerge(current, overrides);
+    const merged = deepMerge(current, overrides as Record<string, unknown>);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
   } catch (err) {
     console.error('Failed to save content:', err);
