@@ -49,21 +49,20 @@ const Scene = memo(function Scene({ isSettled }: SceneProps) {
         }}
         style={{ pointerEvents: 'auto' }}
       >
-        {/* Custom frame loop to avoid THREE.Clock deprecation warning */}
         <SuppressClockWarning />
         
-        {/* Camera positioned responsively based on viewport */}
+        {/* Responsive camera position */}
         <PerspectiveCamera 
           makeDefault 
           position={[0, 2 * viewport.scale, 5 * viewport.scale]} 
           fov={45 + (1 - viewport.scale) * 20} 
         />
         
-        {/* Enhanced lighting for dramatic effect */}
-        <ambientLight intensity={0.3} />
-        <directionalLight position={[5, 10, 5]} intensity={1.2} color="#ffffff" />
-        <directionalLight position={[-5, 5, -5]} intensity={0.5} color="#22d3ee" />
-        <pointLight position={[0, 3, 0]} intensity={0.8} color="#22d3ee" distance={10} />
+        {/* Subtle Dark Blue Ambient & Directional Lighting */}
+        <ambientLight intensity={0.25} color="#0f172a" />
+        <directionalLight position={[5, 10, 5]} intensity={1.1} color="#f8fafc" />
+        <directionalLight position={[-5, 5, -5]} intensity={0.6} color="#3b82f6" />
+        <pointLight position={[0, 3, 0]} intensity={0.7} color="#1d4ed8" distance={10} />
         
         <Environment preset="city" />
         
@@ -71,11 +70,11 @@ const Scene = memo(function Scene({ isSettled }: SceneProps) {
           <KeyboardModel isSettled={isSettled} modelScale={viewport.scale} />
           <ContactShadows 
             position={[0, -0.5, 0]} 
-            opacity={0.8} 
+            opacity={0.85} 
             scale={20 * viewport.scale} 
             blur={2} 
             far={5}
-            color="#22d3ee"
+            color="#1e3a8a"
           />
         </>
       </Canvas>

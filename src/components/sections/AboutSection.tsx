@@ -1,243 +1,215 @@
 "use client";
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { resumeData } from '@/data/resumeData';
+import { resumeData, credentials } from '@/data/resumeData';
 import { containerVariants, cardVariants, headingVariants } from './shared';
 
-// ── Social Card Component ──
-const SocialCard = memo(function SocialCard({
+const SocialButton = memo(function SocialButton({
   icon,
   label,
   value,
   href,
-  delay = 0,
 }: {
-  icon: React.ReactNode;
+  icon: string;
   label: string;
   value: string;
   href: string;
-  delay?: number;
 }) {
   return (
-    <motion.a
+    <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.5 }}
-      viewport={{ once: true }}
-      whileHover={{ scale: 1.05, borderColor: 'rgba(34, 211, 238, 0.6)' }}
-      whileTap={{ scale: 0.95 }}
-      className="px-3 sm:px-4 py-2 sm:py-3 rounded-lg font-mono text-xs sm:text-sm border transition-all duration-300 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-neutral-950 bg-neutral-900/50 text-neutral-300 border-neutral-800 hover:border-cyan-500/50 hover:text-cyan-300"
+      className="flex items-center justify-between px-3 py-2 bg-[#090d16] border border-slate-800/80 rounded hover:border-blue-500/60 hover:bg-slate-900/60 transition-colors group select-none cursor-pointer"
     >
-      <div className="flex items-center gap-2">
-        <span className="text-sm sm:text-base">{icon}</span>
-        <div className="text-left min-w-0">
-          <div className="text-xs uppercase tracking-widest text-neutral-500 truncate">{label}</div>
-          <div className="text-xs sm:text-sm font-semibold text-neutral-200 truncate">{value}</div>
-        </div>
+      <div className="flex items-center gap-2.5">
+        <span className="text-sm">{icon}</span>
+        <span className="text-xs text-slate-400 group-hover:text-slate-200 transition-colors">
+          {label}
+        </span>
       </div>
-    </motion.a>
+      <span className="text-[11px] text-blue-400 font-mono group-hover:text-blue-300">
+        {value} ↗
+      </span>
+    </a>
   );
 });
 
 const AboutSection = memo(function AboutSection() {
-  const [isHovering, setIsHovering] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
-    const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
-    setMousePos({ x: x * 10, y: y * 10 });
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-    setMousePos({ x: 0, y: 0 });
-  };
   return (
-    <section id="about" className="min-h-screen flex items-center justify-center px-4 sm:px-8 md:px-12 relative py-20 sm:py-0">
+    <section
+      id="overview"
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-slate-800/80"
+    >
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.25 }}
-        className="w-full max-w-6xl relative z-10 py-12 grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center"
+        viewport={{ once: true, amount: 0.1 }}
+        className="w-full space-y-6"
       >
-        {/* Left Content */}
-        <div>
-          <motion.div variants={headingVariants} className="flex items-center gap-4 mb-6 sm:mb-8">
-            <div className="w-6 sm:w-8 h-[1px] bg-cyan-500/50" aria-hidden="true" />
-            <h2 className="text-xl sm:text-2xl font-mono text-cyan-400 tracking-widest uppercase">01. About Me</h2>
-          </motion.div>
-          
-          <motion.div variants={cardVariants} className="mb-8 sm:mb-10">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-neutral-100 mb-2">
-              {resumeData.personalInfo.name}
-            </h3>
-            <p className="text-base sm:text-lg text-cyan-400/80 font-mono mb-4 sm:mb-6">
-              CS Student | Aspiring AI & Game Developer
-            </p>
-            <p className="text-sm sm:text-base md:text-lg leading-relaxed text-neutral-400 font-light">
-              Computer Science student at Saint Louis University exploring systems architecture, containerization, and AI workflows. I enjoy building projects that bridge software development with automation and game design.
-            </p>
+        {/* Section Header */}
+        <motion.div variants={headingVariants} className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex items-center gap-3">
+            <span className="text-blue-500 text-sm font-bold">[01]</span>
+            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-mono">
+              SYSTEM PROFILE & OVERVIEW
+            </h2>
+          </div>
+          <span className="text-[11px] text-slate-500 font-mono hidden sm:inline">
+            // sysinfo: narcisoiii.dev
+          </span>
+        </motion.div>
+
+        {/* Main Grid: Neofetch / System Specs Left, Bio & Telemetry Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column: Avatar & System Specs Box (5 cols) */}
+          <motion.div variants={cardVariants} className="lg:col-span-5 space-y-4">
+            {/* Neofetch Terminal Box */}
+            <div className="bg-[#090d16] border border-slate-800 rounded p-4 relative overflow-hidden group shadow-lg">
+              {/* Dark Blue Ambient Glow */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 blur-2xl pointer-events-none" />
+
+              <div className="flex items-center gap-4 border-b border-slate-800 pb-4 mb-4">
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded border border-blue-900/60 overflow-hidden bg-slate-900 shrink-0">
+                  <Image
+                    src="/profile.jpg"
+                    alt={resumeData.personalInfo.name}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-blue-950/20 mix-blend-color" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-100 truncate">
+                    {resumeData.personalInfo.name}
+                  </h3>
+                  <p className="text-xs text-blue-400 font-mono truncate">
+                    {resumeData.personalInfo.title}
+                  </p>
+                  <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                    {resumeData.education.university}
+                  </p>
+                </div>
+              </div>
+
+              {/* Spec list */}
+              <div className="space-y-1.5 text-xs font-mono">
+                <div className="flex justify-between py-0.5 border-b border-slate-900">
+                  <span className="text-slate-500">Degree</span>
+                  <span className="text-slate-300 font-semibold">{resumeData.education.degree}</span>
+                </div>
+                <div className="flex justify-between py-0.5 border-b border-slate-900">
+                  <span className="text-slate-500">GPA</span>
+                  <span className="text-emerald-400 font-semibold">{resumeData.education.gpa} / 4.00</span>
+                </div>
+                <div className="flex justify-between py-0.5 border-b border-slate-900">
+                  <span className="text-slate-500">Class</span>
+                  <span className="text-slate-300">Class of {resumeData.education.classOf}</span>
+                </div>
+                <div className="flex justify-between py-0.5 border-b border-slate-900">
+                  <span className="text-slate-500">Location</span>
+                  <span className="text-slate-300">{resumeData.personalInfo.location}</span>
+                </div>
+                <div className="flex justify-between py-0.5">
+                  <span className="text-slate-500">Primary Focus</span>
+                  <span className="text-blue-400">Systems & AI Automation</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Credentials Badge Box */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2">
+              {credentials.map((cred) => (
+                <div
+                  key={cred.title}
+                  className="px-3 py-2 bg-[#090d16] border border-slate-800/80 rounded text-xs flex items-center gap-2.5"
+                >
+                  <span className="text-base shrink-0">{cred.icon}</span>
+                  <div className="min-w-0">
+                    <div className="font-bold text-slate-200 truncate">{cred.title}</div>
+                    <div className="text-[10px] text-slate-500 truncate">{cred.description}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </motion.div>
 
-          {/* Social Cards */}
-          <motion.div variants={containerVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6 sm:mt-8">
-          <SocialCard
-            icon="🐙"
-            label="GitHub"
-            value="@2241812"
-            href="https://github.com/2241812"
-            delay={0}
-          />
-          <SocialCard
-            icon="💼"
-            label="LinkedIn"
-            value="Narciso III"
-            href={resumeData.personalInfo.linkedin}
-            delay={0.1}
-          />
-          <SocialCard
-            icon="📧"
-            label="Email"
-            value={resumeData.personalInfo.email}
-            href={`mailto:${resumeData.personalInfo.email}`}
-            delay={0.2}
-          />
-          <SocialCard
-            icon="📍"
-            label="Location"
-            value={resumeData.personalInfo.location}
-            href="#"
-            delay={0.3}
-          />
+          {/* Right Column: Narrative Bio & Quick Channel Links (7 cols) */}
+          <motion.div variants={cardVariants} className="lg:col-span-7 space-y-4">
+            {/* Bio Box */}
+            <div className="bg-[#090d16] border border-slate-800 rounded p-4 sm:p-6 space-y-4">
+              <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-800 pb-2">
+                <span>README.md</span>
+                <span className="text-[10px] bg-slate-900 px-2 py-0.5 rounded text-slate-400">
+                  UTF-8 • markdown
+                </span>
+              </div>
+
+              <div className="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed font-mono">
+                <p>
+                  Computer Science student at{' '}
+                  <strong className="text-slate-100 font-semibold">{resumeData.education.university}</strong>,
+                  specializing in <span className="text-blue-400">containerized systems</span>,{' '}
+                  <span className="text-blue-400">process automation</span>, and{' '}
+                  <span className="text-blue-400">game mechanics</span>.
+                </p>
+                <p className="text-slate-400">
+                  I construct reproducible developer workflows, microservice architectures, and machine
+                  learning prototypes that bridge system-level programming with practical desktop and web utilities.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-wrap gap-2.5">
+                <a
+                  href="/Javier, Narciso III C._Resume_.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 bg-blue-950 hover:bg-blue-900 border border-blue-700/60 rounded text-blue-300 text-xs font-bold transition-colors flex items-center gap-1.5"
+                >
+                  <span>📄</span> Download Resume (PDF)
+                </a>
+                <a
+                  href="#contact"
+                  className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded text-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5"
+                >
+                  <span>✉️</span> Initiate Protocol
+                </a>
+              </div>
+            </div>
+
+            {/* Direct Social Channels */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <SocialButton
+                icon="🐙"
+                label="GitHub"
+                value="@2241812"
+                href="https://github.com/2241812"
+              />
+              <SocialButton
+                icon="💼"
+                label="LinkedIn"
+                value="Narciso III Javier"
+                href={resumeData.personalInfo.linkedin}
+              />
+              <SocialButton
+                icon="📧"
+                label="Email"
+                value={resumeData.personalInfo.email}
+                href={`mailto:${resumeData.personalInfo.email}`}
+              />
+              <SocialButton
+                icon="📍"
+                label="Location"
+                value={resumeData.personalInfo.location}
+                href="https://maps.google.com/?q=Baguio+City+Philippines"
+              />
+            </div>
           </motion.div>
         </div>
-
-        {/* Right Image */}
-        <motion.div
-          variants={cardVariants}
-          className="flex items-center justify-center"
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div className="relative w-full max-w-sm">
-            {/* Animated Border Glow */}
-            <motion.div 
-              className="absolute inset-0 rounded-xl bg-gradient-to-br from-cyan-400/20 via-cyan-400/5 to-transparent blur-2xl"
-              animate={isHovering ? {
-                opacity: [0.3, 0.6, 0.3],
-              } : { opacity: 0.2 }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-
-            {/* Parallax Container */}
-            <motion.div
-              className="relative"
-              animate={{
-                rotateX: isHovering ? mousePos.y : 0,
-                rotateY: isHovering ? -mousePos.x : 0,
-              }}
-              transition={{ type: 'spring', stiffness: 400, damping: 60 }}
-              style={{ perspective: 1000 }}
-            >
-              {/* Image container */}
-              <motion.div 
-                className="relative rounded-xl overflow-hidden shadow-2xl"
-                style={{ border: '1px solid rgba(34, 211, 238, 0.3)', boxShadow: '0 0 25px rgba(34, 211, 238, 0.1)' }}
-                whileHover={{ 
-                  borderColor: 'rgba(34, 211, 238, 0.8)',
-                  boxShadow: '0 0 30px rgba(34, 211, 238, 0.3)'
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <motion.img
-                  src="/profile.jpg"
-                  alt="Narciso"
-                  className="w-full h-auto object-cover aspect-square"
-                  whileHover={{ scale: 1.08 }}
-                  transition={{ duration: 0.4 }}
-                />
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/40 via-transparent to-transparent pointer-events-none" />
-              </motion.div>
-
-              {/* Animated Decorative Corners */}
-              <motion.div 
-                className="absolute -top-2 -left-2 rounded-tl-lg"
-                style={{ width: 32, height: 32, borderTop: '2px solid rgba(34, 211, 238, 0.4)', borderLeft: '2px solid rgba(34, 211, 238, 0.4)' }}
-                animate={isHovering ? { 
-                  borderColor: 'rgba(34, 211, 238, 0.8)',
-                  width: 12,
-                  height: 12
-                } : { 
-                  borderColor: 'rgba(34, 211, 238, 0.4)',
-                  width: 32,
-                  height: 32
-                }}
-                transition={{ duration: 0.3 }}
-              />
-              <motion.div 
-                className="absolute -top-2 -right-2 rounded-tr-lg"
-                style={{ width: 32, height: 32, borderTop: '2px solid rgba(34, 211, 238, 0.4)', borderRight: '2px solid rgba(34, 211, 238, 0.4)' }}
-                animate={isHovering ? { 
-                  borderColor: 'rgba(34, 211, 238, 0.8)',
-                  width: 12,
-                  height: 12
-                } : { 
-                  borderColor: 'rgba(34, 211, 238, 0.4)',
-                  width: 32,
-                  height: 32
-                }}
-                transition={{ duration: 0.3 }}
-              />
-              <motion.div 
-                className="absolute -bottom-2 -left-2 rounded-bl-lg"
-                style={{ width: 32, height: 32, borderBottom: '2px solid rgba(34, 211, 238, 0.4)', borderLeft: '2px solid rgba(34, 211, 238, 0.4)' }}
-                animate={isHovering ? { 
-                  borderColor: 'rgba(34, 211, 238, 0.8)',
-                  width: 12,
-                  height: 12
-                } : { 
-                  borderColor: 'rgba(34, 211, 238, 0.4)',
-                  width: 32,
-                  height: 32
-                }}
-                transition={{ duration: 0.3 }}
-              />
-              <motion.div 
-                className="absolute -bottom-2 -right-2 rounded-br-lg"
-                style={{ width: 32, height: 32, borderBottom: '2px solid rgba(34, 211, 238, 0.4)', borderRight: '2px solid rgba(34, 211, 238, 0.4)' }}
-                animate={isHovering ? { 
-                  borderColor: 'rgba(34, 211, 238, 0.8)',
-                  width: 12,
-                  height: 12
-                } : { 
-                  borderColor: 'rgba(34, 211, 238, 0.4)',
-                  width: 32,
-                  height: 32
-                }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.div>
-
-            {/* Center Pulse Ring on Hover */}
-            {isHovering && (
-              <motion.div
-                className="absolute inset-0 rounded-xl"
-                style={{ border: '2px solid rgba(34, 211, 238, 0.2)' }}
-                initial={{ scale: 0.8, opacity: 1 }}
-                animate={{ scale: 1.2, opacity: 0 }}
-                transition={{ duration: 1, repeat: Infinity }}
-              />
-            )}
-          </div>
-        </motion.div>
       </motion.div>
     </section>
   );

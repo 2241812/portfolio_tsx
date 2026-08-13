@@ -21,7 +21,7 @@ export default function AdminPage() {
   }, []);
 
   const updateField = (path: string, value: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const next = structuredClone(prev);
       const parts = path.split('.');
       let obj: Record<string, unknown> = next;
@@ -48,28 +48,43 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-cyan-400 mb-2 font-mono">Content Editor</h1>
-        <p className="text-sm text-neutral-500 mb-6 font-mono">
-          Edit your portfolio content. Changes are saved to localStorage and persist until reset.
-        </p>
+    <div className="min-h-screen bg-[#06090e] text-slate-200 p-4 sm:p-8 font-mono">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header Breadcrumb */}
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3 text-xs">
+          <div className="flex items-center gap-2">
+            <Link href="/" className="text-blue-400 hover:text-blue-300 font-bold">
+              ← ~/portfolio
+            </Link>
+            <span className="text-slate-600">/</span>
+            <span className="text-slate-300">admin_config.sh</span>
+          </div>
+          <span className="text-[10px] text-slate-500">TUI CMS UTILITY</span>
+        </div>
+
+        <div>
+          <h1 className="text-xl font-bold text-slate-100 mb-1">Portfolio Content Configuration</h1>
+          <p className="text-xs text-slate-400">
+            Edit content overrides stored in client localStorage. Persists until manually reset.
+          </p>
+        </div>
 
         {message && (
-          <div className="mb-4 px-4 py-2 bg-cyan-900/40 border border-cyan-500/40 rounded-lg text-sm text-cyan-300">
+          <div className="px-4 py-2 bg-blue-950/80 border border-blue-700/60 rounded text-xs text-blue-300">
             {message}
           </div>
         )}
 
-        <div className="flex gap-2 mb-6 flex-wrap">
-          {(['personalInfo', 'skills', 'education'] as EditableSection[]).map(s => (
+        {/* Section Tabs */}
+        <div className="flex gap-2 flex-wrap">
+          {(['personalInfo', 'skills', 'education'] as EditableSection[]).map((s) => (
             <button
               key={s}
               onClick={() => setActiveSection(s)}
-              className={`px-4 py-2 rounded-lg text-sm font-mono transition-all ${
+              className={`px-3 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer ${
                 activeSection === s
-                  ? 'bg-cyan-600 text-neutral-950 font-bold'
-                  : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
+                  ? 'bg-blue-950 text-blue-200 border border-blue-500 font-bold'
+                  : 'bg-slate-900 text-slate-400 hover:bg-slate-800 border border-slate-800'
               }`}
             >
               {s === 'personalInfo' ? 'Personal Info' : s === 'skills' ? 'Skills' : 'Education'}
@@ -77,118 +92,181 @@ export default function AdminPage() {
           ))}
         </div>
 
-        <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 mb-6">
+        {/* Form Body */}
+        <div className="bg-[#090d16] rounded border border-slate-800 p-4 sm:p-6 space-y-4">
           {activeSection === 'personalInfo' && (
             <div className="space-y-4">
-              <Field label="Name" value={formData.personalInfo?.name ?? resumeData.personalInfo.name} onChange={v => updateField('personalInfo.name', v)} />
-              <Field label="Title" value={formData.personalInfo?.title ?? resumeData.personalInfo.title} onChange={v => updateField('personalInfo.title', v)} />
-              <Field label="Location" value={formData.personalInfo?.location ?? resumeData.personalInfo.location} onChange={v => updateField('personalInfo.location', v)} />
-              <Field label="Email" value={formData.personalInfo?.email ?? resumeData.personalInfo.email} onChange={v => updateField('personalInfo.email', v)} />
-              <Field label="Phone" value={formData.personalInfo?.phone ?? resumeData.personalInfo.phone} onChange={v => updateField('personalInfo.phone', v)} />
-              <Field label="LinkedIn URL" value={formData.personalInfo?.linkedin ?? resumeData.personalInfo.linkedin} onChange={v => updateField('personalInfo.linkedin', v)} />
-              <div>
-                <label className="block text-xs font-mono text-neutral-500 mb-1">Animated Titles (one per line)</label>
-                <textarea
-                  className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-200 font-mono"
-                  rows={4}
-                  value={(formData.personalInfo?.titleAnimated ?? resumeData.personalInfo.titleAnimated).join('\n')}
-                  onChange={e => {
-                    const lines = e.target.value.split('\n').filter(Boolean);
-                    setFormData(prev => {
-                      const next = structuredClone(prev);
-                      if (!next.personalInfo) next.personalInfo = {} as typeof resumeData.personalInfo;
-                      next.personalInfo = { ...resumeData.personalInfo, ...next.personalInfo, titleAnimated: lines };
-                      return next;
-                    });
-                  }}
-                />
-              </div>
+              <Field
+                label="Name"
+                value={formData.personalInfo?.name ?? resumeData.personalInfo.name}
+                onChange={(v) => updateField('personalInfo.name', v)}
+              />
+              <Field
+                label="Title"
+                value={formData.personalInfo?.title ?? resumeData.personalInfo.title}
+                onChange={(v) => updateField('personalInfo.title', v)}
+              />
+              <Field
+                label="Location"
+                value={formData.personalInfo?.location ?? resumeData.personalInfo.location}
+                onChange={(v) => updateField('personalInfo.location', v)}
+              />
+              <Field
+                label="Email"
+                value={formData.personalInfo?.email ?? resumeData.personalInfo.email}
+                onChange={(v) => updateField('personalInfo.email', v)}
+              />
+              <Field
+                label="Phone"
+                value={formData.personalInfo?.phone ?? resumeData.personalInfo.phone}
+                onChange={(v) => updateField('personalInfo.phone', v)}
+              />
+              <Field
+                label="LinkedIn URL"
+                value={formData.personalInfo?.linkedin ?? resumeData.personalInfo.linkedin}
+                onChange={(v) => updateField('personalInfo.linkedin', v)}
+              />
+            </div>
+          )}
+
+          {activeSection === 'skills' && (
+            <div className="space-y-4">
+              <TextareaField
+                label="Programming Languages (comma separated)"
+                value={
+                  formData.skills?.programming?.join(', ') ??
+                  resumeData.skills.programming.join(', ')
+                }
+                onChange={(v) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    skills: {
+                      ...prev.skills,
+                      programming: v.split(',').map((s) => s.trim()).filter(Boolean),
+                    },
+                  }))
+                }
+              />
+              <TextareaField
+                label="Frameworks (comma separated)"
+                value={
+                  formData.skills?.frameworks?.join(', ') ??
+                  resumeData.skills.frameworks.join(', ')
+                }
+                onChange={(v) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    skills: {
+                      ...prev.skills,
+                      frameworks: v.split(',').map((s) => s.trim()).filter(Boolean),
+                    },
+                  }))
+                }
+              />
+              <TextareaField
+                label="Infrastructure (comma separated)"
+                value={
+                  formData.skills?.infrastructure?.join(', ') ??
+                  resumeData.skills.infrastructure.join(', ')
+                }
+                onChange={(v) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    skills: {
+                      ...prev.skills,
+                      infrastructure: v.split(',').map((s) => s.trim()).filter(Boolean),
+                    },
+                  }))
+                }
+              />
             </div>
           )}
 
           {activeSection === 'education' && (
             <div className="space-y-4">
-              <Field label="University" value={formData.education?.university ?? resumeData.education.university} onChange={v => updateField('education.university', v)} />
-              <Field label="Degree" value={formData.education?.degree ?? resumeData.education.degree} onChange={v => updateField('education.degree', v)} />
-              <Field label="GPA" value={formData.education?.gpa ?? resumeData.education.gpa} onChange={v => updateField('education.gpa', v)} />
-              <Field label="Class of" value={formData.education?.classOf ?? resumeData.education.classOf} onChange={v => updateField('education.classOf', v)} />
+              <Field
+                label="University"
+                value={formData.education?.university ?? resumeData.education.university}
+                onChange={(v) => updateField('education.university', v)}
+              />
+              <Field
+                label="Degree"
+                value={formData.education?.degree ?? resumeData.education.degree}
+                onChange={(v) => updateField('education.degree', v)}
+              />
+              <Field
+                label="GPA"
+                value={formData.education?.gpa ?? resumeData.education.gpa}
+                onChange={(v) => updateField('education.gpa', v)}
+              />
+              <Field
+                label="Class Of"
+                value={formData.education?.classOf ?? resumeData.education.classOf}
+                onChange={(v) => updateField('education.classOf', v)}
+              />
             </div>
           )}
 
-          {activeSection === 'skills' && (
-            <div className="space-y-6">
-              <div>
-                <label className="block text-xs font-mono text-neutral-500 mb-1">Programming Languages (one per line)</label>
-                <textarea
-                  className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-200 font-mono"
-                  rows={6}
-                  value={(formData.skills?.programming ?? resumeData.skills.programming).join('\n')}
-                  onChange={e => {
-                    const lines = e.target.value.split('\n').filter(Boolean);
-                    setFormData(prev => {
-                      const next = structuredClone(prev);
-                      if (!next.skills) next.skills = {} as typeof resumeData.skills;
-                      next.skills = { ...resumeData.skills, ...next.skills, programming: lines };
-                      return next;
-                    });
-                  }}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-mono text-neutral-500 mb-1">Frameworks (one per line)</label>
-                <textarea
-                  className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-200 font-mono"
-                  rows={4}
-                  value={(formData.skills?.frameworks ?? resumeData.skills.frameworks).join('\n')}
-                  onChange={e => {
-                    const lines = e.target.value.split('\n').filter(Boolean);
-                    setFormData(prev => {
-                      const next = structuredClone(prev);
-                      if (!next.skills) next.skills = {} as typeof resumeData.skills;
-                      next.skills = { ...resumeData.skills, ...next.skills, frameworks: lines };
-                      return next;
-                    });
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            onClick={handleSave}
-            className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-neutral-950 font-bold rounded-lg font-mono text-sm transition-all"
-          >
-            Save Changes
-          </button>
-          <button
-            onClick={handleReset}
-            className="px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-400 rounded-lg font-mono text-sm transition-all"
-          >
-            Reset to Defaults
-          </button>
-          <Link
-            href="/"
-            className="px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-400 rounded-lg font-mono text-sm transition-all inline-block"
-          >
-            Back to Portfolio
-          </Link>
+          {/* Action buttons */}
+          <div className="flex gap-3 pt-4 border-t border-slate-800">
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 bg-blue-950 hover:bg-blue-900 border border-blue-700/60 rounded text-blue-200 text-xs font-bold transition-colors cursor-pointer"
+            >
+              [Ctrl+S] Save Overrides
+            </button>
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-400 text-xs transition-colors cursor-pointer"
+            >
+              Reset to Defaults
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function Field({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   return (
     <div>
-      <label className="block text-xs font-mono text-neutral-500 mb-1">{label}</label>
+      <label className="block text-xs font-mono text-slate-500 mb-1">{label}</label>
       <input
         type="text"
-        className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-200 font-mono focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/10 transition-all"
+        className="w-full bg-[#06090e] border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 font-mono focus:border-blue-500 focus:outline-none"
         value={value}
-        onChange={e => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </div>
+  );
+}
+
+function TextareaField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <label className="block text-xs font-mono text-slate-500 mb-1">{label}</label>
+      <textarea
+        className="w-full bg-[#06090e] border border-slate-800 rounded px-3 py-2 text-xs text-slate-200 font-mono focus:border-blue-500 focus:outline-none"
+        rows={3}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
       />
     </div>
   );

@@ -22,8 +22,8 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
       return;
     }
 
-    const duration = 3000;
-    const intervalTime = 50;
+    const duration = 2000;
+    const intervalTime = 40;
     const steps = duration / intervalTime;
     let currentStep = 0;
 
@@ -40,8 +40,8 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
       setLoadingPhase('finished');
       setTimeout(() => {
         setLoadingPhase('settled');
-      }, 600);
-    }, 3000);
+      }, 400);
+    }, 2000);
 
     return () => {
       clearInterval(interval);
@@ -72,11 +72,11 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
         <motion.div
           key="loading-container"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.6, ease: "easeInOut" } }}
-          className="fixed inset-0 z-40 flex flex-col items-center justify-center overflow-hidden"
+          exit={{ opacity: 0, transition: { duration: 0.4, ease: "easeInOut" } }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-[#06090e] font-mono"
         >
           <div className="absolute inset-0 z-20" aria-hidden="true">
-            <ErrorBoundary fallback={<div className="w-full h-full bg-neutral-950" />}>
+            <ErrorBoundary fallback={<div className="w-full h-full bg-[#06090e]" />}>
               <Scene isSettled={false} />
             </ErrorBoundary>
           </div>
@@ -84,169 +84,48 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
           <motion.div
             key="loading-top"
             initial={{ y: 0, opacity: 1 }}
-            exit={{ y: '-100%', opacity: 0, transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } }}
-            className="absolute top-0 left-0 w-full h-[15%] bg-gradient-to-b from-neutral-950 via-neutral-950 to-transparent z-10 flex items-center justify-center"
+            exit={{ y: '-100%', opacity: 0, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
+            className="absolute top-0 left-0 w-full h-[15%] bg-gradient-to-b from-[#06090e] via-[#06090e] to-transparent z-10 flex items-center justify-center"
           >
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
               className="text-center"
             >
-              <div className="font-mono text-xs md:text-sm tracking-[0.5em] text-cyan-500/60 uppercase mb-2">
-                Initializing System
+              <div className="font-mono text-xs tracking-[0.3em] text-blue-400 uppercase mb-1">
+                SYSTEM BOOT // POSIX ENVIRONMENT
               </div>
             </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative w-full h-[55%] flex items-center justify-center pointer-events-none z-30"
-          >
-            <div className="absolute inset-x-2 sm:inset-x-8 md:inset-x-24 inset-y-4 border border-cyan-500/20 rounded-lg">
-              <div className="absolute -top-1 -left-1 w-3 sm:w-4 h-3 sm:h-4 border-t-2 border-l-2 border-cyan-400" />
-              <div className="absolute -top-1 -right-1 w-3 sm:w-4 h-3 sm:h-4 border-t-2 border-r-2 border-cyan-400" />
-              <div className="absolute -bottom-1 -left-1 w-3 sm:w-4 h-3 sm:h-4 border-b-2 border-l-2 border-cyan-400" />
-              <div className="absolute -bottom-1 -right-1 w-3 sm:w-4 h-3 sm:h-4 border-b-2 border-r-2 border-cyan-400" />
-            </div>
-
-            <div className="absolute inset-x-2 sm:inset-x-8 md:inset-x-24 inset-y-4 overflow-hidden pointer-events-none">
-              {[0, 1, 2].map((i) => (
-                <motion.div
-                  key={`h-line-${i}`}
-                  className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent"
-                  initial={{ top: `${25 + i * 25}%`, opacity: 0, scaleX: 0 }}
-                  animate={{
-                    opacity: [0, 0.6, 0],
-                    scaleX: [0, 1, 0],
-                  }}
-                  transition={{
-                    duration: 2,
-                    delay: i * 0.4,
-                    repeat: Infinity,
-                    repeatDelay: 1,
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
-              {[0, 1].map((i) => (
-                <motion.div
-                  key={`v-line-${i}`}
-                  className="absolute top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-cyan-400/30 to-transparent"
-                  initial={{ left: i === 0 ? '0%' : '100%' }}
-                  animate={{
-                    left: i === 0 ? ['0%', '50%'] : ['100%', '50%'],
-                    opacity: [0.3, 0.6, 0.3],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
-              <motion.div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-cyan-400/10 blur-xl"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.3, 0.5, 0.3],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-              <div className="absolute bottom-0 left-0 right-0 h-full flex justify-center gap-8 overflow-hidden">
-                {['<', '/', '>', '{', '}', '=', ';', '0', '1'].map((char, i) => (
-                  <motion.span
-                    key={`stream-${i}`}
-                    className="font-mono text-cyan-400/30 text-xs"
-                    initial={{ y: '100%', opacity: 0 }}
-                    animate={{
-                      y: [100, -200],
-                      opacity: [0, 0.5, 0],
-                    }}
-                    transition={{
-                      duration: 3,
-                      delay: i * 0.3,
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                  >
-                    {char}
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-
-            <div className="absolute left-1 sm:left-2 md:left-12 top-1/2 -translate-y-1/2 -rotate-90 origin-center">
-              <span className="font-mono text-[8px] sm:text-[10px] md:text-xs tracking-[0.3em] text-cyan-500/40 uppercase whitespace-nowrap">
-                3D Model
-              </span>
-            </div>
-            <div className="absolute right-1 sm:right-2 md:right-12 top-1/2 -translate-y-1/2 rotate-90 origin-center">
-              <span className="font-mono text-[8px] sm:text-[10px] md:text-xs tracking-[0.3em] text-cyan-500/40 uppercase whitespace-nowrap">
-                Keyboard
-              </span>
-            </div>
           </motion.div>
 
           <motion.div
             key="loading-bottom"
             initial={{ y: 0, opacity: 1 }}
-            exit={{ y: '100%', opacity: 0, transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } }}
-            className="absolute bottom-0 left-0 w-full h-[30%] bg-gradient-to-t from-neutral-950 via-neutral-950 to-transparent z-10 flex flex-col items-center justify-center gap-4 sm:gap-6 px-4"
+            exit={{ y: '100%', opacity: 0, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
+            className="absolute bottom-0 left-0 w-full h-[25%] bg-gradient-to-t from-[#06090e] via-[#06090e] to-transparent z-10 flex flex-col items-center justify-center pb-8"
           >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="flex flex-col items-center gap-3 sm:gap-4"
-            >
-              <div className="relative font-mono text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-widest text-neutral-800">
-                LOADING...
-                <div
-                  className="absolute top-0 left-0 overflow-hidden text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)] whitespace-nowrap"
-                  style={{ width: `${loadProgress}%` }}
-                >
-                  LOADING...
-                </div>
+            <div className="w-64 max-w-xs space-y-2">
+              <div className="flex justify-between text-[11px] text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                  <span>INITIALIZING TUI</span>
+                </span>
+                <span className="text-blue-400 font-bold">{Math.round(loadProgress)}%</span>
               </div>
 
-              <div className="w-56 sm:w-72 md:w-80 h-1.5 sm:h-2 bg-neutral-800 rounded-full overflow-hidden">
+              {/* Progress Bar */}
+              <div className="w-full h-1 bg-slate-900 border border-slate-800 rounded overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-cyan-500 to-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.8)]"
+                  className="h-full bg-blue-500 rounded"
                   style={{ width: `${loadProgress}%` }}
                 />
               </div>
 
-              <div className="font-mono text-xs text-neutral-500 tracking-wider">
-                {loadingPhase === 'finished' ? (
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-cyan-400"
-                  >
-                    SYSTEM READY
-                  </motion.span>
-                ) : (
-                  <span>LOADING ASSETS... {Math.round(loadProgress)}%</span>
-                )}
+              <div className="text-[10px] text-slate-600 text-center">
+                Press [:] or [?] anytime for command mode
               </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.5 }}
-              className="font-mono text-xs sm:text-sm md:text-base text-cyan-500/40 tracking-wider text-center px-4"
-            >
-              TRY PRESSING KEYS ON YOUR KEYBOARD
-            </motion.div>
+            </div>
           </motion.div>
         </motion.div>
       )}

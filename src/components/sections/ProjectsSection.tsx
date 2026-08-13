@@ -3,102 +3,57 @@ import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { containerVariants, cardVariants, headingVariants, langColors, type PinnedRepo } from './shared';
 
-// ── Terminal Project Card ──
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const TerminalProjectCard = memo(function TerminalProjectCard({ repo, index }: { repo: PinnedRepo; index: number }) {
-  return (
-    <motion.a
-      href={repo.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      variants={cardVariants}
-      initial={{ borderColor: 'rgba(21, 94, 117, 0.3)' }}
-      animate={{ borderColor: 'rgba(21, 94, 117, 0.3)' }}
-      whileHover={{ scale: 1.02, borderColor: 'rgba(34, 211, 238, 0.5)' }}
-      transition={{ duration: 0.25 }}
-      className="group relative block p-0 bg-neutral-950/80 border rounded-xl transition-all duration-300 overflow-hidden no-underline focus:outline-none focus:ring-2 focus:ring-cyan-400"
-    >
-      {/* Terminal header bar */}
-      <div className="flex items-center gap-2 px-4 py-2 bg-neutral-900/60 border-b border-cyan-900/30">
-        <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" aria-hidden="true" />
-        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" aria-hidden="true" />
-        <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" aria-hidden="true" />
-        <span className="ml-2 text-[10px] font-mono text-neutral-500 truncate">{repo.name}</span>
-      </div>
+interface TopProject {
+  id: string;
+  rank: string;
+  title: string;
+  role: string;
+  tech: string[];
+  description: string;
+  architecture: string;
+  link?: string;
+  badge: string;
+}
 
-      <div className="p-3 sm:p-5">
-        <h3 className="text-base sm:text-lg font-bold text-neutral-100 group-hover:text-cyan-300 transition-colors duration-300 font-mono">
-          {repo.name}
-        </h3>
-        <p className="text-xs sm:text-sm leading-relaxed text-neutral-400 mt-2 mb-4 line-clamp-3 min-h-[3rem]">
-          {repo.description || 'No description provided.'}
-        </p>
+const TOP_PROJECTS: TopProject[] = [
+  {
+    id: 'multitask',
+    rank: '#01',
+    title: 'MultiTask_ContextSwitch',
+    role: 'Python & Automation Developer',
+    tech: ['Python', 'PyQt6', 'Process Polling', 'Win32 API', 'Automation'],
+    description:
+      'Engineered a desktop workflow automator that continuously monitors asynchronous web-based AI generation tasks, triggering real-time window focus switching and state alerts via a custom PyQt6 engine.',
+    architecture: 'Background Poller ──► Event Trigger ──► PyQt6 Focus Switcher ──► OS Window Target',
+    link: 'https://github.com/2241812/MultiTask_ContextSwitch',
+    badge: 'FLAGSHIP AUTOMATION',
+  },
+  {
+    id: 'campus-navigator',
+    rank: '#02',
+    title: 'WebDev_Campus-Navigator_CS312',
+    role: 'Full-Stack & Systems Developer',
+    tech: ['Go', 'Docker Compose', 'Node.js', 'PHP', 'Dijkstra Algorithm'],
+    description:
+      'Architected a containerized microservices platform for campus navigation. Deployed independent Go routing services, PHP/Node endpoints, and container isolation to calculate shortest paths via Dijkstra algorithm.',
+    architecture: 'Client UI ──► Go Routing Service (Dijkstra) ──► Docker Compose Mesh ──► API Gateway',
+    link: 'https://github.com/2241812/WebDev_Campus-Navigator_CS312',
+    badge: 'MICROSERVICES & ALGORITHMS',
+  },
+  {
+    id: 'hand-sign',
+    rank: '#03',
+    title: 'Basic Hand Sign Recognition System',
+    role: 'AI & Computer Vision Prototype',
+    tech: ['Python', 'CNN', 'Computer Vision', 'OpenCV', 'Colab'],
+    description:
+      'Constructed a convolutional neural network (CNN) image classification pipeline to interpret hand gestures from real-time webcam video feeds, benchmarking inference accuracy across multiple sign categories.',
+    architecture: 'Webcam Stream ──► Frame Preprocessor ──► CNN Classifier ──► Gesture Output',
+    link: 'https://colab.research.google.com/drive/1JtmdmGKfQzO4xnSUnl4rRVXulx5v6TJG?usp=sharing',
+    badge: 'VISION & AI PIPELINE',
+  },
+];
 
-        <div className="flex items-center gap-3 sm:gap-4 text-xs font-mono text-neutral-500 flex-wrap">
-          {repo.language && (
-            <span className="flex items-center gap-1.5">
-              <span
-                className="w-2.5 h-2.5 rounded-full"
-                style={{ backgroundColor: langColors[repo.language] || '#22d3ee' }}
-                aria-hidden="true"
-              />
-              <span className="text-xs sm:text-xs">{repo.language}</span>
-            </span>
-          )}
-          <span className="flex items-center gap-1">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-              />
-            </svg>
-            <span className="sr-only">Stars:</span>
-            {repo.stars}
-          </span>
-          <span className="flex items-center gap-1">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-              />
-            </svg>
-            <span className="sr-only">Forks:</span>
-            {repo.forks}
-          </span>
-        </div>
-      </div>
-    </motion.a>
-  );
-});
-
-// ── Loading Skeleton for Projects ──
-const ProjectSkeleton = memo(function ProjectSkeleton() {
-  return (
-    <div className="col-span-1 md:col-span-2">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-neutral-950/80 border border-cyan-800/30 rounded-xl overflow-hidden">
-        <div className="flex items-center gap-2 px-4 py-2 bg-neutral-900/60 border-b border-cyan-900/30">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500/60 animate-pulse" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60 animate-pulse" />
-          <div className="w-2.5 h-2.5 rounded-full bg-green-500/60 animate-pulse" />
-          <span className="ml-2 text-[10px] font-mono text-neutral-500 animate-pulse">connecting...</span>
-        </div>
-        <div className="p-5 space-y-3">
-          <div className="h-5 w-48 bg-neutral-800 rounded animate-pulse" />
-          <div className="h-3 w-full bg-neutral-800/60 rounded animate-pulse" />
-          <div className="h-3 w-3/4 bg-neutral-800/60 rounded animate-pulse" />
-          <div className="flex gap-4 mt-4">
-            <div className="h-4 w-20 bg-neutral-800/40 rounded animate-pulse" />
-            <div className="h-4 w-12 bg-neutral-800/40 rounded animate-pulse" />
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-});
-
-// ── Main Projects Section ──
 interface ProjectsSectionProps {
   pinnedRepos: PinnedRepo[];
   reposLoading: boolean;
@@ -106,50 +61,205 @@ interface ProjectsSectionProps {
   onRetry: () => void;
 }
 
-const ProjectsSection = memo(function ProjectsSection({ pinnedRepos, reposLoading, reposError, onRetry }: ProjectsSectionProps) {
+const ProjectsSection = memo(function ProjectsSection({
+  pinnedRepos,
+  reposLoading,
+  reposError,
+  onRetry,
+}: ProjectsSectionProps) {
   return (
-    <section id="projects" className="min-h-screen flex items-center justify-start px-4 sm:px-8 md:px-12 relative py-20 sm:py-0">
+    <section
+      id="projects"
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-slate-800/80"
+    >
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        className="w-full max-w-5xl relative z-10 py-12"
+        viewport={{ once: true, amount: 0.05 }}
+        className="w-full space-y-8"
       >
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-3 sm:gap-4">
-          <motion.div variants={headingVariants} className="flex items-center gap-4">
-            <div className="w-6 sm:w-8 h-[1px] bg-cyan-500/50" aria-hidden="true" />
-            <h2 className="text-xl sm:text-2xl font-mono text-cyan-400 tracking-widest uppercase">03. Featured Output</h2>
-          </motion.div>
-          <motion.p variants={cardVariants} className="text-[10px] sm:text-xs font-mono text-neutral-500">
-            [ LIVE REPOSITORIES ]
-          </motion.p>
+        {/* Section Header */}
+        <motion.div
+          variants={headingVariants}
+          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-blue-500 text-sm font-bold">[02]</span>
+            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-mono">
+              FEATURED PROJECTS & ARCHITECTURE
+            </h2>
+          </div>
+          <span className="text-xs text-blue-400 font-mono">
+            ★ TOP 3 HIGHLIGHTS & LIVE REPOSITORIES
+          </span>
+        </motion.div>
+
+        {/* ── TOP 3 SPOTLIGHT SECTION ── */}
+        <div className="space-y-4">
+          <div className="text-[11px] font-mono text-slate-500 uppercase tracking-wider flex items-center gap-2">
+            <span>┌─</span>
+            <span className="text-slate-300 font-bold">FLAGSHIP PROJECTS SPOTLIGHT</span>
+            <span>──────────────────────────────────────────────</span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            {TOP_PROJECTS.map((proj, idx) => (
+              <motion.div
+                key={proj.id}
+                variants={cardVariants}
+                className="bg-[#090d16] border border-slate-800 hover:border-blue-500/70 rounded p-4 sm:p-6 transition-all duration-200 group relative overflow-hidden shadow-lg"
+              >
+                {/* Subtle dark blue ambient gradient */}
+                <div className="absolute top-0 right-0 w-64 h-32 bg-blue-600/5 group-hover:bg-blue-600/10 blur-2xl transition-all pointer-events-none" />
+
+                <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-4">
+                  <div className="space-y-2 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/60 text-xs font-bold font-mono">
+                        {proj.rank}
+                      </span>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-100 group-hover:text-blue-300 transition-colors font-mono">
+                        {proj.title}
+                      </h3>
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 font-mono">
+                        {proj.badge}
+                      </span>
+                    </div>
+
+                    <div className="text-xs text-slate-400 font-mono">
+                      Role: <span className="text-slate-200 font-semibold">{proj.role}</span>
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-mono pt-1">
+                      {proj.description}
+                    </p>
+
+                    {/* Architecture flow */}
+                    <div className="pt-2">
+                      <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1 font-mono">
+                        Pipeline / Architecture:
+                      </div>
+                      <div className="px-3 py-1.5 rounded bg-[#06090e] border border-slate-800/90 text-[11px] text-blue-300 font-mono overflow-x-auto whitespace-nowrap">
+                        {proj.architecture}
+                      </div>
+                    </div>
+
+                    {/* Tech Badges */}
+                    <div className="flex flex-wrap gap-1.5 pt-2">
+                      {proj.tech.map((t) => (
+                        <span
+                          key={t}
+                          className="px-2 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 text-[11px] font-mono"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  {proj.link && (
+                    <div className="shrink-0 flex md:flex-col gap-2 pt-2 md:pt-0">
+                      <a
+                        href={proj.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-2 rounded bg-blue-950 hover:bg-blue-900 border border-blue-700/60 text-blue-200 text-xs font-bold transition-colors font-mono flex items-center gap-1.5 justify-center"
+                      >
+                        <span>Inspect Repo</span>
+                        <span>↗</span>
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
-        {reposLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6" aria-label="Loading projects">
-            <ProjectSkeleton />
-            <ProjectSkeleton />
+        {/* ── ADDITIONAL LIVE REPOSITORIES ── */}
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center justify-between">
+            <div className="text-[11px] font-mono text-slate-500 uppercase tracking-wider flex items-center gap-2">
+              <span>┌─</span>
+              <span className="text-slate-300 font-bold">ALL LIVE REPOSITORIES</span>
+              <span>──────────────────────────────────────────────</span>
+            </div>
+            {reposLoading && (
+              <span className="text-xs text-blue-400 font-mono animate-pulse">
+                Fetching GitHub API...
+              </span>
+            )}
           </div>
-        ) : reposError ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-left py-12" role="alert">
-            <div className="text-cyan-400 font-mono text-xs sm:text-sm mb-4">[ CONNECTION FAILED ]</div>
-            <button
-              onClick={onRetry}
-              className="px-4 sm:px-6 py-2 text-xs font-mono uppercase tracking-wider rounded border border-cyan-500/30 text-cyan-400 hover:bg-cyan-900/10 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-400"
-            >
-              RETRY
-            </button>
-          </motion.div>
-        ) : pinnedRepos.length === 0 ? (
-          <div className="text-neutral-500 font-mono text-xs sm:text-sm">[ NO DATA ]</div>
-        ) : (
-          <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            {pinnedRepos.map((repo) => (
-              <TerminalProjectCard key={repo.name} repo={repo} index={0} />
-            ))}
-          </motion.div>
-        )}
+
+          {reposLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="bg-[#090d16] border border-slate-800 rounded p-4 space-y-2 animate-pulse"
+                >
+                  <div className="h-4 bg-slate-800 rounded w-1/3" />
+                  <div className="h-3 bg-slate-800/60 rounded w-full" />
+                  <div className="h-3 bg-slate-800/40 rounded w-2/3" />
+                </div>
+              ))}
+            </div>
+          ) : reposError ? (
+            <div className="p-4 bg-red-950/20 border border-red-900/40 rounded text-xs text-red-400 font-mono flex items-center justify-between">
+              <span>[!] GitHub sync failed (rate limit or network)</span>
+              <button
+                onClick={onRetry}
+                className="px-3 py-1 bg-red-900/40 hover:bg-red-900/60 border border-red-700 rounded text-red-200 cursor-pointer"
+              >
+                Retry
+              </button>
+            </div>
+          ) : pinnedRepos.length === 0 ? (
+            <div className="p-4 bg-[#090d16] border border-slate-800 rounded text-xs text-slate-500 font-mono text-center">
+              [No additional pinned repositories found]
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {pinnedRepos.map((repo) => (
+                <a
+                  key={repo.name}
+                  href={repo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#090d16] border border-slate-800/90 hover:border-blue-500/60 rounded p-4 transition-colors flex flex-col justify-between group cursor-pointer"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-200 group-hover:text-blue-300 transition-colors font-mono">
+                        {repo.name}
+                      </span>
+                      <span className="text-slate-500 text-xs">↗</span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 font-mono line-clamp-2 leading-relaxed">
+                      {repo.description || 'No description provided.'}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3 pt-3 mt-2 border-t border-slate-900 text-[10px] text-slate-500 font-mono">
+                    {repo.language && (
+                      <span className="flex items-center gap-1">
+                        <span
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: langColors[repo.language] || '#3b82f6' }}
+                        />
+                        <span className="text-slate-400">{repo.language}</span>
+                      </span>
+                    )}
+                    <span>★ {repo.stars}</span>
+                    <span>⑂ {repo.forks}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
       </motion.div>
     </section>
   );

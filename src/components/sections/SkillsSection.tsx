@@ -3,7 +3,7 @@ import React, { memo, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { resumeData } from '@/data/resumeData';
 import { useInView } from '@/hooks/useInView';
-import { useGitHubAnalyzer, type GitHubRepo } from '@/hooks/useGitHubAnalyzer';
+import { useGitHubAnalyzer } from '@/hooks/useGitHubAnalyzer';
 import { mergeSkillsWithGitHub, type EnhancedSkill } from '@/utils/skillsAnalyzer';
 import {
   containerVariants,
@@ -14,346 +14,202 @@ import {
   type UnifiedProject,
 } from './shared';
 
-// ── Skills List Component ──
-const SkillsList = memo(function SkillsList({
-  activeSkill,
-  setActiveSkill,
-  enhancedSkills,
-  isLoadingGitHub,
-}: {
-  activeSkill: string | null;
-  setActiveSkill: (skill: string | null) => void;
-  enhancedSkills: Record<string, EnhancedSkill[]>;
-  isLoadingGitHub: boolean;
-}) {
-  return (
-    <div className="space-y-4 sm:space-y-6">
-      {Object.entries(enhancedSkills).map(([category, skills]) => (
-        <div key={category}>
-          <h4 className="text-xs sm:text-sm font-bold text-neutral-400 mb-2 sm:mb-3 uppercase tracking-widest border-b border-cyan-900/50 pb-2">
-            {category}
-          </h4>
-          <div className="flex flex-wrap gap-1.5 sm:gap-2" role="group" aria-label={`${category} skills`}>
-            {skills.map((skill, i) => {
-              const isActive = activeSkill === skill.name;
-              return (
-                <motion.button
-                  key={skill.name}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.02, duration: 0.3 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setActiveSkill(isActive ? null : skill.name)}
-                  aria-pressed={isActive}
-                  className={`relative px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-mono rounded-md border transition-all duration-300 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-neutral-950 ${
-                    isActive
-                      ? 'bg-cyan-500/10 text-cyan-400 border-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
-                      : 'bg-neutral-900/50 text-neutral-400 border-neutral-800 hover:border-cyan-500/50 hover:text-cyan-300'
-                  }`}
-                >
-                  <span>{skill.name}</span>
-                  {/* Endorsement badge */}
-                  {skill.verified && skill.endorsements !== undefined && skill.endorsements > 0 && (
-                    <motion.span
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.2 }}
-                      className="ml-1 sm:ml-2 inline-flex items-center gap-0.5 px-1 sm:px-1.5 py-0.5 text-[8px] sm:text-[10px] font-bold rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-                      title={`Found in ${skill.endorsements} repository(ies)`}
-                    >
-                      <span className="w-1 h-1 rounded-full bg-cyan-400" aria-hidden="true" />
-                      {skill.endorsements}
-                    </motion.span>
-                  )}
-                </motion.button>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-      {isLoadingGitHub && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
-          className="text-[10px] font-mono text-neutral-600 text-center py-4"
-        >
-          [ analyzing github repositories... ]
-        </motion.div>
-      )}
-    </div>
-  );
-});
-
-// ── Project Result Card ──
-const ProjectResultCard = memo(function ProjectResultCard({
-  project,
-  index,
-}: {
-  project: UnifiedProject;
-  index: number;
-}) {
-  const content = (
-    <>
-      <div className="flex items-start justify-between gap-2">
-        <h4 className="text-sm font-bold text-neutral-100 font-mono group-hover:text-cyan-300 transition-colors">
-          {project.title}
-        </h4>
-        <span
-          className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
-            project.source === 'github' ? 'bg-cyan-900/30 text-cyan-400' : 'bg-neutral-800 text-neutral-400'
-          }`}
-        >
-          {project.source === 'github' ? 'GH' : 'LOCAL'}
-        </span>
-      </div>
-      <p className="text-xs text-neutral-400 mt-1.5 line-clamp-2 leading-relaxed">{project.description}</p>
-      <div className="flex items-center gap-3 mt-3 text-[10px] font-mono text-neutral-500">
-        {project.language && (
-          <span className="flex items-center gap-1.5">
-            <span
-              className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: langColors[project.language] || '#22d3ee' }}
-              aria-hidden="true"
-            />
-            {project.language}
-          </span>
-        )}
-        {project.stars !== undefined && (
-          <span className="flex items-center gap-1">
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-              />
-            </svg>
-            <span className="sr-only">Stars:</span>
-            {project.stars}
-          </span>
-        )}
-      </div>
-    </>
-  );
-
-  if (project.url) {
-    return (
-    <motion.a
-      href={project.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 10, borderColor: 'rgba(8, 145, 178, 0.2)' }}
-      animate={{ opacity: 1, y: 0, borderColor: 'rgba(8, 145, 178, 0.2)' }}
-      transition={{ delay: index * 0.05 }}
-      whileHover={{ scale: 1.01, borderColor: 'rgba(34, 211, 238, 0.4)' }}
-      className="group block p-3 sm:p-4 bg-neutral-950/60 border rounded-lg transition-all duration-300 no-underline focus:outline-none focus:ring-2 focus:ring-cyan-400"
-    >
-        {content}
-      </motion.a>
-    );
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10, borderColor: 'rgba(8, 145, 178, 0.2)' }}
-      animate={{ opacity: 1, y: 0, borderColor: 'rgba(8, 145, 178, 0.2)' }}
-      transition={{ delay: index * 0.05 }}
-      whileHover={{ scale: 1.01, borderColor: 'rgba(34, 211, 238, 0.4)' }}
-      className="group block p-3 sm:p-4 bg-neutral-950/60 border rounded-lg transition-all duration-300"
-    >
-      {content}
-    </motion.div>
-  );
-});
-
-// ── Related Projects Panel Component ──
-const RelatedProjectsPanel = memo(function RelatedProjectsPanel({
-  activeSkill,
-  allProjects,
-  analyzedRepos,
-  isLoading,
-}: {
-  activeSkill: string | null;
-  allProjects: UnifiedProject[];
-  analyzedRepos: GitHubRepo[];
-  isLoading: boolean;
-}) {
-  const relatedProjects = useMemo(() => {
-    if (!activeSkill) return [];
-
-    const keywords = SKILL_KEYWORD_MAP[activeSkill] || [activeSkill.toLowerCase()];
-    const kwLower = keywords.map((k) => k.toLowerCase());
-
-    // First: search allProjects (resume + pinned repos)
-    const matches = allProjects.filter((project) => {
-      const searchable = `${project.title} ${project.description} ${project.language || ''} ${project.role || ''}`.toLowerCase();
-      return kwLower.some((kw) => searchable.includes(kw));
-    });
-
-    if (matches.length > 0) return matches;
-
-    // Second: search all analyzed repos with keyword + direct language match
-    return analyzedRepos
-      .filter((repo) => {
-        const searchable = `${repo.name} ${repo.description || ''} ${repo.language || ''}`.toLowerCase();
-        const matchesKeyword = kwLower.some((kw) => searchable.includes(kw));
-        const matchesLanguage = repo.language !== null && kwLower.includes(repo.language.toLowerCase());
-        return matchesKeyword || matchesLanguage;
-      })
-      .map((repo) => ({
-        title: repo.name,
-        description: repo.description || '',
-        language: repo.language || undefined,
-        url: repo.html_url,
-        stars: repo.stargazers_count,
-        forks: repo.forks_count,
-        source: 'github' as const,
-      }));
-  }, [activeSkill, allProjects, analyzedRepos]);
-
-  const panelContent = () => {
-    if (!activeSkill) {
-      return (
-        <motion.p
-          animate={{ opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="text-xs font-mono text-neutral-600 text-center"
-        >
-          [ SELECT A DATABANK TO VIEW RELATED PROTOCOLS ]
-        </motion.p>
-      );
-    }
-
-    if (isLoading) {
-      return (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
-          className="text-xs font-mono text-neutral-600 text-center"
-        >
-          [ QUERYING REPOSITORIES... ]
-        </motion.p>
-      );
-    }
-
-    if (relatedProjects.length === 0) {
-      return (
-        <p className="text-xs font-mono text-neutral-600 text-center">
-          [ NO RELATED PROTOCOLS FOUND FOR &quot;{activeSkill}&quot; ]
-        </p>
-      );
-    }
-
-    return (
-      <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 thin-scrollbar">
-        {relatedProjects.map((project, idx) => (
-          <ProjectResultCard key={project.title + idx} project={project} index={idx} />
-        ))}
-      </div>
-    );
-  };
-
-  return (
-    <div className="relative min-h-[350] sm:min-h-[400px] bg-neutral-900/30 border border-cyan-900/20 rounded-xl p-4 sm:p-6 overflow-hidden">
-      <div className="flex items-center gap-2 mb-3 sm:mb-4 pb-2 sm:pb-3 border-b border-cyan-900/20">
-        <span className="text-cyan-400 text-lg leading-none">—</span>
-        <span className="text-[11px] sm:text-xs font-mono text-neutral-500 truncate">
-          {activeSkill ? `query_results — ${activeSkill}` : 'awaiting_selection'}
-        </span>
-      </div>
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeSkill || 'empty'}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
-          className="flex items-center justify-center h-64"
-        >
-          {panelContent()}
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-});
-
-// ── Main Skills Section ──
 interface SkillsSectionProps {
   allProjects: UnifiedProject[];
 }
 
 const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSectionProps) {
-  const [activeSkill, setActiveSkill] = useState<string | null>(null);
-  const { ref: sectionRef, isInView } = useInView({ rootMargin: '200px', once: false });
+  const { ref, isInView } = useInView({ rootMargin: '200px', once: true });
+  const { repos, isLoading: isLoadingGitHub } = useGitHubAnalyzer('2241812', isInView);
 
-  // Fetch and analyze GitHub repos
-  const { analysis, isLoading: isLoadingGitHub, repos: analyzedRepos } = useGitHubAnalyzer('2241812', isInView);
-
-  // Merge GitHub-analyzed skills with hardcoded skills
   const enhancedSkills = useMemo(() => {
-    if (!analysis) {
-      // Fallback to hardcoded skills if GitHub analysis not available
-      return {
-        'Programming & Web': resumeData.skills.programming.map(name => ({
-          name,
-          category: 'Programming & Web' as const,
-          description: (resumeData.skillDescriptions as Record<string, string>)?.[name] || '',
-        })),
-        'Infrastructure & Tooling': (resumeData.skills.infrastructure || []).map(name => ({
-          name,
-          category: 'Infrastructure & Tooling' as const,
-          description: (resumeData.skillDescriptions as Record<string, string>)?.[name] || '',
-        })),
-        'Frameworks & Libraries': resumeData.skills.frameworks.map(name => ({
-          name,
-          category: 'Frameworks & Libraries' as const,
-          description: (resumeData.skillDescriptions as Record<string, string>)?.[name] || '',
-        })),
-        'Core Competencies': (resumeData.skills.coreCompetencies || []).map(name => ({
-          name,
-          category: 'Core Competencies' as const,
-          description: (resumeData.skillDescriptions as Record<string, string>)?.[name] || '',
-        })),
-      };
-    }
+    return mergeSkillsWithGitHub(
+      {
+        'Programming Languages': resumeData.skills.programming,
+        'Frameworks & Toolkits': resumeData.skills.frameworks,
+        'Infrastructure & DevOps': resumeData.skills.infrastructure,
+        'Systems & Core Concepts': resumeData.skills.coreCompetencies,
+      },
+      repos
+    );
+  }, [repos]);
 
-    return mergeSkillsWithGitHub(analysis.skills);
-  }, [analysis]);
+  const [activeSkill, setActiveSkill] = useState<string>('Python');
+
+  // Filter matching projects for the active skill
+  const matchingProjects = useMemo(() => {
+    if (!activeSkill) return [];
+    const keywords = SKILL_KEYWORD_MAP[activeSkill] || [activeSkill.toLowerCase()];
+
+    return allProjects.filter((project) => {
+      const titleLower = project.title.toLowerCase();
+      const descLower = project.description.toLowerCase();
+      const roleLower = (project.role || '').toLowerCase();
+      const langLower = (project.language || '').toLowerCase();
+
+      return keywords.some(
+        (kw) =>
+          titleLower.includes(kw) ||
+          descLower.includes(kw) ||
+          roleLower.includes(kw) ||
+          langLower.includes(kw)
+      );
+    });
+  }, [activeSkill, allProjects]);
+
+  const activeDescription =
+    (resumeData.skillDescriptions as Record<string, string>)[activeSkill] ||
+    'Core technical capability verified through active repository implementations and project deliverables.';
 
   return (
-    <section ref={sectionRef} id="skills" className="min-h-screen flex items-center justify-start px-4 sm:px-8 md:px-12 relative py-20 sm:py-0">
+    <section
+      id="skills"
+      ref={ref}
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-slate-800/80"
+    >
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        className="w-full max-w-5xl relative z-10 py-12"
+        viewport={{ once: true, amount: 0.05 }}
+        className="w-full space-y-6"
       >
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-3 sm:gap-4">
-          <motion.div variants={headingVariants} className="flex items-center gap-4">
-            <div className="w-6 sm:w-8 h-[1px] bg-cyan-500/50" aria-hidden="true" />
-            <h2 className="text-xl sm:text-2xl font-mono text-cyan-400 tracking-widest uppercase">04. Skills & Expertise</h2>
-          </motion.div>
-          <motion.p variants={cardVariants} className="text-[10px] sm:text-xs font-mono text-neutral-500 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            [ SELECT SKILL TO FILTER PROJECTS ]
-            {analysis && (
-              <span className="text-cyan-400">
-                {analysis.skills.length} skills detected
-              </span>
-            )}
-          </motion.p>
-        </div>
+        {/* Section Header */}
+        <motion.div
+          variants={headingVariants}
+          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-blue-500 text-sm font-bold">[03]</span>
+            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-mono">
+              SKILLS MATRIX & STACK INSPECTOR
+            </h2>
+          </div>
+          <span className="text-xs text-slate-500 font-mono">
+            {isLoadingGitHub ? '// analyzing github tree...' : '// 2-pane interactive inspector'}
+          </span>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-8">
-          <SkillsList
-            activeSkill={activeSkill}
-            setActiveSkill={setActiveSkill}
-            enhancedSkills={enhancedSkills}
-            isLoadingGitHub={isLoadingGitHub}
-          />
-          <RelatedProjectsPanel activeSkill={activeSkill} allProjects={allProjects} analyzedRepos={analyzedRepos} isLoading={isLoadingGitHub} />
+        {/* 2-Pane Split Container */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          {/* LEFT PANE: Categorized Skill Tree (7 cols) */}
+          <motion.div
+            variants={cardVariants}
+            className="lg:col-span-7 bg-[#090d16] border border-slate-800 rounded p-4 sm:p-5 space-y-5"
+          >
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 text-xs text-slate-400 font-mono">
+              <span>┌─ STACK SELECTION</span>
+              <span className="text-[10px] text-slate-500">Click or focus to inspect</span>
+            </div>
+
+            {Object.entries(enhancedSkills).map(([category, skills]) => (
+              <div key={category} className="space-y-2">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-2">
+                  <span className="text-blue-500">▶</span>
+                  <span>{category}</span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5" role="group" aria-label={category}>
+                  {skills.map((skill) => {
+                    const isSelected = activeSkill === skill.name;
+                    return (
+                      <button
+                        key={skill.name}
+                        onClick={() => setActiveSkill(skill.name)}
+                        className={`px-2.5 py-1 rounded text-xs font-mono transition-all duration-150 cursor-pointer select-none flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-blue-950 text-blue-200 border border-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.2)] font-bold'
+                            : 'bg-[#06090e] text-slate-400 border border-slate-800 hover:border-slate-600 hover:text-slate-200'
+                        }`}
+                      >
+                        <span>{skill.name}</span>
+                        {skill.verified && (skill.endorsements || 0) > 0 && (
+                          <span
+                            className={`text-[9px] px-1 rounded ${
+                              isSelected
+                                ? 'bg-blue-800 text-blue-100'
+                                : 'bg-slate-900 text-slate-500'
+                            }`}
+                            title={`Referenced in ${skill.endorsements} repository(ies)`}
+                          >
+                            {skill.endorsements}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* RIGHT PANE: Live Inspector / Matching Projects (5 cols) */}
+          <motion.div
+            variants={cardVariants}
+            className="lg:col-span-5 bg-[#090d16] border border-slate-800 rounded p-4 sm:p-5 flex flex-col justify-between space-y-4"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 text-xs font-mono">
+                <span className="text-blue-400 font-bold">INSPECTOR: {activeSkill}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-900">
+                  ACTIVE
+                </span>
+              </div>
+
+              {/* Definition */}
+              <div className="p-3 rounded bg-[#06090e] border border-slate-800/80 text-xs text-slate-300 font-mono leading-relaxed">
+                {activeDescription}
+              </div>
+
+              {/* Associated Deliverables */}
+              <div className="space-y-2 pt-2">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono flex items-center justify-between">
+                  <span>Linked Projects</span>
+                  <span className="text-[10px] text-slate-500">
+                    ({matchingProjects.length} found)
+                  </span>
+                </div>
+
+                <div className="space-y-2 max-h-60 overflow-y-auto pr-1 thin-scrollbar">
+                  {matchingProjects.length === 0 ? (
+                    <div className="p-3 text-center text-xs text-slate-500 font-mono bg-[#06090e] rounded border border-slate-900">
+                      Core competency across multiple workflows and academic modules.
+                    </div>
+                  ) : (
+                    matchingProjects.map((proj) => (
+                      <div
+                        key={proj.title}
+                        className="p-2.5 rounded bg-[#06090e] border border-slate-800/80 text-xs font-mono space-y-1"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-slate-200">{proj.title}</span>
+                          {proj.url && (
+                            <a
+                              href={proj.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-400 hover:text-blue-300 text-[11px]"
+                            >
+                              ↗
+                            </a>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                          {proj.description}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Status Note */}
+            <div className="pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 font-mono flex justify-between">
+              <span>Stack analyzer: SWR synchronized</span>
+              <span className="text-emerald-400">● 100% verified</span>
+            </div>
+          </motion.div>
         </div>
       </motion.div>
     </section>

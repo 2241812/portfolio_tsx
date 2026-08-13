@@ -1,66 +1,83 @@
 "use client";
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
-import { containerVariants, cardVariants } from './shared';
+import { containerVariants, cardVariants, headingVariants } from './shared';
 import { useInView } from '@/hooks/useInView';
 import { useGistData } from '@/hooks/useGistData';
 
 const BlogSection = memo(function BlogSection() {
-  const { ref, isInView } = useInView({ rootMargin: '300px', once: true });
+  const { ref, isInView } = useInView({ rootMargin: '200px', once: true });
   const { gists, isLoading, isError, error, retry } = useGistData('2241812', isInView);
 
   // Filter for gists that have markdown files or specific descriptions to act as "blogs"
-  const blogGists = gists.filter(gist => 
-    Object.values(gist.files).some(file => file.language === 'Markdown' || file.type === 'text/markdown') || 
-    gist.description.toLowerCase().includes('blog')
-  ).slice(0, 4);
+  const blogGists = gists
+    .filter(
+      (gist) =>
+        Object.values(gist.files).some(
+          (file) => file.language === 'Markdown' || file.type === 'text/markdown'
+        ) || gist.description.toLowerCase().includes('blog')
+    )
+    .slice(0, 4);
 
   return (
-    <section id="blog" ref={ref} className="min-h-screen py-24 flex items-center justify-center relative z-10 px-8 md:px-12 w-full">
+    <section
+      id="gists"
+      ref={ref}
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-slate-800/80"
+    >
       <motion.div
         variants={containerVariants}
         initial="hidden"
-        animate={isInView ? 'visible' : 'hidden'}
-        className="w-full max-w-6xl relative z-10 grid grid-cols-1 gap-12"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.05 }}
+        className="w-full space-y-6"
       >
-        <div className="flex justify-between items-end border-b border-cyan-900/30 pb-6">
-          <div>
-            <h2 className="text-3xl md:text-5xl font-bold text-cyan-400 mb-2 font-mono tracking-wider">
-              <span className="text-neutral-600">$</span> fetch_logs
+        {/* Section Header */}
+        <motion.div
+          variants={headingVariants}
+          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-blue-500 text-sm font-bold">[05]</span>
+            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-mono">
+              DOCUMENTATION, NOTES & GISTS
             </h2>
-            <p className="text-sm md:text-base text-neutral-500 font-mono uppercase tracking-widest">
-              Live Articles & Notes from GitHub Gists
-            </p>
           </div>
-          {isLoading && <span className="text-xs text-cyan-500 font-mono animate-pulse">Loading...</span>}
-        </div>
+          <span className="text-xs text-slate-500 font-mono">
+            {isLoading ? '// fetching gists...' : '// glow: markdown reader'}
+          </span>
+        </motion.div>
 
         {isError ? (
-          <div className="w-full bg-red-950/20 border border-red-500/20 rounded-xl p-8 flex flex-col items-center justify-center">
-            <span className="text-red-400 font-mono text-sm mb-2">ERR_CONNECTION_REFUSED</span>
-            <span className="text-red-400/70 font-mono text-xs mb-4">{error}</span>
+          <div className="w-full bg-red-950/20 border border-red-900/40 rounded p-6 flex flex-col items-center justify-center font-mono">
+            <span className="text-red-400 text-xs mb-1">ERR_GIST_FETCH_FAILED</span>
+            <span className="text-slate-500 text-[11px] mb-3">{error}</span>
             <button
               onClick={retry}
-              className="px-6 py-2 text-xs font-mono text-red-400 border border-red-500/50 bg-red-900/20 rounded-lg hover:bg-red-900/40 hover:border-red-400 transition-all duration-300"
+              className="px-4 py-1.5 text-xs text-red-200 border border-red-700 bg-red-900/40 rounded hover:bg-red-900/60 transition-colors cursor-pointer"
             >
-              RETRY FETCH
+              Retry
             </button>
           </div>
         ) : blogGists.length === 0 && !isLoading ? (
-          <div className="w-full bg-neutral-900/40 border border-neutral-800/60 rounded-xl p-8 text-center">
-             <span className="text-neutral-500 font-mono text-sm">
-               {gists.length > 0 
-                 ? `Found ${gists.length} gist(s) but none match filter (need .md file or 'blog' in description)`
-                 : 'No gists found. Make sure your gist is public and check browser console for errors.'}
-             </span>
+          <div className="w-full bg-[#090d16] border border-slate-800 rounded p-6 text-center font-mono">
+            <span className="text-slate-400 text-xs">
+              {gists.length > 0
+                ? `Found ${gists.length} public gist(s).`
+                : 'No external gists detected. Technical notes are published to GitHub repositories.'}
+            </span>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {blogGists.map((gist) => {
               const fileKey = Object.keys(gist.files)[0];
               const file = gist.files[fileKey];
-              const date = new Date(gist.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-              
+              const date = new Date(gist.created_at).toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              });
+
               return (
                 <motion.a
                   key={gist.id}
@@ -68,37 +85,27 @@ const BlogSection = memo(function BlogSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   variants={cardVariants}
-                  whileHover={{ scale: 1.02, y: -4 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="group relative bg-neutral-900/60 backdrop-blur-sm border border-cyan-900/30 rounded-xl p-6 overflow-hidden hover:border-cyan-400/60 transition-all duration-300 flex flex-col h-full"
+                  className="bg-[#090d16] border border-slate-800 hover:border-blue-500/70 rounded p-4 transition-all flex flex-col justify-between group cursor-pointer font-mono"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-transparent to-cyan-500/5 group-hover:to-cyan-500/20 transition-all duration-500" />
-                  
-                  <div className="relative z-10 flex flex-col h-full justify-between">
-                    <div>
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex items-center gap-2">
-                          <svg className="w-5 h-5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H14" />
-                          </svg>
-                          <span className="text-xs text-neutral-500 font-mono">{date}</span>
-                        </div>
-                        <span className="text-[10px] px-2 py-1 rounded bg-cyan-950/40 text-cyan-400 border border-cyan-900/50 font-mono">
-                          {file.language || 'Markdown'}
-                        </span>
-                      </div>
-                      
-                      <h3 className="text-xl font-bold text-neutral-200 group-hover:text-cyan-300 transition-colors duration-300 mb-3">
-                        {gist.description || file.filename || `Gist #${gist.id.substring(0, 7)}`}
-                      </h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span className="text-[11px] text-blue-400"># {gist.id.substring(0, 7)}</span>
+                      <span>{date}</span>
                     </div>
-                    
-                    <div className="flex items-center gap-2 mt-4 text-cyan-500 font-mono text-xs group-hover:gap-3 transition-all duration-300">
+
+                    <h3 className="text-sm font-bold text-slate-100 group-hover:text-blue-300 transition-colors line-clamp-2">
+                      {gist.description || file.filename || `Gist ${gist.id.substring(0, 7)}`}
+                    </h3>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-900 text-xs">
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-900">
+                      {file.language || 'Markdown'}
+                    </span>
+                    <span className="text-blue-400 group-hover:text-blue-300 text-xs flex items-center gap-1">
                       <span>Read Log</span>
-                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </div>
+                      <span>↗</span>
+                    </span>
                   </div>
                 </motion.a>
               );

@@ -9,10 +9,10 @@ import {
   ProjectsSection,
   ContactSection,
   BlogSection,
+  FooterSection,
   type UnifiedProject,
 } from '@/components/sections';
 
-// ── Main Sections Component ──
 const Sections = memo(function Sections() {
   // GitHub pinned repos with SWR - automatic caching and revalidation
   const { pinnedRepos, isLoading, isError, retry } = usePinnedRepos('2241812');
@@ -41,16 +41,20 @@ const Sections = memo(function Sections() {
   );
 
   return (
-    <>
-      <div className="relative z-10 flex flex-col w-full pointer-events-none [&>section]:pointer-events-auto max-w-6xl mx-auto pb-12">
-        <AboutSection />
-        <GitHubStats />
-        <ProjectsSection pinnedRepos={pinnedRepos} reposLoading={isLoading} reposError={isError} onRetry={retry} />
-        <SkillsSection allProjects={allProjects} />
-        <BlogSection />
-        <ContactSection />
-      </div>
-    </>
+    <div className="relative z-10 flex flex-col w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <AboutSection />
+      <ProjectsSection
+        pinnedRepos={pinnedRepos}
+        reposLoading={isLoading}
+        reposError={isError}
+        onRetry={retry}
+      />
+      <SkillsSection allProjects={allProjects} />
+      <GitHubStats />
+      <BlogSection />
+      <ContactSection />
+      <FooterSection />
+    </div>
   );
 });
 
