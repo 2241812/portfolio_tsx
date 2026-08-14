@@ -51,16 +51,13 @@ const AboutSection = memo(function AboutSection() {
         className="w-full space-y-6"
       >
         {/* Section Header */}
-        <motion.div variants={headingVariants} className="flex items-center justify-between border-b border-blue-900/30 pb-3">
+        <motion.div variants={headingVariants} className="flex items-center justify-between border-b border-zinc-800 pb-3">
           <div className="flex items-center gap-3">
-            <span className="text-cyan-400 text-sm font-bold font-orbitron">[01]</span>
-            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-orbitron">
-              SYSTEM PROFILE &amp; CORE IDENTITY
+            <span className="text-zinc-400 text-sm font-bold font-mono">[01]</span>
+            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-mono">
+              ABOUT &amp; PROFILE
             </h2>
           </div>
-          <span className="text-[11px] text-cyan-400/80 font-mono hidden sm:inline">
-            {"// sysinfo: narcisoiii.dev (v2.0)"}
-          </span>
         </motion.div>
 
         {/* Main Grid: ASCII Avatar & Specs Left, Narrative Bio & Telemetry Right */}
