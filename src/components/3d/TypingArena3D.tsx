@@ -63,7 +63,7 @@ function ProjectileSystem({ eventsRef }: { eventsRef: React.MutableRefObject<Pro
     // Check for new spawn events
     if (eventsRef.current.length > 0) {
       eventsRef.current.forEach((ev) => {
-        const color = ev.isCorrect ? new THREE.Color(0x00f0ff) : new THREE.Color(0xff2a55);
+        const color = ev.isCorrect ? new THREE.Color(0xffffff) : new THREE.Color(0xf43f5e);
         const mat = new THREE.MeshBasicMaterial({ color });
         const mesh = new THREE.Mesh(geometry.current, mat);
         mesh.position.set(ev.x, 0.8, ev.z);
@@ -167,9 +167,9 @@ const TypingArena3D = forwardRef<TypingArena3DHandle, TypingArena3DProps>(functi
   }));
 
   return (
-    <div className="relative w-full h-[380px] sm:h-[420px] rounded-2xl overflow-hidden bg-[#12141a]/95 border border-zinc-800/80 shadow-2xl">
-      {/* Subtle sci-fi ambient grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(#272b35_1px,transparent_1px)] [background-size:16px_16px] opacity-30 pointer-events-none" />
+    <div className="relative w-full h-[420px] sm:h-[460px] rounded-2xl overflow-hidden bg-[#101319]/95 border border-zinc-800 shadow-2xl">
+      {/* Subtle monochrome ambient grid */}
+      <div className="absolute inset-0 bg-[radial-gradient(#272b35_1px,transparent_1px)] [background-size:16px_16px] opacity-25 pointer-events-none" />
 
       {/* ── 3D CANVAS (Keyboard + Particle Lasers) ── */}
       <div className="absolute inset-0 z-10 pointer-events-none">
@@ -187,50 +187,53 @@ const TypingArena3D = forwardRef<TypingArena3DHandle, TypingArena3DProps>(functi
         >
           <PerspectiveCamera
             makeDefault
-            position={[0, 2.8 * viewport.scale, 5.2 * viewport.scale]}
-            fov={40 + (1 - viewport.scale) * 15}
+            position={[0, 1.4, 3.2]}
+            rotation={[-0.2, 0, 0]}
+            fov={45}
           />
-          <ambientLight intensity={0.4} color="#1e293b" />
-          <directionalLight position={[5, 12, 6]} intensity={1.5} color="#f1f5f9" />
-          <directionalLight position={[-6, 6, -4]} intensity={0.8} color="#00f0ff" />
-          <pointLight position={[0, 4, 0]} intensity={1.2} color="#00f0ff" distance={12} />
+          <ambientLight intensity={0.5} color="#18181b" />
+          <directionalLight position={[5, 10, 6]} intensity={1.8} color="#ffffff" />
+          <directionalLight position={[-6, 6, -3]} intensity={0.7} color="#e4e4e7" />
+          <pointLight position={[0, 3, 0]} intensity={1.2} color="#ffffff" distance={10} />
 
           <Environment preset="city" />
 
-          <group position={[0, -0.4, 0]}>
-            <KeyboardModel isSettled={true} modelScale={viewport.scale * 1.05} />
-            <ProjectileSystem eventsRef={projectileEvents} />
-            <ContactShadows
-              position={[0, -0.45, 0]}
-              opacity={0.7}
-              scale={18 * viewport.scale}
-              blur={2.5}
-              far={4}
-              color="#090d16"
-            />
-          </group>
+          <React.Suspense fallback={null}>
+            <group position={[0, -0.05, 0]}>
+              <KeyboardModel isSettled={true} modelScale={viewport.scale} />
+              <ProjectileSystem eventsRef={projectileEvents} />
+              <ContactShadows
+                position={[0, -0.4, 0]}
+                opacity={0.7}
+                scale={15}
+                blur={2}
+                far={4}
+                color="#000000"
+              />
+            </group>
+          </React.Suspense>
         </Canvas>
       </div>
 
       {/* ── LEFT FLOATING SHOOTER HOLOGRAM HUD ── */}
       <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 pointer-events-auto select-none">
-        <div className="relative w-44 sm:w-52 p-3.5 rounded-xl bg-[#0e1117]/85 backdrop-blur-md border border-cyan-500/30 shadow-[0_0_25px_rgba(0,240,255,0.15)] space-y-2.5">
+        <div className="relative w-44 sm:w-52 p-3.5 rounded-xl bg-[#0e1015]/90 backdrop-blur-md border border-zinc-800 shadow-xl space-y-2.5">
           {/* Tactical Header */}
-          <div className="flex items-center justify-between border-b border-cyan-500/20 pb-1.5 text-[9px] font-mono text-cyan-400">
-            <span className="flex items-center gap-1 font-bold tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+          <div className="flex items-center justify-between border-b border-zinc-800 pb-1.5 text-[9px] font-mono text-zinc-400">
+            <span className="flex items-center gap-1.5 font-bold tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               <span>TAC_HUD // V1.0</span>
             </span>
-            <span className="text-zinc-500">[SPD_LOCK]</span>
+            <span className="text-zinc-500">[LOCK]</span>
           </div>
 
           {/* WPM Main Metric */}
           <div className="space-y-0.5">
             <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest flex items-center justify-between">
               <span>VELOCITY (WPM)</span>
-              <span className="text-cyan-400 text-[9px] font-bold">⚡ LIVE</span>
+              <span className="text-zinc-300 text-[9px] font-bold">LIVE</span>
             </div>
-            <div className="text-3xl sm:text-4xl font-extrabold text-white font-orbitron drop-shadow-[0_0_12px_rgba(0,240,255,0.5)]">
+            <div className="text-3xl sm:text-4xl font-extrabold text-white font-mono">
               {wpm}
             </div>
             <div className="text-[10px] font-mono text-zinc-500 flex justify-between">
@@ -240,24 +243,16 @@ const TypingArena3D = forwardRef<TypingArena3DHandle, TypingArena3DProps>(functi
           </div>
 
           {/* Accuracy Target Gauge */}
-          <div className="space-y-1 pt-1 border-t border-zinc-800/80">
+          <div className="space-y-1 pt-1 border-t border-zinc-800">
             <div className="flex justify-between text-[10px] font-mono text-zinc-400">
               <span>TARGET ACCURACY</span>
-              <span
-                className={`font-bold ${
-                  accuracy >= 98
-                    ? 'text-emerald-400'
-                    : accuracy >= 90
-                    ? 'text-cyan-300'
-                    : 'text-rose-400'
-                }`}
-              >
+              <span className="font-bold text-white">
                 {accuracy}%
               </span>
             </div>
             <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 transition-all duration-200"
+                className="h-full bg-white transition-all duration-200"
                 style={{ width: `${accuracy}%` }}
               />
             </div>
@@ -267,11 +262,11 @@ const TypingArena3D = forwardRef<TypingArena3DHandle, TypingArena3DProps>(functi
 
       {/* ── RIGHT FLOATING SHOOTER HOLOGRAM HUD ── */}
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 pointer-events-auto select-none">
-        <div className="relative w-44 sm:w-52 p-3.5 rounded-xl bg-[#0e1117]/85 backdrop-blur-md border border-cyan-500/30 shadow-[0_0_25px_rgba(0,240,255,0.15)] space-y-2.5">
+        <div className="relative w-44 sm:w-52 p-3.5 rounded-xl bg-[#0e1015]/90 backdrop-blur-md border border-zinc-800 shadow-xl space-y-2.5">
           {/* Tactical Header */}
-          <div className="flex items-center justify-between border-b border-cyan-500/20 pb-1.5 text-[9px] font-mono text-cyan-400">
+          <div className="flex items-center justify-between border-b border-zinc-800 pb-1.5 text-[9px] font-mono text-zinc-400">
             <span className="font-bold tracking-wider">MISSION_DATA</span>
-            <span className="text-emerald-400 font-bold">
+            <span className="text-zinc-300 font-bold">
               {isActive ? 'ENGAGED' : 'STANDBY'}
             </span>
           </div>
@@ -281,22 +276,22 @@ const TypingArena3D = forwardRef<TypingArena3DHandle, TypingArena3DProps>(functi
             <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">
               {isTimeMode ? 'COUNTDOWN' : 'TARGET WORDS'}
             </div>
-            <div className="text-3xl sm:text-4xl font-extrabold text-white font-orbitron">
+            <div className="text-3xl sm:text-4xl font-extrabold text-white font-mono">
               {timeOrWordsLeft}
-              {isTimeMode && <span className="text-base text-cyan-400 font-mono ml-1">s</span>}
+              {isTimeMode && <span className="text-base text-zinc-400 font-mono ml-1">s</span>}
             </div>
           </div>
 
           {/* Combo / Streak Meter */}
-          <div className="pt-1 border-t border-zinc-800/80 space-y-1">
+          <div className="pt-1 border-t border-zinc-800 space-y-1">
             <div className="flex justify-between text-[10px] font-mono">
               <span className="text-zinc-400">STREAK MULTIPLIER</span>
-              <span className="text-amber-400 font-bold font-orbitron">
+              <span className="text-white font-bold font-mono">
                 {streak}x
               </span>
             </div>
             <div className="flex justify-between text-[9px] font-mono text-zinc-500">
-              <span>HIT: <strong className="text-emerald-400">{correctChars}</strong></span>
+              <span>HIT: <strong className="text-zinc-200">{correctChars}</strong></span>
               <span>MISS: <strong className="text-rose-400">{incorrectChars}</strong></span>
             </div>
           </div>
@@ -305,11 +300,11 @@ const TypingArena3D = forwardRef<TypingArena3DHandle, TypingArena3DProps>(functi
 
       {/* ── BOTTOM HUD TELEMETRY FOOTER ── */}
       <div className="absolute bottom-3 left-0 right-0 z-20 px-6 flex items-center justify-between text-[10px] font-mono text-zinc-500 pointer-events-none">
-        <span className="hidden sm:inline">KEG_FIRING_SYSTEM: READY</span>
-        <span className="text-cyan-400/80 font-bold mx-auto sm:mx-0">
+        <span className="hidden sm:inline">FIRING_SYSTEM: ACTIVE</span>
+        <span className="text-zinc-400 font-bold mx-auto sm:mx-0">
           ⌨️ TYPE TO SHOOT KEYSTROKE PROJECTILES
         </span>
-        <span className="hidden sm:inline">3D_RENDER: THREE.JS GLTF</span>
+        <span className="hidden sm:inline">3D_RENDER: THREE.JS</span>
       </div>
     </div>
   );

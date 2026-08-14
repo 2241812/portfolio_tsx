@@ -46,22 +46,22 @@ const Scene = memo(function Scene({ isSettled }: SceneProps) {
           fov={45 + (1 - viewport.scale) * 20} 
         />
         
-        {/* Subtle Cyber Neon Ambient & Directional Lighting */}
-        <ambientLight intensity={0.3} color="#0c1933" />
-        <directionalLight position={[5, 10, 5]} intensity={1.2} color="#f8fafc" />
-        <directionalLight position={[-5, 5, -5]} intensity={0.7} color="#06b6d4" />
-        <pointLight position={[0, 3, 0]} intensity={0.8} color="#3b82f6" distance={10} />
+        {/* Neutral Monochrome Studio Lighting */}
+        <ambientLight intensity={0.4} color="#18181b" />
+        <directionalLight position={[5, 10, 5]} intensity={1.5} color="#ffffff" />
+        <directionalLight position={[-5, 5, -5]} intensity={0.6} color="#d4d4d8" />
+        <pointLight position={[0, 3, 0]} intensity={0.8} color="#ffffff" distance={10} />
         
         <Environment preset="city" />
         
         <KeyboardModel isSettled={isSettled} modelScale={viewport.scale} />
         <ContactShadows 
           position={[0, -0.5, 0]} 
-          opacity={0.85} 
+          opacity={0.7} 
           scale={20 * viewport.scale} 
           blur={2} 
           far={5}
-          color="#0e2a5e"
+          color="#000000"
         />
       </Canvas>
     </div>

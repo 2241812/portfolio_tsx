@@ -23,7 +23,7 @@ const BlogSection = memo(function BlogSection() {
     <section
       id="gists"
       ref={ref}
-      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-blue-900/30"
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-zinc-800"
     >
       <motion.div
         variants={containerVariants}
@@ -35,33 +35,33 @@ const BlogSection = memo(function BlogSection() {
         {/* Section Header */}
         <motion.div
           variants={headingVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-blue-900/30 pb-3 gap-2"
+          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-800 pb-3 gap-2"
         >
           <div className="flex items-center gap-3">
-            <span className="text-cyan-400 text-sm font-bold font-orbitron">[05]</span>
-            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-orbitron">
+            <span className="text-zinc-400 text-sm font-bold font-mono">[05]</span>
+            <h2 className="text-base sm:text-lg font-bold text-white uppercase tracking-wider font-mono">
               DOCUMENTATION, NOTES &amp; GISTS
             </h2>
           </div>
-          <span className="text-xs text-slate-400 font-mono">
+          <span className="text-xs text-zinc-400 font-mono">
             {isLoading ? '// telemetry: fetching gists...' : '// status: live markdown reader'}
           </span>
         </motion.div>
 
         {isError ? (
-          <div className="w-full bg-red-950/20 border border-red-900/40 rounded p-6 flex flex-col items-center justify-center font-mono">
-            <span className="text-red-400 text-xs mb-1">ERR_GIST_FETCH_FAILED</span>
-            <span className="text-slate-500 text-[11px] mb-3">{error}</span>
+          <div className="w-full bg-zinc-900 border border-zinc-800 rounded p-6 flex flex-col items-center justify-center font-mono">
+            <span className="text-zinc-400 text-xs mb-1">ERR_GIST_FETCH_FAILED</span>
+            <span className="text-zinc-500 text-[11px] mb-3">{error}</span>
             <button
               onClick={retry}
-              className="px-4 py-1.5 text-xs text-red-200 border border-red-700 bg-red-900/40 rounded hover:bg-red-900/60 transition-colors cursor-pointer"
+              className="px-4 py-1.5 text-xs text-zinc-200 border border-zinc-700 bg-zinc-800 rounded hover:bg-zinc-700 transition-colors cursor-pointer"
             >
               Retry
             </button>
           </div>
         ) : blogGists.length === 0 && !isLoading ? (
-          <div className="w-full bg-[#090d16] border border-slate-800 rounded p-6 text-center font-mono">
-            <span className="text-slate-400 text-xs">
+          <div className="w-full bg-[#0e1015] border border-zinc-800 rounded p-6 text-center font-mono">
+            <span className="text-zinc-400 text-xs">
               {gists.length > 0
                 ? `Found ${gists.length} public gist(s).`
                 : 'No external gists detected. Technical notes are published to GitHub repositories.'}
@@ -89,21 +89,21 @@ const BlogSection = memo(function BlogSection() {
                 >
                   <div className="cyber-bracket-tl" />
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-slate-400">
-                      <span className="text-[11px] text-cyan-400 font-bold"># {gist.id.substring(0, 7)}</span>
+                    <div className="flex items-center justify-between text-xs text-zinc-400">
+                      <span className="text-[11px] text-zinc-400 font-bold"># {gist.id.substring(0, 7)}</span>
                       <span>{date}</span>
                     </div>
 
-                    <h3 className="text-sm font-bold text-slate-100 group-hover:text-cyan-300 transition-colors line-clamp-2">
+                    <h3 className="text-sm font-bold text-zinc-100 group-hover:text-white transition-colors line-clamp-2">
                       {gist.description || file.filename || `Gist ${gist.id.substring(0, 7)}`}
                     </h3>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-800/80 text-xs">
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800">
+                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-zinc-800 text-xs">
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-900 text-zinc-300 border border-zinc-700">
                       {file.language || 'Markdown'}
                     </span>
-                    <span className="text-cyan-400 group-hover:text-cyan-300 text-xs flex items-center gap-1 font-bold">
+                    <span className="text-zinc-400 group-hover:text-white text-xs flex items-center gap-1 font-bold">
                       <span>Read Document</span>
                       <span>↗</span>
                     </span>

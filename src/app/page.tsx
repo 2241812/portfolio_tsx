@@ -50,38 +50,35 @@ export default function Home() {
           />
 
           <main id="main-content" className="relative z-20 flex-1 flex flex-col pt-16 pb-12">
-            {/* Cyber-Luxe Hero Banner */}
+            {/* Minimalist Monochrome Hero Banner */}
             <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-4">
               <div className="cyber-glass-card rounded-xl p-5 sm:p-8 relative overflow-hidden shadow-2xl">
-                {/* Hologram Corner Brackets */}
+                {/* Minimalist Corner Brackets */}
                 <div className="cyber-bracket-tl" />
                 <div className="cyber-bracket-br" />
 
-                {/* Subtle cyber ambient light */}
-                <div className="absolute top-0 right-0 w-96 h-48 bg-gradient-to-bl from-cyan-500/20 via-blue-600/10 to-transparent blur-3xl pointer-events-none" />
-
                 <div className="relative z-10 space-y-5">
                   {/* Top Prompt Line */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-400 border-b border-blue-900/30 pb-3 gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-cyan-400 font-bold">$</span>
-                      <span className="text-slate-300 font-mono">whoami &amp;&amp; cat /etc/motd</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-zinc-400 border-b border-zinc-800 pb-3 gap-2">
+                    <div className="flex items-center gap-2 font-mono">
+                      <span className="text-zinc-200 font-bold">$</span>
+                      <span className="text-zinc-300">whoami &amp;&amp; cat /etc/motd</span>
                     </div>
-                    <span className="text-[11px] text-cyan-400/80 font-mono tracking-wider">
-                      CYBER_SESSION // PRESS [?] FOR SHORTCUTS
+                    <span className="text-[11px] text-zinc-500 font-mono tracking-wider">
+                      TERMINAL // PRESS [?] FOR SHORTCUTS
                     </span>
                   </div>
 
                   {/* Hero Title & Identity */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-1">
                     <div className="space-y-1.5">
-                      <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-100 font-orbitron drop-shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+                      <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white font-mono">
                         {resumeData.personalInfo.name}
                       </h1>
-                      <p className="text-xs sm:text-sm text-cyan-400 font-mono flex items-center gap-2">
-                        <span>{resumeData.personalInfo.title}</span>
-                        <span className="text-slate-600">•</span>
-                        <span className="text-slate-300">Systems Architecture &amp; AI Automation</span>
+                      <p className="text-xs sm:text-sm text-zinc-400 font-mono flex items-center gap-2">
+                        <span className="text-zinc-200 font-semibold">{resumeData.personalInfo.title}</span>
+                        <span className="text-zinc-600">•</span>
+                        <span className="text-zinc-400">Systems Architecture &amp; Automation</span>
                       </p>
                     </div>
 
@@ -89,25 +86,25 @@ export default function Home() {
                     <div className="flex flex-wrap gap-2 text-xs font-mono">
                       <button
                         onClick={() => setActiveSection('projects')}
-                        className="px-3.5 py-2 rounded-lg bg-gradient-to-r from-blue-600/80 to-cyan-500/80 hover:from-blue-500 hover:to-cyan-400 text-white font-bold transition-all cursor-pointer flex items-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                        className="px-3.5 py-2 rounded-lg bg-white hover:bg-zinc-200 text-black font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm"
                       >
                         <span>★ Top 3 Projects</span>
-                        <kbd className="text-[10px] px-1 rounded bg-black/30 text-cyan-200">[2]</kbd>
+                        <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-200 text-zinc-800">[2]</kbd>
                       </button>
                       <button
                         onClick={() => setActiveSection('skills')}
-                        className="px-3.5 py-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-slate-200 transition-all cursor-pointer flex items-center gap-2"
+                        className="px-3.5 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 transition-all cursor-pointer flex items-center gap-2"
                       >
                         <span>Skills Matrix</span>
-                        <kbd className="text-[10px] px-1 rounded bg-black/40 text-slate-400">[3]</kbd>
+                        <kbd className="text-[10px] px-1 rounded bg-black/40 text-zinc-500">[3]</kbd>
                       </button>
                       <button
                         onClick={() => setIsCommandOpen(true)}
-                        className="px-3.5 py-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-slate-200 transition-all cursor-pointer flex items-center gap-2"
+                        className="px-3.5 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 transition-all cursor-pointer flex items-center gap-2"
                       >
-                        <span className="text-cyan-400 font-bold">:</span>
+                        <span className="text-zinc-400 font-bold">:</span>
                         <span>CLI Prompt</span>
-                        <kbd className="text-[10px] px-1 rounded bg-black/40 text-slate-400">[:]</kbd>
+                        <kbd className="text-[10px] px-1 rounded bg-black/40 text-zinc-500">[:]</kbd>
                       </button>
                     </div>
                   </div>
@@ -120,30 +117,30 @@ export default function Home() {
           </main>
 
           {/* Bottom Vim / Tmux Statusline */}
-          <div className="fixed bottom-0 left-0 w-full z-40 bg-[#06090e]/95 backdrop-blur border-t border-slate-800 px-4 py-1.5 flex items-center justify-between text-[11px] font-mono text-slate-400">
+          <div className="fixed bottom-0 left-0 w-full z-40 bg-[#0c0d10]/95 backdrop-blur border-t border-zinc-800 px-4 py-1.5 flex items-center justify-between text-[11px] font-mono text-zinc-400">
             <div className="flex items-center gap-3">
-              <span className="px-1.5 py-0.2 rounded bg-blue-950 text-blue-300 border border-blue-800 text-[10px] font-bold">
+              <span className="px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] font-bold">
                 NORMAL
               </span>
-              <span className="hidden sm:inline text-slate-500">utf-8</span>
-              <span className="hidden md:inline text-slate-600">|</span>
-              <span className="text-slate-300">
-                active: <span className="text-blue-400 font-bold">{activeSection}</span>
+              <span className="hidden sm:inline text-zinc-500">utf-8</span>
+              <span className="hidden md:inline text-zinc-700">|</span>
+              <span className="text-zinc-300">
+                active: <span className="text-white font-bold">{activeSection}</span>
               </span>
             </div>
 
-            <div className="flex items-center gap-3 text-slate-500">
+            <div className="flex items-center gap-3 text-zinc-500">
               <span className="hidden lg:inline">[j/k] Navigate</span>
               <span className="hidden lg:inline">[1-6] Jump</span>
               <button
                 onClick={() => setIsCommandOpen(true)}
-                className="hover:text-blue-400 cursor-pointer"
+                className="hover:text-white cursor-pointer"
               >
                 [:] Command
               </button>
               <button
                 onClick={() => setIsHelpOpen(true)}
-                className="hover:text-blue-400 cursor-pointer"
+                className="hover:text-white cursor-pointer"
               >
                 [?] Help
               </button>

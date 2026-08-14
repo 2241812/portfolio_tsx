@@ -70,7 +70,7 @@ const ProjectsSection = memo(function ProjectsSection({
   return (
     <section
       id="projects"
-      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-blue-900/30"
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-zinc-800"
     >
       <motion.div
         variants={containerVariants}
@@ -82,24 +82,24 @@ const ProjectsSection = memo(function ProjectsSection({
         {/* Section Header */}
         <motion.div
           variants={headingVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-blue-900/30 pb-3 gap-2"
+          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-800 pb-3 gap-2"
         >
           <div className="flex items-center gap-3">
-            <span className="text-cyan-400 text-sm font-bold font-orbitron">[02]</span>
-            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-orbitron">
+            <span className="text-zinc-400 text-sm font-bold font-mono">[02]</span>
+            <h2 className="text-base sm:text-lg font-bold text-white uppercase tracking-wider font-mono">
               FEATURED PROJECTS &amp; ARCHITECTURE
             </h2>
           </div>
-          <span className="text-xs text-cyan-400 font-mono">
+          <span className="text-xs text-zinc-400 font-mono">
             ★ TOP 3 HIGHLIGHTS &amp; LIVE REPOSITORIES
           </span>
         </motion.div>
 
         {/* ── TOP 3 SPOTLIGHT SECTION ── */}
         <div className="space-y-4">
-          <div className="text-[11px] font-mono text-cyan-400/80 uppercase tracking-wider flex items-center gap-2">
+          <div className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider flex items-center gap-2">
             <span>┌─</span>
-            <span className="text-slate-200 font-bold">FLAGSHIP ARCHITECTURES</span>
+            <span className="text-zinc-300 font-bold">FLAGSHIP ARCHITECTURES</span>
             <span>──────────────────────────────────────────────</span>
           </div>
 
@@ -113,37 +113,34 @@ const ProjectsSection = memo(function ProjectsSection({
                 <div className="cyber-bracket-tl" />
                 <div className="cyber-bracket-br" />
 
-                {/* Ambient glow */}
-                <div className="absolute top-0 right-0 w-80 h-40 bg-gradient-to-bl from-cyan-500/15 via-blue-600/5 to-transparent blur-3xl pointer-events-none group-hover:from-cyan-500/25 transition-all" />
-
                 <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-5">
                   <div className="space-y-3 flex-1">
                     <div className="flex flex-wrap items-center gap-2.5">
-                      <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs font-bold font-orbitron shadow-[0_0_10px_rgba(6,182,212,0.4)]">
+                      <span className="px-2.5 py-1 rounded bg-white text-black text-xs font-bold font-mono shadow-sm">
                         {proj.rank}
                       </span>
-                      <h3 className="text-base sm:text-xl font-bold text-slate-100 group-hover:text-cyan-300 transition-colors font-orbitron">
+                      <h3 className="text-base sm:text-xl font-bold text-white font-mono">
                         {proj.title}
                       </h3>
-                      <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-800 font-mono">
+                      <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-zinc-900 text-zinc-300 border border-zinc-700 font-mono">
                         {proj.badge}
                       </span>
                     </div>
 
-                    <div className="text-xs text-slate-400 font-mono">
-                      Target Role: <span className="text-slate-200 font-semibold">{proj.role}</span>
+                    <div className="text-xs text-zinc-400 font-mono">
+                      Target Role: <span className="text-zinc-200 font-semibold">{proj.role}</span>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-mono pt-1">
+                    <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-mono pt-1">
                       {proj.description}
                     </p>
 
                     {/* Architecture flow */}
                     <div className="pt-2">
-                      <div className="text-[10px] text-cyan-400 uppercase tracking-wider mb-1 font-mono font-bold">
+                      <div className="text-[10px] text-zinc-400 uppercase tracking-wider mb-1 font-mono font-bold">
                         Pipeline / Architecture Flow:
                       </div>
-                      <div className="px-3.5 py-2 rounded-lg bg-[#02050c] border border-cyan-900/40 text-[11px] text-cyan-300 font-mono overflow-x-auto whitespace-nowrap shadow-inner">
+                      <div className="px-3.5 py-2 rounded-lg bg-[#0e1015] border border-zinc-800 text-[11px] text-zinc-300 font-mono overflow-x-auto whitespace-nowrap shadow-inner">
                         {proj.architecture}
                       </div>
                     </div>
@@ -153,7 +150,7 @@ const ProjectsSection = memo(function ProjectsSection({
                       {proj.tech.map((t) => (
                         <span
                           key={t}
-                          className="px-2.5 py-1 rounded bg-slate-900/90 text-slate-300 border border-slate-800 text-[11px] font-mono hover:border-cyan-500/60 transition-colors"
+                          className="px-2.5 py-1 rounded bg-zinc-900 text-zinc-300 border border-zinc-800 text-[11px] font-mono hover:border-zinc-600 transition-colors"
                         >
                           {t}
                         </span>
@@ -168,7 +165,7 @@ const ProjectsSection = memo(function ProjectsSection({
                         href={proj.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold transition-all font-mono flex items-center gap-2 justify-center shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer"
+                        className="px-4 py-2.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-bold transition-all font-mono flex items-center gap-2 justify-center shadow-sm cursor-pointer"
                       >
                         <span>Inspect Repo</span>
                         <span>↗</span>
@@ -184,13 +181,13 @@ const ProjectsSection = memo(function ProjectsSection({
         {/* ── ADDITIONAL LIVE REPOSITORIES ── */}
         <div className="space-y-4 pt-4">
           <div className="flex items-center justify-between">
-            <div className="text-[11px] font-mono text-cyan-400/80 uppercase tracking-wider flex items-center gap-2">
+            <div className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider flex items-center gap-2">
               <span>┌─</span>
-              <span className="text-slate-200 font-bold">ALL LIVE REPOSITORIES</span>
+              <span className="text-zinc-300 font-bold">ALL LIVE REPOSITORIES</span>
               <span>──────────────────────────────────────────────</span>
             </div>
             {reposLoading && (
-              <span className="text-xs text-cyan-400 font-mono animate-pulse">
+              <span className="text-xs text-zinc-400 font-mono animate-pulse">
                 Fetching GitHub API...
               </span>
             )}
@@ -203,24 +200,24 @@ const ProjectsSection = memo(function ProjectsSection({
                   key={i}
                   className="cyber-glass-card rounded-lg p-4 space-y-2 animate-pulse"
                 >
-                  <div className="h-4 bg-slate-800 rounded w-1/3" />
-                  <div className="h-3 bg-slate-800/60 rounded w-full" />
-                  <div className="h-3 bg-slate-800/40 rounded w-2/3" />
+                  <div className="h-4 bg-zinc-800 rounded w-1/3" />
+                  <div className="h-3 bg-zinc-800/60 rounded w-full" />
+                  <div className="h-3 bg-zinc-800/40 rounded w-2/3" />
                 </div>
               ))}
             </div>
           ) : reposError ? (
-            <div className="p-4 bg-red-950/20 border border-red-900/40 rounded text-xs text-red-400 font-mono flex items-center justify-between">
+            <div className="p-4 bg-zinc-900 border border-zinc-800 rounded text-xs text-zinc-400 font-mono flex items-center justify-between">
               <span>[!] GitHub sync fallback active</span>
               <button
                 onClick={onRetry}
-                className="px-3 py-1 bg-red-900/40 hover:bg-red-900/60 border border-red-700 rounded text-red-200 cursor-pointer"
+                className="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded text-zinc-200 cursor-pointer"
               >
                 Retry
               </button>
             </div>
           ) : pinnedRepos.length === 0 ? (
-            <div className="p-4 cyber-glass-card rounded text-xs text-slate-400 font-mono text-center">
+            <div className="p-4 cyber-glass-card rounded text-xs text-zinc-400 font-mono text-center">
               [Repositories loaded from GitHub profile @narcisoJavier]
             </div>
           ) : (
@@ -236,24 +233,24 @@ const ProjectsSection = memo(function ProjectsSection({
                   <div className="cyber-bracket-tl" />
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-200 group-hover:text-cyan-300 transition-colors font-mono">
+                      <span className="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors font-mono">
                         {repo.name}
                       </span>
-                      <span className="text-cyan-400 text-xs">↗</span>
+                      <span className="text-zinc-400 text-xs">↗</span>
                     </div>
-                    <p className="text-[11px] text-slate-400 font-mono line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-zinc-400 font-mono line-clamp-2 leading-relaxed">
                       {repo.description || 'No description provided.'}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3 pt-3 mt-2 border-t border-slate-800/80 text-[10px] text-slate-400 font-mono">
+                  <div className="flex items-center gap-3 pt-3 mt-2 border-t border-zinc-800 text-[10px] text-zinc-500 font-mono">
                     {repo.language && (
                       <span className="flex items-center gap-1.5">
                         <span
                           className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: langColors[repo.language] || '#3b82f6' }}
+                          style={{ backgroundColor: langColors[repo.language] || '#71717a' }}
                         />
-                        <span className="text-slate-300">{repo.language}</span>
+                        <span className="text-zinc-300">{repo.language}</span>
                       </span>
                     )}
                     <span>★ {repo.stars}</span>

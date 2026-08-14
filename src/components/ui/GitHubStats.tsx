@@ -111,7 +111,7 @@ const GitHubStats = memo(function GitHubStats() {
     <section
       id="github"
       ref={sectionRef}
-      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-blue-900/30"
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-zinc-800"
     >
       <motion.div
         variants={containerVariants}
@@ -123,12 +123,12 @@ const GitHubStats = memo(function GitHubStats() {
         {/* Section Header */}
         <motion.div
           variants={headingVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-blue-900/30 pb-3 gap-2"
+          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-800 pb-3 gap-2"
         >
           <div className="flex items-center gap-3">
-            <span className="text-cyan-400 text-sm font-bold font-orbitron">[04]</span>
-            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-orbitron">
-              GITHUB TELEMETRY &amp; INTERACTIVE BREAKER
+            <span className="text-zinc-400 text-sm font-bold font-mono">[04]</span>
+            <h2 className="text-base sm:text-lg font-bold text-white uppercase tracking-wider font-mono">
+              GITHUB ACTIVITY &amp; CONTRIBUTIONS
             </h2>
           </div>
           <div className="flex items-center gap-3">
@@ -136,8 +136,8 @@ const GitHubStats = memo(function GitHubStats() {
               onClick={handleToggleGame}
               className={`px-3 py-1.5 text-xs font-mono rounded border transition-all cursor-pointer flex items-center gap-1.5 ${
                 isGameActive
-                  ? 'bg-cyan-950 text-cyan-200 border-cyan-400 font-bold shadow-[0_0_15px_rgba(6,182,212,0.3)]'
-                  : 'bg-slate-900/80 text-cyan-300 border-cyan-800/60 hover:bg-cyan-950/60 hover:border-cyan-500'
+                  ? 'bg-zinc-800 text-white border-zinc-500 font-bold shadow-sm'
+                  : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:bg-zinc-800 hover:border-zinc-600'
               }`}
             >
               <span>🎮</span>
@@ -150,38 +150,38 @@ const GitHubStats = memo(function GitHubStats() {
         <motion.div variants={containerVariants} className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="cyber-glass-card rounded p-3 text-center space-y-1 relative">
             <div className="cyber-bracket-tl" />
-            <div className="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Public Repos</div>
-            <div className="text-xl font-bold text-slate-100 font-orbitron">
+            <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-mono">Public Repos</div>
+            <div className="text-xl font-bold text-white font-mono">
               {userData ? userData.public_repos : '25'}
             </div>
-            <div className="text-[10px] text-cyan-400 font-mono">Active Repositories</div>
+            <div className="text-[10px] text-zinc-400 font-mono">Active Repositories</div>
           </div>
 
           <div className="cyber-glass-card rounded p-3 text-center space-y-1 relative">
             <div className="cyber-bracket-tl" />
-            <div className="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Current Streak</div>
-            <div className="text-xl font-bold text-emerald-400 font-orbitron">
+            <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-mono">Current Streak</div>
+            <div className="text-xl font-bold text-zinc-200 font-mono">
               {streak.currentStreak} Days
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">Continuous Commits</div>
+            <div className="text-[10px] text-zinc-500 font-mono">Continuous Commits</div>
           </div>
 
           <div className="cyber-glass-card rounded p-3 text-center space-y-1 relative">
             <div className="cyber-bracket-tl" />
-            <div className="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Followers</div>
-            <div className="text-xl font-bold text-slate-100 font-orbitron">
+            <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-mono">Followers</div>
+            <div className="text-xl font-bold text-white font-mono">
               {userData ? userData.followers : '4'}
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">Network</div>
+            <div className="text-[10px] text-zinc-500 font-mono">Network</div>
           </div>
 
           <div className="cyber-glass-card rounded p-3 text-center space-y-1 relative">
             <div className="cyber-bracket-tl" />
-            <div className="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Total Activity</div>
-            <div className="text-xl font-bold text-cyan-400 font-orbitron">
+            <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-mono">Total Activity</div>
+            <div className="text-xl font-bold text-white font-mono">
               {streak.totalContributions}
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">Annual Contributions</div>
+            <div className="text-[10px] text-zinc-500 font-mono">Annual Contributions</div>
           </div>
         </motion.div>
 
@@ -190,16 +190,16 @@ const GitHubStats = memo(function GitHubStats() {
           variants={cardVariants}
           className="cyber-glass-card rounded p-4 sm:p-5 space-y-3 relative overflow-hidden"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono border-b border-slate-800/80 pb-2 gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono border-b border-zinc-800 pb-2 gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-cyan-400 font-bold">CONTRIBUTION MATRIX (365 DAYS)</span>
+              <span className="text-zinc-200 font-bold">CONTRIBUTION MATRIX (365 DAYS)</span>
               {isGameActive && (
-                <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-600 text-[10px] animate-pulse">
-                  BREAKER GAME ACTIVE (CLICK CELLS)
+                <span className="px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-600 text-[10px]">
+                  BREAKER GAME ACTIVE
                 </span>
               )}
             </div>
-            <span className="text-[10px] text-slate-400">
+            <span className="text-[10px] text-zinc-500">
               {isGameActive ? 'Press [ESC] or button to stop' : 'Hover cell for details • Click button to break'}
             </span>
           </div>
@@ -218,17 +218,17 @@ const GitHubStats = memo(function GitHubStats() {
           variants={cardVariants}
           className="cyber-glass-card rounded p-4 sm:p-5 space-y-3 font-mono"
         >
-          <div className="flex items-center justify-between text-xs border-b border-slate-800/80 pb-2">
-            <span className="text-slate-300 font-bold flex items-center gap-2">
-              <span className="text-cyan-400 font-bold">$</span>
+          <div className="flex items-center justify-between text-xs border-b border-zinc-800 pb-2">
+            <span className="text-zinc-300 font-bold flex items-center gap-2">
+              <span className="text-zinc-400 font-bold">$</span>
               <span>git log --graph --oneline -n 5</span>
             </span>
-            <span className="text-[10px] text-cyan-400">Live Activity Feed</span>
+            <span className="text-[10px] text-zinc-500">Live Activity Feed</span>
           </div>
 
-          <div className="space-y-2 text-xs divide-y divide-slate-800/60">
+          <div className="space-y-2 text-xs divide-y divide-zinc-800/60">
             {events.length === 0 ? (
-              <div className="text-slate-400 py-2">
+              <div className="text-zinc-400 py-2">
                 * e4d1f6a (HEAD -&gt; main) fix: resolve SkillsSection type error and pin Node 20 (recent)
               </div>
             ) : (
@@ -240,11 +240,11 @@ const GitHubStats = memo(function GitHubStats() {
                 return (
                   <div key={evt.id} className="flex flex-col sm:flex-row sm:items-center justify-between pt-2 gap-1">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-cyan-400 shrink-0 font-bold">* {evt.id.substring(0, 7)}</span>
-                      <span className="text-slate-500 shrink-0">({evt.repo.name.split('/')[1] || evt.repo.name})</span>
-                      <span className="text-slate-300 truncate">{commitMsg}</span>
+                      <span className="text-zinc-400 shrink-0 font-bold">* {evt.id.substring(0, 7)}</span>
+                      <span className="text-zinc-500 shrink-0">({evt.repo.name.split('/')[1] || evt.repo.name})</span>
+                      <span className="text-zinc-300 truncate">{commitMsg}</span>
                     </div>
-                    <span className="text-[10px] text-slate-400 shrink-0 sm:ml-4">
+                    <span className="text-[10px] text-zinc-500 shrink-0 sm:ml-4">
                       {getRelativeTime(evt.created_at)}
                     </span>
                   </div>

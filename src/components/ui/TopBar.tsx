@@ -63,7 +63,7 @@ const TopBar = memo(function TopBar({
           isSettled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
         }`}
       >
-        <div className="w-full bg-[#040711]/90 backdrop-blur-xl border-b border-cyan-500/20 px-4 md:px-8 py-2.5 flex items-center justify-between shadow-[0_4px_25px_rgba(0,0,0,0.5)]">
+        <div className="w-full bg-[#0c0d10]/90 backdrop-blur-xl border-b border-zinc-800/80 px-4 md:px-8 py-2.5 flex items-center justify-between shadow-lg">
           {/* Left: Terminal Breadcrumb / Prompt */}
           <div className="flex items-center gap-3">
             <button
@@ -71,15 +71,15 @@ const TopBar = memo(function TopBar({
               className="flex items-center gap-2 text-left group cursor-pointer"
               title="Return to overview"
             >
-              <span className="w-2.5 h-2.5 rounded-sm bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.9)] animate-pulse" />
-              <span className="text-xs text-slate-300 group-hover:text-cyan-300 transition-colors font-mono">
-                <span className="text-cyan-400 font-bold">narciso</span>@<span className="text-slate-100">portfolio</span>:
-                <span className="text-cyan-300">~/narcisoiii.dev</span>
-                <span className="text-slate-500 ml-1 hidden sm:inline">(main)</span>
+              <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+              <span className="text-xs text-zinc-400 group-hover:text-white transition-colors font-mono">
+                <span className="text-white font-bold">narciso</span>@<span className="text-zinc-300">portfolio</span>:
+                <span className="text-zinc-400">~/narcisoiii.dev</span>
+                <span className="text-zinc-600 ml-1 hidden sm:inline">(main)</span>
               </span>
             </button>
-            <span className="hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-700/60 text-[10px] text-cyan-300 font-orbitron">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] text-zinc-300 font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-pulse" />
               <span>LIVE</span>
             </span>
           </div>
@@ -92,16 +92,16 @@ const TopBar = memo(function TopBar({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`px-3 py-1 text-xs transition-all duration-150 rounded-lg cursor-pointer select-none flex items-center gap-1.5 ${
+                  className={`px-3 py-1 text-xs transition-all duration-150 rounded-lg cursor-pointer select-none flex items-center gap-1.5 font-mono ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-600/90 to-cyan-500/90 text-white font-bold shadow-[0_0_12px_rgba(6,182,212,0.4)] border border-cyan-400/50'
-                      : 'text-slate-400 hover:text-cyan-200 hover:bg-slate-900/80 border border-transparent'
+                      ? 'bg-zinc-800 text-white font-bold border border-zinc-700 shadow-sm'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-900 border border-transparent'
                   }`}
                 >
-                  <span className="text-slate-500 text-[10px]">[{item.key}]</span>
+                  <span className="text-zinc-600 text-[10px]">[{item.key}]</span>
                   <span>{item.label}</span>
                   {item.badge && (
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-black/40 text-cyan-200 font-semibold">
+                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300 font-semibold">
                       ★
                     </span>
                   )}
@@ -114,34 +114,34 @@ const TopBar = memo(function TopBar({
           <div className="flex items-center gap-2 text-xs">
             <button
               onClick={onOpenCommand}
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-cyan-900/40 text-slate-300 hover:border-cyan-400 hover:text-cyan-300 transition-all cursor-pointer shadow-sm"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:border-zinc-600 hover:text-white transition-all cursor-pointer shadow-sm font-mono"
               title="Open command palette (:)"
             >
-              <span className="text-cyan-400 font-bold">:</span>
+              <span className="text-zinc-400 font-bold">:</span>
               <span>cmd</span>
-              <kbd className="text-[10px] text-slate-500 ml-1">[:]</kbd>
+              <kbd className="text-[10px] text-zinc-500 ml-1">[:]</kbd>
             </button>
 
             <button
               onClick={() => router.push('/break')}
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-cyan-900/40 text-slate-300 hover:border-cyan-400 hover:text-cyan-300 transition-all cursor-pointer shadow-sm"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:border-zinc-600 hover:text-white transition-all cursor-pointer shadow-sm font-mono"
               title="Launch typing challenge (/break)"
             >
               <span>⌨️</span>
               <span className="hidden lg:inline">break</span>
-              <kbd className="text-[10px] text-slate-500 ml-1">[b]</kbd>
+              <kbd className="text-[10px] text-zinc-500 ml-1">[b]</kbd>
             </button>
 
             <button
               onClick={onOpenHelp}
-              className="px-2.5 py-1 rounded-lg bg-slate-900/90 border border-slate-800 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/50 transition-all cursor-pointer"
+              className="px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600 transition-all cursor-pointer font-mono"
               title="Shortcuts (?)"
             >
               <span>?</span>
             </button>
 
             {/* Live Clock */}
-            <span className="hidden xl:inline text-[11px] text-cyan-400/80 border-l border-slate-800 pl-3 font-mono">
+            <span className="hidden xl:inline text-[11px] text-zinc-400 border-l border-zinc-800 pl-3 font-mono">
               {time}
             </span>
 

@@ -56,7 +56,7 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
     <section
       id="skills"
       ref={ref}
-      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-blue-900/30"
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-zinc-800"
     >
       <motion.div
         variants={containerVariants}
@@ -68,15 +68,15 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
         {/* Section Header */}
         <motion.div
           variants={headingVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-blue-900/30 pb-3 gap-2"
+          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-800 pb-3 gap-2"
         >
           <div className="flex items-center gap-3">
-            <span className="text-cyan-400 text-sm font-bold font-orbitron">[03]</span>
-            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-orbitron">
+            <span className="text-zinc-400 text-sm font-bold font-mono">[03]</span>
+            <h2 className="text-base sm:text-lg font-bold text-white uppercase tracking-wider font-mono">
               SKILLS MATRIX &amp; STACK INSPECTOR
             </h2>
           </div>
-          <span className="text-xs text-cyan-400/80 font-mono">
+          <span className="text-xs text-zinc-400 font-mono">
             {isLoadingGitHub ? '// telemetry: analyzing github tree...' : '// status: 2-pane interactive inspector'}
           </span>
         </motion.div>
@@ -89,15 +89,15 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
             className="lg:col-span-7 cyber-glass-card rounded-xl p-5 sm:p-6 space-y-5 relative"
           >
             <div className="cyber-bracket-tl" />
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-xs text-slate-400 font-mono">
-              <span className="text-cyan-400 font-bold">┌─ STACK SELECTION MATRIX</span>
-              <span className="text-[10px] text-slate-400">Click to inspect linked projects</span>
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-2 text-xs text-zinc-400 font-mono">
+              <span className="text-zinc-200 font-bold">┌─ STACK SELECTION MATRIX</span>
+              <span className="text-[10px] text-zinc-500">Click to inspect linked projects</span>
             </div>
 
             {Object.entries(enhancedSkills).map(([category, skills]) => (
               <div key={category} className="space-y-2.5">
-                <div className="text-[11px] font-bold text-slate-300 uppercase tracking-wider font-mono flex items-center gap-2">
-                  <span className="text-cyan-400 font-bold">▶</span>
+                <div className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider font-mono flex items-center gap-2">
+                  <span className="text-zinc-400 font-bold">▶</span>
                   <span>{category}</span>
                 </div>
 
@@ -110,8 +110,8 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
                         onClick={() => setActiveSkill(skill.name)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-150 cursor-pointer select-none flex items-center gap-2 ${
                           isSelected
-                            ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold shadow-[0_0_15px_rgba(6,182,212,0.4)] border border-cyan-400'
-                            : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:border-cyan-500/50 hover:text-cyan-200'
+                            ? 'bg-white text-black font-bold shadow-sm border border-white'
+                            : 'bg-zinc-900 text-zinc-300 border border-zinc-800 hover:border-zinc-600 hover:text-white'
                         }`}
                       >
                         <span>{skill.name}</span>
@@ -119,8 +119,8 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
                           <span
                             className={`text-[9px] px-1.5 py-0.2 rounded-full ${
                               isSelected
-                                ? 'bg-black/40 text-cyan-200'
-                                : 'bg-slate-800 text-slate-400'
+                                ? 'bg-zinc-200 text-zinc-900 font-bold'
+                                : 'bg-zinc-800 text-zinc-400'
                             }`}
                             title={`Referenced in ${skill.endorsements} repository(ies)`}
                           >
@@ -142,52 +142,52 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
           >
             <div className="cyber-bracket-tl" />
             <div className="space-y-3.5">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-xs font-mono">
-                <span className="text-cyan-400 font-bold font-orbitron">INSPECTOR // {activeSkill}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 font-bold">
-                  ACTIVE_INSPECTOR
+              <div className="flex items-center justify-between border-b border-zinc-800 pb-2 text-xs font-mono">
+                <span className="text-white font-bold font-mono">INSPECTOR // {activeSkill}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-900 text-zinc-300 border border-zinc-700 font-bold">
+                  ACTIVE
                 </span>
               </div>
 
               {/* Definition */}
-              <div className="p-3.5 rounded-lg bg-[#02050c] border border-cyan-900/40 text-xs text-slate-300 font-mono leading-relaxed shadow-inner">
+              <div className="p-3.5 rounded-lg bg-[#0e1015] border border-zinc-800 text-xs text-zinc-300 font-mono leading-relaxed shadow-inner">
                 {activeDescription}
               </div>
 
               {/* Associated Deliverables */}
               <div className="space-y-2 pt-2">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center justify-between">
-                  <span className="text-cyan-400">Linked Deliverables</span>
-                  <span className="text-[10px] text-slate-400">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-zinc-300 font-mono flex items-center justify-between">
+                  <span className="text-zinc-400">Linked Deliverables</span>
+                  <span className="text-[10px] text-zinc-500">
                     ({matchingProjects.length} found)
                   </span>
                 </div>
 
                 <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1 thin-scrollbar">
                   {matchingProjects.length === 0 ? (
-                    <div className="p-3 text-center text-xs text-slate-400 font-mono bg-[#02050c] rounded-lg border border-slate-800">
+                    <div className="p-3 text-center text-xs text-zinc-500 font-mono bg-[#0e1015] rounded-lg border border-zinc-800">
                       Core competency across multiple workflows and academic modules.
                     </div>
                   ) : (
                     matchingProjects.map((proj) => (
                       <div
                         key={proj.title}
-                        className="p-3 rounded-lg bg-[#02050c] border border-slate-800 hover:border-cyan-500/50 transition-colors text-xs font-mono space-y-1.5"
+                        className="p-3 rounded-lg bg-[#0e1015] border border-zinc-800 hover:border-zinc-600 transition-colors text-xs font-mono space-y-1.5"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-slate-100">{proj.title}</span>
+                          <span className="font-bold text-zinc-100">{proj.title}</span>
                           {proj.url && (
                             <a
                               href={proj.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-cyan-400 hover:text-cyan-300 text-[11px] font-bold"
+                              className="text-zinc-400 hover:text-white text-[11px] font-bold"
                             >
                               ↗
                             </a>
                           )}
                         </div>
-                        <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                        <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
                           {proj.description}
                         </p>
                       </div>
@@ -198,9 +198,9 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
             </div>
 
             {/* Quick Status Note */}
-            <div className="pt-3 border-t border-slate-800 text-[10px] text-slate-400 font-mono flex justify-between">
+            <div className="pt-3 border-t border-zinc-800 text-[10px] text-zinc-500 font-mono flex justify-between">
               <span>Stack analyzer: SWR synchronized</span>
-              <span className="text-emerald-400 font-bold">● 100% verified</span>
+              <span className="text-zinc-300 font-bold">● verified</span>
             </div>
           </motion.div>
         </div>
