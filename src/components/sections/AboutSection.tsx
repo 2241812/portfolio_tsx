@@ -21,15 +21,15 @@ const SocialButton = memo(function SocialButton({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center justify-between px-3.5 py-2.5 cyber-glass-card rounded hover:border-cyan-400/60 transition-all group select-none cursor-pointer relative overflow-hidden"
+      className="flex items-center justify-between px-3.5 py-2.5 cyber-glass-card rounded hover:border-zinc-600 transition-all group select-none cursor-pointer relative overflow-hidden"
     >
       <div className="flex items-center gap-2.5">
         <span className="text-base">{icon}</span>
-        <span className="text-xs text-slate-300 group-hover:text-cyan-200 transition-colors font-mono">
+        <span className="text-xs text-zinc-400 group-hover:text-zinc-200 transition-colors font-mono">
           {label}
         </span>
       </div>
-      <span className="text-[11px] text-cyan-400 font-mono group-hover:text-cyan-300 flex items-center gap-1 font-bold">
+      <span className="text-[11px] text-zinc-400 font-mono group-hover:text-white flex items-center gap-1 font-bold">
         <span>{value}</span>
         <span className="text-[10px]">↗</span>
       </span>
@@ -41,7 +41,7 @@ const AboutSection = memo(function AboutSection() {
   return (
     <section
       id="overview"
-      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-blue-900/30"
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-zinc-800"
     >
       <motion.div
         variants={containerVariants}
@@ -54,7 +54,7 @@ const AboutSection = memo(function AboutSection() {
         <motion.div variants={headingVariants} className="flex items-center justify-between border-b border-zinc-800 pb-3">
           <div className="flex items-center gap-3">
             <span className="text-zinc-400 text-sm font-bold font-mono">[01]</span>
-            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-mono">
+            <h2 className="text-base sm:text-lg font-bold text-zinc-100 uppercase tracking-wider font-mono">
               ABOUT &amp; PROFILE
             </h2>
           </div>
@@ -72,35 +72,35 @@ const AboutSection = memo(function AboutSection() {
             {/* Spec Box */}
             <div className="cyber-glass-card rounded p-4 relative overflow-hidden group shadow-lg w-full">
               <div className="cyber-bracket-tl" />
-              <div className="flex items-center justify-between text-xs border-b border-slate-800 pb-2 mb-3">
-                <span className="text-cyan-400 font-bold font-mono">SPECIFICATIONS // METRICS</span>
-                <span className="text-[10px] text-slate-400 font-mono">NODE_ENV: PRODUCTION</span>
+              <div className="flex items-center justify-between text-xs border-b border-zinc-800 pb-2 mb-3">
+                <span className="text-zinc-200 font-bold font-mono">SPECIFICATIONS // METRICS</span>
+                <span className="text-[10px] text-zinc-500 font-mono">NODE_ENV: PRODUCTION</span>
               </div>
 
               <div className="space-y-2 text-xs font-mono">
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Institution</span>
-                  <span className="text-slate-200 font-semibold">{resumeData.education.university}</span>
+                <div className="flex justify-between py-1 border-b border-zinc-800/60">
+                  <span className="text-zinc-400">Institution</span>
+                  <span className="text-zinc-200 font-semibold">{resumeData.education.university}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Degree</span>
-                  <span className="text-slate-200 font-semibold">{resumeData.education.degree}</span>
+                <div className="flex justify-between py-1 border-b border-zinc-800/60">
+                  <span className="text-zinc-400">Degree</span>
+                  <span className="text-zinc-200 font-semibold">{resumeData.education.degree}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Cumulative GPA</span>
-                  <span className="text-emerald-400 font-bold font-mono">{resumeData.education.gpa} / 4.00</span>
+                <div className="flex justify-between py-1 border-b border-zinc-800/60">
+                  <span className="text-zinc-400">Cumulative GPA</span>
+                  <span className="text-white font-bold font-mono">{resumeData.education.gpa} / 4.00</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Cohort</span>
-                  <span className="text-slate-200">Class of {resumeData.education.classOf}</span>
+                <div className="flex justify-between py-1 border-b border-zinc-800/60">
+                  <span className="text-zinc-400">Cohort</span>
+                  <span className="text-zinc-200">Class of {resumeData.education.classOf}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Location Base</span>
-                  <span className="text-slate-200">{resumeData.personalInfo.location}</span>
+                <div className="flex justify-between py-1 border-b border-zinc-800/60">
+                  <span className="text-zinc-400">Location Base</span>
+                  <span className="text-zinc-200">{resumeData.personalInfo.location}</span>
                 </div>
                 <div className="flex justify-between py-1">
-                  <span className="text-slate-400">Specialization</span>
-                  <span className="text-cyan-400 font-bold">Systems, Automation &amp; Game Dev</span>
+                  <span className="text-zinc-400">Specialization</span>
+                  <span className="text-zinc-100 font-bold">Systems, Automation &amp; Game Dev</span>
                 </div>
               </div>
             </div>
@@ -115,8 +115,8 @@ const AboutSection = memo(function AboutSection() {
                   <div className="cyber-bracket-tl" />
                   <span className="text-lg shrink-0">{cred.icon}</span>
                   <div className="min-w-0">
-                    <div className="font-bold text-slate-100 font-mono truncate">{cred.title}</div>
-                    <div className="text-[11px] text-cyan-400/80 font-mono truncate">{cred.description}</div>
+                    <div className="font-bold text-zinc-100 font-mono truncate">{cred.title}</div>
+                    <div className="text-[11px] text-zinc-400 font-mono truncate">{cred.description}</div>
                   </div>
                 </div>
               ))}
@@ -128,22 +128,22 @@ const AboutSection = memo(function AboutSection() {
             {/* Bio Box */}
             <div className="cyber-glass-card rounded p-5 sm:p-7 space-y-4 relative">
               <div className="cyber-bracket-tl" />
-              <div className="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-2">
-                <span className="font-mono text-cyan-400 font-bold">README.md // EXECUTIVE_SUMMARY</span>
-                <span className="text-[10px] bg-cyan-950/60 border border-cyan-800 text-cyan-300 px-2 py-0.5 rounded font-mono">
+              <div className="flex items-center justify-between text-xs text-zinc-400 border-b border-zinc-800 pb-2">
+                <span className="font-mono text-zinc-200 font-bold">README.md // EXECUTIVE_SUMMARY</span>
+                <span className="text-[10px] bg-zinc-900 border border-zinc-800 text-zinc-300 px-2 py-0.5 rounded font-mono">
                   UTF-8 • MARKDOWN
                 </span>
               </div>
 
-              <div className="space-y-3.5 text-xs sm:text-sm text-slate-300 leading-relaxed font-mono">
+              <div className="space-y-3.5 text-xs sm:text-sm text-zinc-300 leading-relaxed font-mono">
                 <p>
                   Computer Science undergraduate at{' '}
-                  <strong className="text-slate-100 font-bold">{resumeData.education.university}</strong>,
-                  engineering <span className="text-cyan-400 font-semibold">containerized cloud architectures</span>,{' '}
-                  <span className="text-cyan-400 font-semibold">automated desktop workflows</span>, and{' '}
-                  <span className="text-cyan-400 font-semibold">interactive game engines</span>.
+                  <strong className="text-white font-bold">{resumeData.education.university}</strong>,
+                  engineering <span className="text-zinc-100 font-semibold">containerized cloud architectures</span>,{' '}
+                  <span className="text-zinc-100 font-semibold">automated desktop workflows</span>, and{' '}
+                  <span className="text-zinc-100 font-semibold">interactive game engines</span>.
                 </p>
-                <p className="text-slate-400">
+                <p className="text-zinc-400">
                   I bridge low-level systems programming with high-polish interactive applications — constructing reproducible Docker environments, microservice pipelines, and computer vision models.
                 </p>
               </div>
@@ -154,13 +154,13 @@ const AboutSection = memo(function AboutSection() {
                   href="/Javier, Narciso III C._Resume_.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 rounded text-white text-xs font-bold font-mono transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.4)] cursor-pointer"
+                  className="px-4 py-2 bg-white hover:bg-zinc-200 rounded text-black text-xs font-bold font-mono transition-all flex items-center gap-2 shadow-sm cursor-pointer"
                 >
                   <span>📄</span> Download Resume (PDF)
                 </a>
                 <a
                   href="#contact"
-                  className="px-4 py-2 bg-slate-900/80 hover:bg-cyan-950/60 border border-cyan-800/60 hover:border-cyan-400 rounded text-cyan-300 text-xs font-semibold font-mono transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 hover:border-zinc-500 rounded text-zinc-200 text-xs font-semibold font-mono transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <span>✉️</span> Initiate Direct Protocol
                 </a>

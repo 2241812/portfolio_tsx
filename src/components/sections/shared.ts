@@ -106,22 +106,22 @@ export interface UnifiedProject {
   featured?: boolean;
 }
 
-// ── Language Colors (TUI Balanced) ──
+// ── Language Colors (Monochrome / Greyscale Balanced) ──
 export const langColors: Record<string, string> = {
-  TypeScript: '#3178c6',
-  JavaScript: '#eab308',
-  Python: '#3b82f6',
-  Go: '#06b6d4',
-  Rust: '#f97316',
-  Java: '#d97706',
-  'C++': '#ec4899',
-  C: '#64748b',
-  'C#': '#22c55e',
-  PHP: '#6366f1',
-  HTML: '#f43f5e',
-  CSS: '#8b5cf6',
-  Shell: '#10b981',
-  Dockerfile: '#0ea5e9',
+  TypeScript: '#ffffff',
+  JavaScript: '#e4e4e7',
+  Python: '#d4d4d8',
+  Go: '#ffffff',
+  Rust: '#a1a1aa',
+  Java: '#71717a',
+  'C++': '#f4f4f5',
+  C: '#a1a1aa',
+  'C#': '#e4e4e7',
+  PHP: '#71717a',
+  HTML: '#d4d4d8',
+  CSS: '#a1a1aa',
+  Shell: '#ffffff',
+  Dockerfile: '#e4e4e7',
 };
 
 // ── Skill-to-Project Mapping ──

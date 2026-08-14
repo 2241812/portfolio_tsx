@@ -155,20 +155,20 @@ export const CommandPalette = memo(function CommandPalette({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -10 }}
             transition={{ duration: 0.15 }}
-            className="relative w-full max-w-xl bg-[#090d16] border border-blue-900/60 rounded shadow-2xl overflow-hidden font-mono z-10"
+            className="relative w-full max-w-xl bg-[#101216] border border-zinc-800 rounded-xl shadow-2xl overflow-hidden font-mono z-10"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-3 py-2 bg-[#0c1220] border-b border-slate-800 text-xs text-slate-400">
+            <div className="flex items-center justify-between px-3.5 py-2.5 bg-[#14161b] border-b border-zinc-800 text-xs text-zinc-400">
               <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                <span className="text-slate-200">CLI COMMAND PALETTE</span>
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                <span className="text-zinc-200">CLI COMMAND PALETTE</span>
               </span>
               <span>[ESC] CLOSE</span>
             </div>
 
             {/* Input Line */}
-            <div className="flex items-center px-4 py-3 border-b border-slate-800 bg-[#06090e]">
-              <span className="text-blue-400 font-bold mr-2">:</span>
+            <div className="flex items-center px-4 py-3 border-b border-zinc-800 bg-[#0c0d10]">
+              <span className="text-zinc-400 font-bold mr-2">:</span>
               <input
                 ref={inputRef}
                 type="text"
@@ -179,14 +179,14 @@ export const CommandPalette = memo(function CommandPalette({
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="Type command or search (e.g. projects, skills, break)..."
-                className="w-full bg-transparent text-slate-100 placeholder:text-slate-600 text-sm focus:outline-none"
+                className="w-full bg-transparent text-zinc-100 placeholder:text-zinc-600 text-sm focus:outline-none"
               />
             </div>
 
             {/* Command Results List */}
-            <div className="max-h-72 overflow-y-auto p-1 divide-y divide-slate-900/50">
+            <div className="max-h-72 overflow-y-auto p-1 divide-y divide-zinc-900">
               {filteredCommands.length === 0 ? (
-                <div className="p-4 text-center text-xs text-slate-500">
+                <div className="p-4 text-center text-xs text-zinc-500">
                   No command match for &quot;{input}&quot;
                 </div>
               ) : (
@@ -197,20 +197,20 @@ export const CommandPalette = memo(function CommandPalette({
                       key={item.cmd}
                       onClick={() => item.action()}
                       onMouseEnter={() => setSelectedIndex(idx)}
-                      className={`w-full flex items-center justify-between px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
+                      className={`w-full flex items-center justify-between px-3.5 py-2 text-left text-xs transition-colors cursor-pointer ${
                         isSelected
-                          ? 'bg-blue-950/60 text-blue-200 border-l-2 border-blue-500'
-                          : 'text-slate-400 hover:bg-slate-900/60 hover:text-slate-200'
+                          ? 'bg-zinc-800 text-white border-l-2 border-white'
+                          : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className={`font-bold ${isSelected ? 'text-blue-400' : 'text-slate-300'}`}>
+                        <span className={`font-bold ${isSelected ? 'text-white' : 'text-zinc-300'}`}>
                           {item.cmd}
                         </span>
-                        <span className="text-slate-500 text-[11px] truncate">{item.desc}</span>
+                        <span className="text-zinc-500 text-[11px] truncate">{item.desc}</span>
                       </div>
                       {item.badge && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800/60 font-semibold">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700 font-semibold">
                           {item.badge}
                         </span>
                       )}
@@ -221,7 +221,7 @@ export const CommandPalette = memo(function CommandPalette({
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between px-3 py-1.5 bg-[#070a0f] border-t border-slate-800 text-[10px] text-slate-500">
+            <div className="flex items-center justify-between px-3.5 py-2 bg-[#0c0d10] border-t border-zinc-800 text-[10px] text-zinc-500">
               <span>[↑/↓] Navigate</span>
               <span>[Enter] Execute</span>
               <span>[Tab] Complete</span>

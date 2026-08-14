@@ -31,15 +31,15 @@ const GameModeDialog = memo(function GameModeDialog({
       onClick={onClose}
     >
       <motion.div
-        className="bg-neutral-900 border border-cyan-500 rounded-lg p-6 max-w-md w-full mx-4"
+        className="bg-[#121215] border border-zinc-800 rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Solo Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-neutral-800">
-          <button className="px-4 py-2 text-sm text-cyan-400 border-b-2 border-cyan-400 font-medium">
+        <div className="flex gap-2 mb-6 border-b border-zinc-800">
+          <button className="px-4 py-2 text-sm text-white border-b-2 border-white font-medium font-mono">
             Select Mode
           </button>
         </div>
@@ -53,9 +53,7 @@ const GameModeDialog = memo(function GameModeDialog({
             return (
               <motion.button
                 key={difficulty}
-                className={`w-full p-3 rounded-lg border-2 font-mono text-sm transition-all ${
-                  settings.borderColor
-                } hover:brightness-110`}
+                className="w-full p-3 rounded-lg border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 font-mono text-sm transition-all"
                 onClick={() => {
                   onSelectDifficulty(difficulty as GameDifficulty);
                   onClose();
@@ -65,16 +63,16 @@ const GameModeDialog = memo(function GameModeDialog({
               >
                 <div className="flex justify-between items-center">
                   <div>
-                    <div className="text-left font-bold text-neutral-100">{settings.label}</div>
-                    <div className="text-xs text-neutral-500 text-left">
+                    <div className="text-left font-bold text-zinc-100">{settings.label}</div>
+                    <div className="text-xs text-zinc-500 text-left">
                       Speed: {(settings.baseSpeed * 100).toFixed(0)}% | Multiplier: {settings.pointMultiplier}x
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className={`text-sm font-bold ${isNew ? 'text-neutral-600' : 'text-cyan-400'}`}>
+                    <div className={`text-sm font-bold ${isNew ? 'text-zinc-600' : 'text-white'}`}>
                       {bestScore || '-'}
                     </div>
-                    {isNew && <div className="text-[10px] text-neutral-600">Locked</div>}
+                    {isNew && <div className="text-[10px] text-zinc-600">Locked</div>}
                   </div>
                 </div>
               </motion.button>
@@ -83,47 +81,46 @@ const GameModeDialog = memo(function GameModeDialog({
         </div>
 
         {/* Quick Stats */}
-        <div className="bg-neutral-800/40 rounded-lg p-4 mb-6 border border-neutral-700">
-          <div className="text-xs text-neutral-500 font-mono mb-3">LIFETIME STATS</div>
-          <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="bg-zinc-900/40 rounded-lg p-4 mb-6 border border-zinc-800">
+          <div className="text-xs text-zinc-500 font-mono mb-3">LIFETIME STATS</div>
+          <div className="grid grid-cols-2 gap-4 text-sm font-mono">
             <div>
-              <div className="text-neutral-500">Games</div>
-              <div className="text-cyan-400 font-bold">{stats.totalGamesPlayed}</div>
+              <div className="text-zinc-500">Games</div>
+              <div className="text-white font-bold">{stats.totalGamesPlayed}</div>
             </div>
             <div>
-              <div className="text-neutral-500">Avg Score</div>
-              <div className="text-cyan-400 font-bold">{stats.averageScore}</div>
+              <div className="text-zinc-500">Avg Score</div>
+              <div className="text-white font-bold">{stats.averageScore}</div>
             </div>
             <div>
-              <div className="text-neutral-500">Total Points</div>
-              <div className="text-cyan-400 font-bold">{stats.totalPointsEarned}</div>
+              <div className="text-zinc-500">Total Points</div>
+              <div className="text-white font-bold">{stats.totalPointsEarned}</div>
             </div>
             <div>
-              <div className="text-neutral-500">Best Combo</div>
-              <div className="text-cyan-400 font-bold">{stats.highestCombo}x</div>
+              <div className="text-zinc-500">Best Combo</div>
+              <div className="text-white font-bold">{stats.highestCombo}x</div>
             </div>
           </div>
         </div>
 
         {/* Achievements Preview */}
         {achievements.length > 0 && (
-          <div className="bg-neutral-800/40 rounded-lg p-4 mb-6 border border-neutral-700">
-            <div className="text-xs text-neutral-500 font-mono mb-3">
+          <div className="bg-zinc-900/40 rounded-lg p-4 mb-6 border border-zinc-800">
+            <div className="text-xs text-zinc-500 font-mono mb-3">
               ACHIEVEMENTS ({achievements.length})
             </div>
             <div className="flex flex-wrap gap-2">
               {achievements.slice(0, 5).map((ach) => (
                 <div
                   key={ach}
-                  className="w-8 h-8 rounded-lg bg-neutral-700 flex items-center justify-center text-lg hover:bg-neutral-600 transition-colors"
+                  className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-sm text-white"
                   title={ach}
                 >
-                  {/* Achievement icons would go here */}
                   ✓
                 </div>
               ))}
               {achievements.length > 5 && (
-                <div className="w-8 h-8 rounded-lg bg-neutral-700 flex items-center justify-center text-xs font-bold text-cyan-400">
+                <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-white">
                   +{achievements.length - 5}
                 </div>
               )}
@@ -132,10 +129,10 @@ const GameModeDialog = memo(function GameModeDialog({
         )}
 
         {/* Controls */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 font-mono">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 rounded-lg border border-neutral-700 text-sm text-neutral-400 hover:text-neutral-200 transition-colors"
+            className="flex-1 px-4 py-2 rounded-lg border border-zinc-700 text-sm text-zinc-400 hover:text-white transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -144,18 +141,18 @@ const GameModeDialog = memo(function GameModeDialog({
               onSelectDifficulty(GameDifficulty.Medium);
               onClose();
             }}
-            className="flex-1 px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-sm font-bold text-white transition-colors"
+            className="flex-1 px-4 py-2 rounded-lg bg-white hover:bg-zinc-200 text-sm font-bold text-black transition-colors cursor-pointer"
           >
             Quick Start
           </button>
         </div>
 
         {/* Keyboard Hints */}
-        <div className="mt-4 pt-4 border-t border-neutral-800">
-          <div className="text-[10px] text-neutral-600 font-mono space-y-1">
-            <div>Press <span className="text-cyan-400">1-4</span> for difficulty</div>
-            <div>Press <span className="text-cyan-400">SPACE</span> to start</div>
-            <div>Press <span className="text-cyan-400">ESC</span> to quit</div>
+        <div className="mt-4 pt-4 border-t border-zinc-800">
+          <div className="text-[10px] text-zinc-500 font-mono space-y-1">
+            <div>Press <span className="text-zinc-300">1-4</span> for difficulty</div>
+            <div>Press <span className="text-zinc-300">SPACE</span> to start</div>
+            <div>Press <span className="text-zinc-300">ESC</span> to quit</div>
           </div>
         </div>
       </motion.div>

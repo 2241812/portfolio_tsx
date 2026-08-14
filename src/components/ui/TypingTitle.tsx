@@ -55,17 +55,17 @@ const TypingTitle: React.FC<TypingTitleProps> = ({
     <div className={`inline-block ${className}`}>
       <span 
         style={{ fontFamily: 'var(--font-rajdhani)' }}
-        className="text-base sm:text-lg md:text-2xl font-semibold text-cyan-400 uppercase"
+        className="text-base sm:text-lg md:text-2xl font-semibold text-zinc-200 uppercase"
       >
         Computer Science Student {' '}
-        <span className="text-cyan-400">|</span>
+        <span className="text-zinc-500">|</span>
         {' '}
         {displayedText}
         {displayedText.length > 0 && (
           <motion.span
             animate={{ opacity: [1, 0] }}
             transition={{ duration: 0.6, repeat: Infinity }}
-            className="ml-0.5 text-cyan-400"
+            className="ml-0.5 text-white"
           >
             |
           </motion.span>

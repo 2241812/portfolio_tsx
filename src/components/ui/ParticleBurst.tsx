@@ -14,13 +14,13 @@ interface Particle {
   rotSpeed: number;
 }
 
-const CYAN_SHADES = [
-  "#22d3ee",
-  "#06b6d4",
-  "#0891b2",
-  "#67e8f9",
-  "#a5f3fc",
+const MONOCHROME_SHADES = [
   "#ffffff",
+  "#f4f4f5",
+  "#e4e4e7",
+  "#d4d4d8",
+  "#a1a1aa",
+  "#71717a",
 ];
 
 export interface ParticleBurstRef {
@@ -119,7 +119,7 @@ const ParticleBurst = memo(
             life: 30 + Math.random() * 30,
             maxLife: 60,
             size: 3 + Math.random() * 4,
-            color: CYAN_SHADES[Math.floor(Math.random() * CYAN_SHADES.length)],
+            color: MONOCHROME_SHADES[Math.floor(Math.random() * MONOCHROME_SHADES.length)],
             rotation: Math.random() * Math.PI * 2,
             rotSpeed: (Math.random() - 0.5) * 0.3,
           });

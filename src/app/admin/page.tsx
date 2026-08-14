@@ -65,29 +65,29 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#06090e] text-slate-200 p-4 sm:p-8 font-mono">
+    <div className="min-h-screen bg-[#09090b] text-zinc-200 p-4 sm:p-8 font-mono">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header Breadcrumb */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3 text-xs">
+        <div className="flex items-center justify-between border-b border-zinc-800 pb-3 text-xs">
           <div className="flex items-center gap-2">
-            <Link href="/" className="text-blue-400 hover:text-blue-300 font-bold">
+            <Link href="/" className="text-zinc-300 hover:text-white font-bold">
               ← ~/portfolio
             </Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-slate-300">admin_config.sh</span>
+            <span className="text-zinc-600">/</span>
+            <span className="text-zinc-300">admin_config.sh</span>
           </div>
-          <span className="text-[10px] text-slate-500">TUI CMS UTILITY</span>
+          <span className="text-[10px] text-zinc-500">TUI CMS UTILITY</span>
         </div>
 
         <div>
-          <h1 className="text-xl font-bold text-slate-100 mb-1">Portfolio Content Configuration</h1>
-          <p className="text-xs text-slate-400">
+          <h1 className="text-xl font-bold text-zinc-100 mb-1">Portfolio Content Configuration</h1>
+          <p className="text-xs text-zinc-400">
             Edit content overrides stored in client localStorage. Persists until manually reset.
           </p>
         </div>
 
         {message && (
-          <div className="px-4 py-2 bg-blue-950/80 border border-blue-700/60 rounded text-xs text-blue-300">
+          <div className="px-4 py-2 bg-zinc-900 border border-zinc-700 rounded text-xs text-white">
             {message}
           </div>
         )}
@@ -100,8 +100,8 @@ export default function AdminPage() {
               onClick={() => setActiveSection(s)}
               className={`px-3 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer ${
                 activeSection === s
-                  ? 'bg-blue-950 text-blue-200 border border-blue-500 font-bold'
-                  : 'bg-slate-900 text-slate-400 hover:bg-slate-800 border border-slate-800'
+                  ? 'bg-white text-black font-bold'
+                  : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 border border-zinc-800'
               }`}
             >
               {s === 'personalInfo' ? 'Personal Info' : s === 'skills' ? 'Skills' : 'Education'}
@@ -110,11 +110,11 @@ export default function AdminPage() {
         </div>
 
         {/* Form Body */}
-        <div className="bg-[#090d16] rounded border border-slate-800 p-4 sm:p-6 space-y-4">
+        <div className="bg-[#121215] rounded-xl border border-zinc-800 p-4 sm:p-6 space-y-4">
           {activeSection === 'personalInfo' && (
             <div className="space-y-4">
               <Field
-                label="Name"
+                label="Full Name"
                 value={formData.personalInfo?.name ?? resumeData.personalInfo.name}
                 onChange={(v) => updatePersonalInfo('name', v)}
               />
@@ -201,16 +201,16 @@ export default function AdminPage() {
           )}
 
           {/* Action buttons */}
-          <div className="flex gap-3 pt-4 border-t border-slate-800">
+          <div className="flex gap-3 pt-4 border-t border-zinc-800">
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-blue-950 hover:bg-blue-900 border border-blue-700/60 rounded text-blue-200 text-xs font-bold transition-colors cursor-pointer"
+              className="px-4 py-2 bg-white hover:bg-zinc-200 rounded text-black text-xs font-bold transition-colors cursor-pointer"
             >
               [Ctrl+S] Save Overrides
             </button>
             <button
               onClick={handleReset}
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-400 text-xs transition-colors cursor-pointer"
+              className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded text-zinc-300 text-xs transition-colors cursor-pointer"
             >
               Reset to Defaults
             </button>
@@ -232,10 +232,10 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-xs font-mono text-slate-500 mb-1">{label}</label>
+      <label className="block text-xs font-mono text-zinc-500 mb-1">{label}</label>
       <input
         type="text"
-        className="w-full bg-[#06090e] border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 font-mono focus:border-blue-500 focus:outline-none"
+        className="w-full bg-[#0c0d10] border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-200 font-mono focus:border-zinc-500 focus:outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
@@ -254,9 +254,9 @@ function TextareaField({
 }) {
   return (
     <div>
-      <label className="block text-xs font-mono text-slate-500 mb-1">{label}</label>
+      <label className="block text-xs font-mono text-zinc-500 mb-1">{label}</label>
       <textarea
-        className="w-full bg-[#06090e] border border-slate-800 rounded px-3 py-2 text-xs text-slate-200 font-mono focus:border-blue-500 focus:outline-none"
+        className="w-full bg-[#0c0d10] border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-200 font-mono focus:border-zinc-500 focus:outline-none"
         rows={3}
         value={value}
         onChange={(e) => onChange(e.target.value)}

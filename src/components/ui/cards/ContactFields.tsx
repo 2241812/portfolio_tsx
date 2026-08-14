@@ -19,65 +19,35 @@ export const GlitchSocialLink = memo(function GlitchSocialLink({
   value: string;
   onClick?: () => void;
 }) {
-  const [isGlitching, setIsGlitching] = useState(false);
-
   return (
     <motion.a
       href={href}
       target="_blank"
       rel="noreferrer"
       onClick={onClick}
-      onHoverStart={() => setIsGlitching(true)}
-      onHoverEnd={() => setIsGlitching(false)}
-      whileHover={{ scale: 1.04, boxShadow: '0 0 30px rgba(34,211,238,0.2), inset 0 0 30px rgba(34,211,238,0.05)' }}
-      whileTap={{ scale: 0.97 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.2 }}
-      className="group relative flex items-center gap-4 p-5 rounded-xl bg-neutral-950/80 border border-cyan-900/30 hover:border-cyan-400/60 cursor-pointer overflow-hidden no-underline focus:outline-none focus:ring-2 focus:ring-cyan-400"
+      className="group relative flex items-center gap-4 p-5 rounded-xl bg-zinc-950/80 border border-zinc-800 hover:border-zinc-600 cursor-pointer overflow-hidden no-underline focus:outline-none focus:ring-2 focus:ring-zinc-400"
     >
-      {/* Matrix rain overlay on hover */}
-      <div
-        className="absolute inset-0 overflow-hidden rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        aria-hidden="true"
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-cyan-500/5" />
-        {isGlitching && (
-          <>
-            <motion.div
-              className="absolute top-0 left-0 w-full h-full bg-cyan-400/5"
-              animate={{ y: [0, -10, 5, 0] }}
-              transition={{ duration: 0.2, repeat: Infinity }}
-            />
-            <motion.div
-              className="absolute top-0 left-0 w-full h-full bg-cyan-400/3"
-              animate={{ y: [0, 8, -3, 0] }}
-              transition={{ duration: 0.15, repeat: Infinity }}
-            />
-          </>
-        )}
-      </div>
-
       {/* Icon Container */}
-      <div className="relative flex-shrink-0 w-12 h-12 rounded-lg bg-cyan-900/30 border border-cyan-800/40 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-800/50 group-hover:text-cyan-300 group-hover:shadow-[0_0_16px_rgba(34,211,238,0.3)] transition-all duration-300">
+      <div className="relative flex-shrink-0 w-12 h-12 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-300 group-hover:bg-zinc-800 group-hover:text-white transition-all duration-300">
         {icon}
       </div>
 
       {/* Text Content */}
       <div className="relative text-left">
-        <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest block">
+        <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block">
           {label}
         </span>
-        <motion.span
-          className="text-sm font-semibold text-neutral-200 group-hover:text-cyan-300 transition-colors duration-300 block"
-          animate={isGlitching ? { x: [0, -2, 2, -1, 0] } : { x: 0 }}
-          transition={{ duration: 0.3 }}
-        >
+        <span className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors duration-300 block">
           {value}
-        </motion.span>
+        </span>
       </div>
 
       {/* Arrow Icon */}
       <svg
-        className="relative ml-auto w-4 h-4 text-neutral-700 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all duration-300 flex-shrink-0"
+        className="relative ml-auto w-4 h-4 text-zinc-600 group-hover:text-white group-hover:translate-x-1 transition-all duration-300 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -128,16 +98,16 @@ export const CopyableField = memo(function CopyableField({
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
-      className={`group relative flex items-center gap-4 p-5 rounded-xl bg-neutral-950/80 border transition-all duration-300 cursor-pointer overflow-hidden ${
-        copied ? 'border-green-400/60 shadow-[0_0_20px_rgba(34,197,94,0.2)]' : 'border-cyan-900/30 hover:border-cyan-400/60'
+      className={`group relative flex items-center gap-4 p-5 rounded-xl bg-zinc-950/80 border transition-all duration-300 cursor-pointer overflow-hidden ${
+        copied ? 'border-white shadow-lg' : 'border-zinc-800 hover:border-zinc-600'
       }`}
     >
       {/* Icon Container */}
       <div
         className={`relative flex-shrink-0 w-12 h-12 rounded-lg border flex items-center justify-center transition-all duration-300 ${
           copied
-            ? 'bg-green-900/30 border-green-800/40 text-green-400'
-            : 'bg-cyan-900/30 border-cyan-800/40 text-cyan-400 group-hover:bg-cyan-800/50 group-hover:text-cyan-300'
+            ? 'bg-zinc-800 border-zinc-700 text-white'
+            : 'bg-zinc-900 border-zinc-800 text-zinc-400 group-hover:bg-zinc-800 group-hover:text-white'
         }`}
       >
         {icon}
@@ -145,12 +115,12 @@ export const CopyableField = memo(function CopyableField({
 
       {/* Text Content */}
       <div className="relative text-left flex-1 min-w-0">
-        <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest block">
+        <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block">
           {label}
         </span>
         <span
           className={`text-sm font-semibold transition-colors duration-300 block truncate ${
-            copied ? 'text-green-400' : 'text-neutral-200 group-hover:text-cyan-300'
+            copied ? 'text-white' : 'text-zinc-200 group-hover:text-white'
           }`}
         >
           {copied ? 'COPIED!' : value}
@@ -163,10 +133,10 @@ export const CopyableField = memo(function CopyableField({
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         aria-label={copied ? 'Copied' : `Copy ${label}`}
-        className={`relative flex-shrink-0 w-8 h-8 rounded-md border flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 ${
+        className={`relative flex-shrink-0 w-8 h-8 rounded-md border flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-zinc-400 ${
           copied
-            ? 'border-green-400/40 text-green-400 bg-green-900/20'
-            : 'border-cyan-800/40 text-cyan-600 hover:text-cyan-400 hover:border-cyan-600/60 hover:bg-cyan-900/20'
+            ? 'border-zinc-600 text-white bg-zinc-800'
+            : 'border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600 hover:bg-zinc-800'
         }`}
       >
         {copied ? (

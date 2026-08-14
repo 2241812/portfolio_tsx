@@ -15,33 +15,33 @@ export const DIFFICULTY_SETTINGS = {
     baseSpeed: 0.1,
     pointMultiplier: 1,
     label: 'Easy',
-    color: 'from-blue-700 to-blue-500',
-    borderColor: 'border-blue-500',
-    glowColor: 'shadow-[0_0_10px_rgba(59,130,246,0.3)]',
+    color: 'from-zinc-800 to-zinc-600',
+    borderColor: 'border-zinc-700',
+    glowColor: 'shadow-[0_0_10px_rgba(255,255,255,0.05)]',
   },
   [GameDifficulty.Medium]: {
     baseSpeed: 0.3,
     pointMultiplier: 1.5,
     label: 'Medium',
-    color: 'from-blue-600 to-indigo-500',
-    borderColor: 'border-blue-400',
-    glowColor: 'shadow-[0_0_10px_rgba(59,130,246,0.4)]',
+    color: 'from-zinc-700 to-zinc-500',
+    borderColor: 'border-zinc-500',
+    glowColor: 'shadow-[0_0_10px_rgba(255,255,255,0.1)]',
   },
   [GameDifficulty.Hard]: {
     baseSpeed: 0.6,
     pointMultiplier: 2,
     label: 'Hard',
-    color: 'from-indigo-600 to-purple-500',
-    borderColor: 'border-indigo-400',
-    glowColor: 'shadow-[0_0_10px_rgba(99,102,241,0.4)]',
+    color: 'from-zinc-600 to-zinc-400',
+    borderColor: 'border-zinc-400',
+    glowColor: 'shadow-[0_0_10px_rgba(255,255,255,0.15)]',
   },
   [GameDifficulty.Insane]: {
     baseSpeed: 1.2,
     pointMultiplier: 3,
     label: 'Insane',
-    color: 'from-red-600 to-amber-500',
-    borderColor: 'border-red-500',
-    glowColor: 'shadow-[0_0_12px_rgba(239,68,68,0.5)]',
+    color: 'from-zinc-400 to-zinc-100',
+    borderColor: 'border-zinc-200',
+    glowColor: 'shadow-[0_0_12px_rgba(255,255,255,0.25)]',
   },
 };
 
@@ -62,18 +62,26 @@ export enum Achievement {
   ModeMastery = 'mode-mastery',
 }
 
-export const ACHIEVEMENTS = {
+export const ACHIEVEMENTS_CONFIG: Record<
+  Achievement,
+  {
+    label: string;
+    description: string;
+    icon: string;
+    condition: (...args: any[]) => boolean;
+  }
+> = {
   [Achievement.FirstBlood]: {
     label: 'First Blood',
-    description: 'Score 10 points in a single game',
-    icon: '🎯',
-    condition: (score: number) => score >= 10,
+    description: 'Break your first commit cell',
+    icon: '⚡',
+    condition: (cellsBroken: number) => cellsBroken >= 1,
   },
   [Achievement.ComboMaster]: {
     label: 'Combo Master',
-    description: 'Reach a 50x combo multiplier',
-    icon: '⚡',
-    condition: (score: number, combo: number) => combo >= 50,
+    description: 'Achieve a 10x combo streak',
+    icon: '🔥',
+    condition: (combo: number) => combo >= 10,
   },
   [Achievement.SpeedRunner]: {
     label: 'Speed Runner',
@@ -114,18 +122,20 @@ export const ACHIEVEMENTS = {
   },
 };
 
+export const ACHIEVEMENTS = ACHIEVEMENTS_CONFIG;
+
 export const LEVEL_COLORS = [
-  'bg-slate-900/60',
-  'bg-blue-950',
-  'bg-blue-800',
-  'bg-blue-600',
-  'bg-blue-400',
+  'bg-zinc-900/60',
+  'bg-zinc-800',
+  'bg-zinc-600',
+  'bg-zinc-400',
+  'bg-zinc-100',
 ];
 
 export const LEVEL_GLOWS = [
   '',
-  'shadow-[0_0_3px_rgba(59,130,246,0.1)]',
-  'shadow-[0_0_5px_rgba(59,130,246,0.2)]',
-  'shadow-[0_0_8px_rgba(59,130,246,0.35)]',
-  'shadow-[0_0_10px_rgba(59,130,246,0.5)]',
+  'shadow-[0_0_3px_rgba(255,255,255,0.05)]',
+  'shadow-[0_0_5px_rgba(255,255,255,0.1)]',
+  'shadow-[0_0_8px_rgba(255,255,255,0.2)]',
+  'shadow-[0_0_10px_rgba(255,255,255,0.3)]',
 ];

@@ -68,13 +68,13 @@ export const StatCard = memo(function StatCard({
       viewport={{ once: true }}
       whileHover={{ scale: 1.05, y: -5 }}
       onClick={onClick}
-      className="p-3 sm:p-5 md:p-6 rounded-lg bg-neutral-900/60 border border-cyan-900/30 hover:border-cyan-400/60 transition-all duration-300 text-center cursor-pointer"
+      className="p-3 sm:p-5 md:p-6 rounded-xl bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 transition-all duration-300 text-center cursor-pointer"
     >
-      <div className="flex justify-center mb-2 sm:mb-3 text-cyan-400">{icon}</div>
-      <div className="text-xl sm:text-2xl font-bold text-cyan-400 font-mono mb-1">
+      <div className="flex justify-center mb-2 sm:mb-3 text-zinc-300">{icon}</div>
+      <div className="text-xl sm:text-2xl font-bold text-white font-mono mb-1">
         <AnimatedCounter value={value} suffix={suffix} />
       </div>
-      <div className="text-[10px] sm:text-xs text-neutral-500 font-mono uppercase tracking-widest">
+      <div className="text-[10px] sm:text-xs text-zinc-500 font-mono uppercase tracking-widest">
         {label}
       </div>
     </motion.div>
@@ -102,10 +102,10 @@ export const AchievementBadge = memo(function AchievementBadge({
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.5 }}
       viewport={{ once: true, amount: 0.3 }}
-      whileHover={{ scale: 1.02, x: 10 }}
-      className="p-4 rounded-xl bg-neutral-900/60 border border-cyan-900/30 hover:border-cyan-400/60 hover:bg-neutral-800/80 transition-all duration-300 group cursor-pointer flex items-center gap-4"
+      whileHover={{ scale: 1.02, x: 6 }}
+      className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80 transition-all duration-300 group cursor-pointer flex items-center gap-4"
     >
-      <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-cyan-900/30 flex items-center justify-center text-2xl border border-cyan-800/40 group-hover:bg-cyan-800/50 group-hover:scale-110 transition-transform duration-300">
+      <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-zinc-800 flex items-center justify-center text-2xl border border-zinc-700 group-hover:bg-zinc-700 group-hover:scale-105 transition-transform duration-300">
         <motion.div
           animate={{ rotate: [0, -10, 10, -10, 0] }}
           transition={{ duration: 0.5, delay: delay + 0.5 }}
@@ -114,8 +114,8 @@ export const AchievementBadge = memo(function AchievementBadge({
         </motion.div>
       </div>
       <div>
-        <h4 className="text-sm font-bold text-neutral-200 group-hover:text-cyan-300 transition-colors duration-300 mb-1">{title}</h4>
-        <p className="text-xs text-neutral-500 font-mono leading-relaxed">{description}</p>
+        <h4 className="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors duration-300 mb-1">{title}</h4>
+        <p className="text-xs text-zinc-500 font-mono leading-relaxed">{description}</p>
       </div>
     </motion.div>
   );
@@ -142,12 +142,12 @@ export const TechStackItem = memo(function TechStackItem({
       whileInView={{ opacity: 1, scale: 1 }}
       transition={{ delay, duration: 0.4 }}
       viewport={{ once: true }}
-      whileHover={{ scale: 1.1, boxShadow: '0 0 20px rgba(34,211,238,0.2)' }}
+      whileHover={{ scale: 1.05 }}
       onClick={onClick}
-      className="p-3 rounded-lg bg-gradient-to-br from-cyan-900/20 to-neutral-900/40 border border-cyan-900/30 hover:border-cyan-400/60 transition-all duration-300 text-center cursor-pointer"
+      className="p-3 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 transition-all duration-300 text-center cursor-pointer"
     >
-      <div className="text-lg font-bold text-cyan-400 font-mono">{count}</div>
-      <div className="text-xs text-neutral-400 uppercase tracking-widest font-mono">
+      <div className="text-lg font-bold text-white font-mono">{count}</div>
+      <div className="text-xs text-zinc-400 uppercase tracking-widest font-mono">
         {name}
       </div>
     </motion.div>

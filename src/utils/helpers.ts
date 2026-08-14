@@ -123,10 +123,10 @@ export function calculateWPM(chars: number, seconds: number): number {
 }
 
 export function percentageColor(percentage: number): string {
-  if (percentage >= 95) return '#10b981'; // green
-  if (percentage >= 85) return '#06b6d4'; // cyan
-  if (percentage >= 70) return '#eab308'; // yellow
-  return '#ef4444'; // red
+  if (percentage >= 95) return '#ffffff'; // pure white
+  if (percentage >= 85) return '#e4e4e7'; // light zinc
+  if (percentage >= 70) return '#a1a1aa'; // medium zinc
+  return '#71717a'; // dark zinc
 }
 
 // ==================== Array Utilities ====================

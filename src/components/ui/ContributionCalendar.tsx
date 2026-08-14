@@ -282,10 +282,10 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
   return (
     <div ref={sectionRef} className="w-full">
       {loading && !isInView ? (
-        <div className="w-full h-32 bg-neutral-900/50 rounded-lg" />
+        <div className="w-full h-32 bg-zinc-900/50 rounded-lg" />
       ) : loading ? (
-        <div className="w-full h-32 bg-neutral-900/50 rounded-lg animate-pulse flex items-center justify-center">
-          <svg className="w-6 h-6 text-cyan-900 animate-spin" fill="none" viewBox="0 0 24 24">
+        <div className="w-full h-32 bg-zinc-900/50 rounded-lg animate-pulse flex items-center justify-center">
+          <svg className="w-6 h-6 text-zinc-700 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
@@ -296,14 +296,14 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
           <div className="flex items-center justify-between mb-3 gap-4">
             <div className="flex items-center gap-3 min-w-0">
               {!gameMode && (
-                <span className="text-xs text-neutral-500 font-mono truncate">
+                <span className="text-xs text-zinc-500 font-mono truncate">
                   {totalContributions} contributions
                 </span>
               )}
               {gameMode && (
                 <div className="flex items-center gap-3">
                   <motion.span
-                    className="text-sm font-bold text-cyan-400 whitespace-nowrap"
+                    className="text-sm font-bold text-white whitespace-nowrap"
                     animate={{ scale: [1, 1.05, 1] }}
                     transition={{ duration: 0.5, repeat: combo > 0 ? Infinity : 0 }}
                     style={{ fontFamily: 'var(--font-orbitron)' }}
@@ -312,7 +312,7 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
                   </motion.span>
                   {combo > 2 && (
                     <motion.span
-                      className="text-[10px] font-mono text-orange-400 whitespace-nowrap"
+                      className="text-[10px] font-mono text-zinc-300 whitespace-nowrap font-bold"
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
                       key={combo}
@@ -320,15 +320,12 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
                       {combo}x
                     </motion.span>
                   )}
-                  <span className="text-[10px] text-neutral-600 font-mono whitespace-nowrap">
+                  <span className="text-[10px] text-zinc-600 font-mono whitespace-nowrap">
                     {gameSpeed.toFixed(1)}x
                   </span>
                 </div>
               )}
             </div>
-            
-            {/* Difficulty indicator + mode button */}
-            {/* Button removed - game is controlled via "// break" in GitHubStats */}
           </div>
 
           {/* Grid container: holds both the grid and the right-aligned controls */}
@@ -336,13 +333,13 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
             {/* Right-aligned controls: progress bar only (button moved to GitHubStats) */}
             {gameMode && (
               <div className="absolute -right-1 top-0 flex items-center gap-2 z-10">
-                <div className="w-16 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+                <div className="w-16 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 rounded-full"
+                    className="h-full bg-white rounded-full"
                     style={{ width: `${Math.min((scrollOffset / totalWidth) * 100, 100)}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-neutral-600 font-mono">
+                <span className="text-[10px] text-zinc-600 font-mono">
                   {brokenCells.size}
                 </span>
               </div>
@@ -350,11 +347,11 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
 
             {/* Legend - moved to bottom-left with padding */}
             <div className="absolute -left-4 -bottom-6 flex items-center gap-1.5 z-10">
-              <span className="text-[10px] text-neutral-600 font-mono">Less</span>
+              <span className="text-[10px] text-zinc-600 font-mono">Less</span>
               {LEVEL_COLORS.map((color, i) => (
                 <div key={i} className={`w-[11px] h-[11px] rounded-sm ${color} ${LEVEL_GLOWS[i]}`} />
               ))}
-              <span className="text-[10px] text-neutral-600 font-mono">More</span>
+              <span className="text-[10px] text-zinc-600 font-mono">More</span>
             </div>
 
             {/* Contribution grid with scrolling */}
@@ -365,7 +362,7 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
             >
               {/* Scroll indicator line */}
               {gameMode && !gameOver && (
-                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-cyan-400 via-cyan-500 to-cyan-400 z-10 shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
+                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white z-10 shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
               )}
 
               <motion.div
@@ -414,7 +411,7 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
                   >
                     {/* Points popup */}
                     <motion.div
-                      className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-cyan-400 whitespace-nowrap"
+                      className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white whitespace-nowrap font-mono"
                       initial={{ opacity: 1, y: 0 }}
                       animate={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.6 }}
@@ -425,7 +422,7 @@ const ContributionCalendar = memo(forwardRef(function ContributionCalendar({ use
                     {[...Array(6)].map((_, i) => (
                       <motion.div
                         key={i}
-                        className="absolute w-1.5 h-1.5 rounded-full bg-cyan-400"
+                        className="absolute w-1.5 h-1.5 rounded-full bg-white"
                         initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
                         animate={{
                           x: (Math.random() - 0.5) * 30,

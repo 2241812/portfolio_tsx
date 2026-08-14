@@ -85,7 +85,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
             key="loading-top"
             initial={{ y: 0, opacity: 1 }}
             exit={{ y: '-100%', opacity: 0, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
-            className="absolute top-0 left-0 w-full h-[15%] bg-gradient-to-b from-[#06090e] via-[#06090e] to-transparent z-10 flex items-center justify-center"
+            className="absolute top-0 left-0 w-full h-[15%] bg-gradient-to-b from-[#09090b] via-[#09090b] to-transparent z-10 flex items-center justify-center"
           >
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -93,7 +93,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
               transition={{ delay: 0.2, duration: 0.4 }}
               className="text-center"
             >
-              <div className="font-mono text-xs tracking-[0.3em] text-blue-400 uppercase mb-1">
+              <div className="font-mono text-xs tracking-[0.3em] text-zinc-300 uppercase mb-1">
                 SYSTEM BOOT // POSIX ENVIRONMENT
               </div>
             </motion.div>
@@ -103,26 +103,26 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
             key="loading-bottom"
             initial={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
-            className="absolute bottom-0 left-0 w-full h-[25%] bg-gradient-to-t from-[#06090e] via-[#06090e] to-transparent z-10 flex flex-col items-center justify-center pb-8"
+            className="absolute bottom-0 left-0 w-full h-[25%] bg-gradient-to-t from-[#09090b] via-[#09090b] to-transparent z-10 flex flex-col items-center justify-center pb-8"
           >
             <div className="w-64 max-w-xs space-y-2">
-              <div className="flex justify-between text-[11px] text-slate-400">
+              <div className="flex justify-between text-[11px] text-zinc-400 font-mono">
                 <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                   <span>INITIALIZING TUI</span>
                 </span>
-                <span className="text-blue-400 font-bold">{Math.round(loadProgress)}%</span>
+                <span className="text-white font-bold">{Math.round(loadProgress)}%</span>
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full h-1 bg-slate-900 border border-slate-800 rounded overflow-hidden">
+              <div className="w-full h-1 bg-zinc-900 border border-zinc-800 rounded overflow-hidden">
                 <motion.div
-                  className="h-full bg-blue-500 rounded"
+                  className="h-full bg-white rounded"
                   style={{ width: `${loadProgress}%` }}
                 />
               </div>
 
-              <div className="text-[10px] text-slate-600 text-center">
+              <div className="text-[10px] text-zinc-600 font-mono text-center">
                 Press [:] or [?] anytime for command mode
               </div>
             </div>

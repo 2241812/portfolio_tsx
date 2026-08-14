@@ -26,8 +26,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#040711] text-slate-200 font-mono relative selection:bg-cyan-900 selection:text-cyan-100 overflow-x-hidden cyber-grid-pattern">
-      {/* Ambient Cyber Aurora Glow */}
+    <div className="min-h-screen bg-[#09090b] text-zinc-200 font-mono relative selection:bg-zinc-800 selection:text-white overflow-x-hidden cyber-grid-pattern">
+      {/* Ambient Monochrome Glow */}
       <div className="cyber-ambient-aurora" aria-hidden="true" />
 
       {/* Boot Loading Screen */}

@@ -148,7 +148,7 @@ const TopBar = memo(function TopBar({
             {/* Mobile Hamburger Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-blue-400 hover:text-blue-300 focus:outline-none"
+              className="md:hidden px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white focus:outline-none cursor-pointer"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? '[X]' : '[MENU]'}
@@ -158,34 +158,34 @@ const TopBar = memo(function TopBar({
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#090d16] border-b border-slate-800 px-4 py-4 space-y-2 text-xs">
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2">
+          <div className="md:hidden bg-[#101216] border-b border-zinc-800 px-4 py-4 space-y-2 text-xs">
+            <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">
               SECTIONS
             </div>
             {TUI_NAV_ITEMS.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center justify-between p-2 rounded text-left ${
+                className={`w-full flex items-center justify-between p-2 rounded text-left cursor-pointer ${
                   activeSection === item.id
-                    ? 'bg-blue-950/80 text-blue-300 border border-blue-700/60 font-bold'
-                    : 'text-slate-300 hover:bg-slate-900/60'
+                    ? 'bg-zinc-800 text-white border border-zinc-700 font-bold'
+                    : 'text-zinc-300 hover:bg-zinc-900'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-500">[{item.key}]</span>
+                  <span className="text-zinc-500">[{item.key}]</span>
                   <span>{item.label}</span>
                 </div>
-                <span className="text-[10px] text-slate-500">{item.desc}</span>
+                <span className="text-[10px] text-zinc-500">{item.desc}</span>
               </button>
             ))}
-            <div className="pt-2 border-t border-slate-800 flex gap-2">
+            <div className="pt-2 border-t border-zinc-800 flex gap-2">
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
                   router.push('/break');
                 }}
-                className="flex-1 py-1.5 px-2 text-center rounded bg-slate-900 border border-slate-800 text-blue-300"
+                className="flex-1 py-1.5 px-2 text-center rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white cursor-pointer"
               >
                 ⌨️ Typing Game
               </button>
@@ -194,7 +194,7 @@ const TopBar = memo(function TopBar({
                   setMobileMenuOpen(false);
                   onOpenCommand?.();
                 }}
-                className="flex-1 py-1.5 px-2 text-center rounded bg-slate-900 border border-slate-800 text-slate-300"
+                className="flex-1 py-1.5 px-2 text-center rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white cursor-pointer"
               >
                 : Commands
               </button>

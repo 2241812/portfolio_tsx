@@ -71,14 +71,14 @@ export const ANIMATION_CONFIG = {
 // ==================== Color Configuration ====================
 export const COLOR_CONFIG = {
   // Primary colors
-  PRIMARY: '#06b6d4', // cyan
-  PRIMARY_DARK: '#0891b2',
-  PRIMARY_LIGHT: '#22d3ee',
+  PRIMARY: '#ffffff', // pure white
+  PRIMARY_DARK: '#a1a1aa',
+  PRIMARY_LIGHT: '#f4f4f5',
   
   // Background colors
-  BACKGROUND: '#09090b', // neutral-950
-  BACKGROUND_SECONDARY: '#18181b', // neutral-900
-  BACKGROUND_TERTIARY: '#27272a', // neutral-800
+  BACKGROUND: '#09090b', // carbon black
+  BACKGROUND_SECONDARY: '#18181b', // dark zinc
+  BACKGROUND_TERTIARY: '#27272a', // zinc border
   
   // Text colors
   TEXT_PRIMARY: '#f5f5f5', // neutral-100
@@ -86,16 +86,16 @@ export const COLOR_CONFIG = {
   TEXT_TERTIARY: '#71717a', // neutral-500
   
   // Status colors
-  SUCCESS: '#10b981',
-  WARNING: '#f59e0b',
-  ERROR: '#ef4444',
-  INFO: '#3b82f6',
+  SUCCESS: '#ffffff',
+  WARNING: '#d4d4d8',
+  ERROR: '#f43f5e',
+  INFO: '#a1a1aa',
   
   // Accent colors
-  ACCENT_CYAN: '#06b6d4',
-  ACCENT_GREEN: '#10b981',
-  ACCENT_YELLOW: '#eab308',
-  ACCENT_RED: '#ef4444',
+  ACCENT_CYAN: '#d4d4d8',
+  ACCENT_GREEN: '#ffffff',
+  ACCENT_YELLOW: '#a1a1aa',
+  ACCENT_RED: '#f43f5e',
 };
 
 // ==================== Keyboard Shortcuts ====================

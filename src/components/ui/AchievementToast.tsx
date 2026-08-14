@@ -100,14 +100,14 @@ const AutoDismissToast = memo(function AutoDismissToast({
         transition: { delay: idx * 0.15 },
       }}
       exit={{ opacity: 0, x: 100, transition: { duration: 0.2 } }}
-      className="bg-gradient-to-r from-purple-900/90 to-cyan-900/90 border border-purple-500 rounded-lg px-4 py-3 backdrop-blur-md shadow-lg cursor-pointer"
+      className="bg-[#18181c]/95 border border-zinc-700 rounded-xl px-4 py-3 backdrop-blur-md shadow-2xl cursor-pointer"
       onClick={onDismiss}
     >
       <div className="flex items-center gap-3">
         <div className="text-2xl">{data.icon}</div>
         <div>
-          <div className="text-sm font-bold text-cyan-400">{data.label}</div>
-          <div className="text-xs text-neutral-400">{data.description}</div>
+          <div className="text-sm font-bold text-white font-mono">{data.label}</div>
+          <div className="text-xs text-zinc-400 font-mono">{data.description}</div>
         </div>
       </div>
     </motion.div>

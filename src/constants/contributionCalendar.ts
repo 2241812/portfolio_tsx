@@ -9,19 +9,19 @@ export const CONTRIBUTION_CONFIG = {
 } as const;
 
 export const LEVEL_COLORS = [
-  'bg-neutral-800/50',
-  'bg-cyan-900/60',
-  'bg-cyan-700/70',
-  'bg-cyan-500/80',
-  'bg-cyan-400',
+  'bg-zinc-900/60',
+  'bg-zinc-800',
+  'bg-zinc-600',
+  'bg-zinc-400',
+  'bg-zinc-100',
 ] as const;
 
 export const LEVEL_GLOWS = [
   '',
-  'shadow-[0_0_3px_rgba(34,211,238,0.1)]',
-  'shadow-[0_0_5px_rgba(34,211,238,0.2)]',
-  'shadow-[0_0_8px_rgba(34,211,238,0.3)]',
-  'shadow-[0_0_12px_rgba(34,211,238,0.5)]',
+  'shadow-[0_0_3px_rgba(255,255,255,0.05)]',
+  'shadow-[0_0_5px_rgba(255,255,255,0.1)]',
+  'shadow-[0_0_8px_rgba(255,255,255,0.2)]',
+  'shadow-[0_0_10px_rgba(255,255,255,0.3)]',
 ] as const;
 
 export const CELL_CLASSES = {

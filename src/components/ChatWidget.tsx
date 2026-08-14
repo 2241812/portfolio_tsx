@@ -142,12 +142,12 @@ const ChatWidget = memo(function ChatWidget({ isOpen: initialOpen = false, onClo
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 px-3.5 py-2 rounded bg-[#090d16] border border-blue-600/70 text-blue-300 text-xs font-mono font-bold shadow-xl flex items-center gap-2 hover:bg-blue-950 transition-colors z-40 cursor-pointer"
+            className="fixed bottom-6 right-6 px-3.5 py-2 rounded-lg bg-[#121215] border border-zinc-700 text-zinc-200 text-xs font-mono font-bold shadow-xl flex items-center gap-2 hover:bg-zinc-800 hover:text-white transition-colors z-40 cursor-pointer"
             aria-label="Open AI Assistant terminal"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
             <span>:chat</span>
-            <kbd className="text-[10px] text-slate-500 font-normal">[AI]</kbd>
+            <kbd className="text-[10px] text-zinc-500 font-normal">[AI]</kbd>
           </motion.button>
         )}
       </AnimatePresence>
@@ -160,25 +160,25 @@ const ChatWidget = memo(function ChatWidget({ isOpen: initialOpen = false, onClo
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.15 }}
-            className="fixed bottom-6 right-4 sm:right-6 w-[420px] max-w-[calc(100vw-32px)] h-[540px] bg-[#090d16]/95 backdrop-blur-xl border border-blue-900/60 rounded shadow-2xl flex flex-col z-50 overflow-hidden font-mono"
+            className="fixed bottom-6 right-4 sm:right-6 w-[420px] max-w-[calc(100vw-32px)] h-[540px] bg-[#101216]/95 backdrop-blur-xl border border-zinc-800 rounded-xl shadow-2xl flex flex-col z-50 overflow-hidden font-mono"
           >
             {/* Window Header */}
-            <div className="px-3.5 py-2 bg-[#0c1220] border-b border-slate-800 flex items-center justify-between text-xs">
+            <div className="px-3.5 py-2.5 bg-[#14161b] border-b border-zinc-800 flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-blue-500" />
-                <span className="font-bold text-slate-200">narciso-ai:~$ (v2.4)</span>
+                <span className="w-2 h-2 rounded-full bg-zinc-300" />
+                <span className="font-bold text-zinc-100">narciso-ai:~$</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleReset}
-                  className="text-[10px] text-slate-500 hover:text-slate-300 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800"
+                  className="text-[10px] text-zinc-400 hover:text-white px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700 cursor-pointer"
                   title="Clear conversation"
                 >
                   clear
                 </button>
                 <button
                   onClick={handleClose}
-                  className="text-slate-400 hover:text-slate-200 text-xs px-1"
+                  className="text-zinc-400 hover:text-white text-xs px-1 cursor-pointer"
                   aria-label="Close terminal"
                 >
                   [✕]
@@ -187,12 +187,12 @@ const ChatWidget = memo(function ChatWidget({ isOpen: initialOpen = false, onClo
             </div>
 
             {/* Quick Prompt Chips */}
-            <div className="px-3 py-1.5 bg-[#06090e] border-b border-slate-900 flex gap-1.5 overflow-x-auto thin-scrollbar">
+            <div className="px-3 py-2 bg-[#0c0d10] border-b border-zinc-900 flex gap-1.5 overflow-x-auto thin-scrollbar">
               {QUICK_PROMPTS.map((q) => (
                 <button
                   key={q}
                   onClick={() => sendQuery(q)}
-                  className="px-2 py-0.5 rounded bg-slate-900/80 hover:bg-blue-950 text-slate-400 hover:text-blue-300 border border-slate-800 hover:border-blue-700/60 text-[10px] whitespace-nowrap cursor-pointer transition-colors"
+                  className="px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-600 text-[10px] whitespace-nowrap cursor-pointer transition-colors"
                 >
                   {q}
                 </button>
@@ -208,14 +208,14 @@ const ChatWidget = memo(function ChatWidget({ isOpen: initialOpen = false, onClo
                     message.role === 'user' ? 'items-end' : 'items-start'
                   }`}
                 >
-                  <div className="text-[10px] text-slate-500 mb-0.5">
+                  <div className="text-[10px] text-zinc-500 mb-0.5">
                     {message.role === 'user' ? 'you@client' : 'narciso-ai'}
                   </div>
                   <div
-                    className={`px-3 py-2 rounded text-xs leading-relaxed max-w-[90%] ${
+                    className={`px-3 py-2 rounded-lg text-xs leading-relaxed max-w-[90%] ${
                       message.role === 'user'
-                        ? 'bg-blue-950 text-blue-200 border border-blue-700/60'
-                        : 'bg-[#06090e] text-slate-300 border border-slate-800/90'
+                        ? 'bg-zinc-800 text-zinc-100 border border-zinc-700'
+                        : 'bg-[#0c0d10] text-zinc-300 border border-zinc-800'
                     }`}
                   >
                     {message.content}
@@ -224,8 +224,8 @@ const ChatWidget = memo(function ChatWidget({ isOpen: initialOpen = false, onClo
               ))}
 
               {isLoading && (
-                <div className="flex items-center gap-2 text-xs text-blue-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                <div className="flex items-center gap-2 text-xs text-zinc-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                   <span>Processing query stream...</span>
                 </div>
               )}
@@ -234,8 +234,8 @@ const ChatWidget = memo(function ChatWidget({ isOpen: initialOpen = false, onClo
             </div>
 
             {/* Input Line */}
-            <div className="p-3 bg-[#0c1220] border-t border-slate-800 flex gap-2 items-center">
-              <span className="text-blue-400 font-bold">$</span>
+            <div className="p-3 bg-[#14161b] border-t border-zinc-800 flex gap-2 items-center">
+              <span className="text-zinc-400 font-bold">$</span>
               <input
                 ref={inputRef}
                 type="text"
@@ -244,12 +244,12 @@ const ChatWidget = memo(function ChatWidget({ isOpen: initialOpen = false, onClo
                 onKeyDown={handleKeyPress}
                 placeholder="Ask about projects, skills, or experience..."
                 disabled={isLoading}
-                className="flex-1 bg-transparent text-slate-100 placeholder:text-slate-600 text-xs focus:outline-none"
+                className="flex-1 bg-transparent text-zinc-100 placeholder:text-zinc-600 text-xs focus:outline-none"
               />
               <button
                 onClick={() => sendQuery(inputValue)}
                 disabled={isLoading || !inputValue.trim()}
-                className="px-2.5 py-1 bg-blue-950 hover:bg-blue-900 disabled:opacity-40 text-blue-300 border border-blue-700/60 rounded text-xs font-bold transition-colors cursor-pointer"
+                className="px-3 py-1 bg-white hover:bg-zinc-200 disabled:opacity-40 text-black border border-white rounded-md text-xs font-bold transition-colors cursor-pointer"
               >
                 Send
               </button>

@@ -282,7 +282,7 @@ const TypingGame = memo(function TypingGame({ testText: initialTestText, onKeyPr
                 handleReset();
               }}
               className={`transition-colors cursor-pointer ${
-                mode === 'duration' ? 'text-amber-400 font-bold' : 'hover:text-zinc-300'
+                mode === 'duration' ? 'text-white font-bold' : 'hover:text-zinc-300'
               }`}
             >
               time
@@ -294,7 +294,7 @@ const TypingGame = memo(function TypingGame({ testText: initialTestText, onKeyPr
                 handleReset();
               }}
               className={`transition-colors cursor-pointer ${
-                mode === 'words' ? 'text-amber-400 font-bold' : 'hover:text-zinc-300'
+                mode === 'words' ? 'text-white font-bold' : 'hover:text-zinc-300'
               }`}
             >
               words
@@ -314,7 +314,7 @@ const TypingGame = memo(function TypingGame({ testText: initialTestText, onKeyPr
                     handleReset();
                   }}
                   className={`transition-colors cursor-pointer ${
-                    duration === sec ? 'text-amber-400 font-bold' : 'hover:text-zinc-300'
+                    duration === sec ? 'text-white font-bold' : 'hover:text-zinc-300'
                   }`}
                 >
                   {sec}
@@ -329,7 +329,7 @@ const TypingGame = memo(function TypingGame({ testText: initialTestText, onKeyPr
                     handleReset();
                   }}
                   className={`transition-colors cursor-pointer ${
-                    wordCount === wc ? 'text-amber-400 font-bold' : 'hover:text-zinc-300'
+                    wordCount === wc ? 'text-white font-bold' : 'hover:text-zinc-300'
                   }`}
                 >
                   {wc}
@@ -350,7 +350,7 @@ const TypingGame = memo(function TypingGame({ testText: initialTestText, onKeyPr
                   handleReset();
                 }}
                 className={`capitalize transition-colors cursor-pointer ${
-                  difficulty === diff ? 'text-amber-400 font-bold' : 'hover:text-zinc-300'
+                  difficulty === diff ? 'text-white font-bold' : 'hover:text-zinc-300'
                 }`}
               >
                 {diff}
@@ -401,9 +401,9 @@ const TypingGame = memo(function TypingGame({ testText: initialTestText, onKeyPr
                           : 'text-[#646669]'
                       }`}
                     >
-                      {/* Monkeytype Smooth Amber Caret */}
+                      {/* Smooth White Caret */}
                       {isCurrent && (
-                        <span className="absolute -left-[2px] top-1 bottom-1 w-[2.5px] bg-[#e2b714] rounded-full animate-pulse shadow-[0_0_8px_rgba(226,183,20,0.8)]" />
+                        <span className="absolute -left-[2px] top-1 bottom-1 w-[2.5px] bg-white rounded-full animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                       )}
                       {char}
                     </span>
@@ -418,7 +418,7 @@ const TypingGame = memo(function TypingGame({ testText: initialTestText, onKeyPr
         <div className="flex justify-center mt-4">
           <button
             onClick={handleReset}
-            className="text-zinc-500 hover:text-amber-400 transition-colors p-2 text-lg cursor-pointer"
+            className="text-zinc-500 hover:text-white transition-colors p-2 text-lg cursor-pointer"
             title="Restart test (Tab + Enter or Esc)"
           >
             ↻
@@ -477,50 +477,50 @@ const TypingGame = memo(function TypingGame({ testText: initialTestText, onKeyPr
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="p-6 sm:p-8 rounded-2xl bg-[#101319] border border-cyan-500/30 text-center w-full max-w-lg shadow-[0_0_40px_rgba(0,240,255,0.2)] space-y-6"
+              className="p-6 sm:p-8 rounded-2xl bg-[#121216] border border-zinc-800 text-center w-full max-w-lg shadow-2xl space-y-6"
             >
               <div className="space-y-1">
-                <div className="text-[10px] font-mono text-cyan-400 font-bold tracking-widest uppercase">
-                  TAC_DEBRIEF // COMPLETE
+                <div className="text-[10px] font-mono text-zinc-400 font-bold tracking-widest uppercase">
+                  DEBRIEF // COMPLETE
                 </div>
-                <h2 className="text-3xl font-extrabold text-white font-orbitron">
-                  {stats.wpm} <span className="text-base text-cyan-400 font-mono">WPM</span>
+                <h2 className="text-3xl font-extrabold text-white font-mono">
+                  {stats.wpm} <span className="text-base text-zinc-400 font-mono">WPM</span>
                 </h2>
               </div>
 
               {/* Stats Breakdown */}
               <div className="grid grid-cols-3 gap-3 font-mono text-left">
-                <div className="p-3 bg-[#181c24] rounded-xl border border-zinc-800">
+                <div className="p-3 bg-[#18181c] rounded-xl border border-zinc-800">
                   <div className="text-[10px] text-zinc-500">ACCURACY</div>
-                  <div className="text-xl font-bold text-emerald-400 font-orbitron">{stats.accuracy}%</div>
+                  <div className="text-xl font-bold text-white font-mono">{stats.accuracy}%</div>
                 </div>
-                <div className="p-3 bg-[#181c24] rounded-xl border border-zinc-800">
+                <div className="p-3 bg-[#18181c] rounded-xl border border-zinc-800">
                   <div className="text-[10px] text-zinc-500">RAW SPEED</div>
-                  <div className="text-xl font-bold text-zinc-200 font-orbitron">{stats.rawWpm}</div>
+                  <div className="text-xl font-bold text-zinc-300 font-mono">{stats.rawWpm}</div>
                 </div>
-                <div className="p-3 bg-[#181c24] rounded-xl border border-zinc-800">
+                <div className="p-3 bg-[#18181c] rounded-xl border border-zinc-800">
                   <div className="text-[10px] text-zinc-500">MAX STREAK</div>
-                  <div className="text-xl font-bold text-amber-400 font-orbitron">{stats.streak}x</div>
+                  <div className="text-xl font-bold text-white font-mono">{stats.streak}x</div>
                 </div>
               </div>
 
-              <div className="p-3 bg-[#181c24] rounded-xl border border-zinc-800 text-xs font-mono flex justify-around text-zinc-400">
-                <span>Correct: <strong className="text-emerald-400">{stats.correctChars}</strong></span>
-                <span>Misses: <strong className="text-rose-400">{stats.incorrectChars}</strong></span>
-                <span>Total: <strong className="text-zinc-200">{stats.charsTyped}</strong></span>
+              <div className="p-3 bg-[#18181c] rounded-xl border border-zinc-800 text-xs font-mono flex justify-around text-zinc-400">
+                <span>Correct: <strong className="text-zinc-200">{stats.correctChars}</strong></span>
+                <span>Misses: <strong className="text-zinc-400">{stats.incorrectChars}</strong></span>
+                <span>Total: <strong className="text-white">{stats.charsTyped}</strong></span>
               </div>
 
               {/* Action Buttons */}
               <div className="flex gap-3 justify-center pt-2 font-mono">
                 <button
                   onClick={handleReset}
-                  className="px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs transition-all cursor-pointer shadow-[0_0_15px_rgba(0,240,255,0.4)]"
+                  className="px-5 py-2 rounded-lg bg-white hover:bg-zinc-200 text-black font-bold text-xs transition-all cursor-pointer shadow-sm"
                 >
                   ↻ Next Test (Esc)
                 </button>
                 <button
                   onClick={() => router.push('/')}
-                  className="px-5 py-2 rounded-lg bg-[#181c24] hover:bg-[#202530] text-zinc-300 border border-zinc-700 font-bold text-xs transition-all cursor-pointer"
+                  className="px-5 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-xs transition-all cursor-pointer"
                 >
                   ← Portfolio
                 </button>
