@@ -1,15 +1,14 @@
 "use client";
 import React, { memo, useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { resumeData } from '@/data/resumeData';
 import { useInView } from '@/hooks/useInView';
 import { useGitHubAnalyzer } from '@/hooks/useGitHubAnalyzer';
-import { mergeSkillsWithGitHub, type EnhancedSkill } from '@/utils/skillsAnalyzer';
+import { mergeSkillsWithGitHub } from '@/utils/skillsAnalyzer';
 import {
   containerVariants,
   cardVariants,
   headingVariants,
-  langColors,
   SKILL_KEYWORD_MAP,
   type UnifiedProject,
 } from './shared';
@@ -20,19 +19,11 @@ interface SkillsSectionProps {
 
 const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSectionProps) {
   const { ref, isInView } = useInView({ rootMargin: '200px', once: true });
-  const { repos, isLoading: isLoadingGitHub } = useGitHubAnalyzer('2241812', isInView);
+  const { analysis, isLoading: isLoadingGitHub } = useGitHubAnalyzer('2241812', isInView);
 
   const enhancedSkills = useMemo(() => {
-    return mergeSkillsWithGitHub(
-      {
-        'Programming Languages': resumeData.skills.programming,
-        'Frameworks & Toolkits': resumeData.skills.frameworks,
-        'Infrastructure & DevOps': resumeData.skills.infrastructure,
-        'Systems & Core Concepts': resumeData.skills.coreCompetencies,
-      },
-      repos
-    );
-  }, [repos]);
+    return mergeSkillsWithGitHub(analysis?.skills ?? []);
+  }, [analysis]);
 
   const [activeSkill, setActiveSkill] = useState<string>('Python');
 
