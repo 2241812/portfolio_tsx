@@ -1,49 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  /* Core TUI Monochrome + Dark Blue palette */
-  --background: #06090e;
+  /* Cyber-Luxe Dark Palette */
+  --background: #040711;
   --foreground: #e2e8f0;
   
-  /* Primary Accent: Dark Blue / Royal Blue (Ambient Lighting) */
+  /* Primary Neon Accent: Cyber Blue & Electric Cyan */
   --primary: #3b82f6;
   --primary-hover: #60a5fa;
+  --primary-cyan: #06b6d4;
   --primary-foreground: #ffffff;
-  --primary-muted: rgba(59, 130, 246, 0.15);
-  --primary-glow: rgba(59, 130, 246, 0.25);
+  --primary-muted: rgba(59, 130, 246, 0.12);
+  --primary-glow: rgba(59, 130, 246, 0.35);
   
-  /* Neutral / Slate levels */
-  --muted: #64748b;
-  --muted-foreground: #94a3b8;
-  --subtle: #334155;
-  
-  /* TUI Cards and surfaces */
-  --card: rgba(11, 15, 25, 0.85);
-  --card-foreground: #e2e8f0;
-  --card-border: #1e293b;
-  --card-border-active: #3b82f6;
-  
-  /* Borders */
-  --border: #1e293b;
-  --border-muted: #0f172a;
-  --border-bright: #334155;
-  
-  /* ANSI Status colors */
-  --success: #22c55e;
-  --error: #ef4444;
+  /* Cyber Surfaces & Glassmorphism */
+  --card-bg: rgba(9, 13, 24, 0.75);
+  --card-border: rgba(59, 130, 246, 0.18);
+  --card-border-hover: rgba(6, 182, 212, 0.5);
+  --card-glow: rgba(59, 130, 246, 0.15);
+
+  /* ANSI / Tech Status Colors */
+  --success: #10b981;
+  --error: #f43f5e;
   --warning: #f59e0b;
-  --info: #3b82f6;
-  
-  /* Radius: Minimalist crisp TUI (0 - 4px) */
-  --radius: 0.25rem;
-  --radius-lg: 0.375rem;
-  --radius-xl: 0.5rem;
+  --info: #06b6d4;
 }
 
-/* Global scrollbar styling - thin, dark, unobtrusive */
+/* Lenis Smooth Scrolling */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Global scrollbar styling */
 html {
   scrollbar-width: thin;
-  scrollbar-color: #1e293b transparent;
+  scrollbar-color: #1e293b #040711;
 }
 
 html::-webkit-scrollbar {
@@ -52,7 +60,7 @@ html::-webkit-scrollbar {
 }
 
 html::-webkit-scrollbar-track {
-  background: transparent;
+  background: #040711;
 }
 
 html::-webkit-scrollbar-thumb {
@@ -61,10 +69,9 @@ html::-webkit-scrollbar-thumb {
 }
 
 html::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #3b82f6;
 }
 
-/* Hide scrollbar utility */
 .hide-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -74,10 +81,9 @@ html::-webkit-scrollbar-thumb:hover {
   display: none;
 }
 
-/* Thin scrollbar for overflow containers */
 .thin-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #1e293b transparent;
+  scrollbar-color: rgba(59, 130, 246, 0.3) transparent;
 }
 
 .thin-scrollbar::-webkit-scrollbar {
@@ -90,38 +96,27 @@ html::-webkit-scrollbar-thumb:hover {
 }
 
 .thin-scrollbar::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: rgba(59, 130, 246, 0.3);
   border-radius: 2px;
 }
 
 .thin-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: #06b6d4;
 }
 
 @theme inline {
-  /* Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary-muted: var(--primary-muted);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-card-border: var(--card-border);
-  --color-border: var(--border);
-  --color-border-muted: var(--border-muted);
+  --color-primary-cyan: var(--primary-cyan);
   --color-success: var(--success);
   --color-error: var(--error);
   --color-warning: var(--warning);
   --color-info: var(--info);
   
-  /* Typography */
-  --font-sans: var(--font-geist-mono), monospace;
   --font-mono: var(--font-geist-mono), monospace;
-  --font-orbitron: var(--font-orbitron);
-  --font-rajdhani: var(--font-rajdhani);
+  --font-orbitron: var(--font-orbitron), sans-serif;
+  --font-rajdhani: var(--font-rajdhani), sans-serif;
 }
 
 body {
@@ -132,60 +127,84 @@ body {
   font-feature-settings: "tnum" 1, "zero" 1;
 }
 
-/* TUI Ambient Lighting: Subtle Dark Blue Radial Glow */
-.tui-ambient-glow {
-  background: radial-gradient(
-    ellipse 80% 50% at 50% -20%,
-    rgba(30, 58, 138, 0.15),
-    rgba(15, 23, 42, 0.05) 50%,
-    transparent 80%
+/* Ambient Aurora Mesh Background */
+.cyber-ambient-aurora {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: 
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(37, 99, 235, 0.18), transparent 70%),
+    radial-gradient(circle 40vw at 90% 20%, rgba(6, 182, 212, 0.12), transparent 60%),
+    radial-gradient(circle 35vw at 10% 60%, rgba(99, 102, 241, 0.1), transparent 60%),
+    radial-gradient(ellipse 70% 40% at 50% 100%, rgba(30, 58, 138, 0.15), transparent 70%);
+}
+
+/* Futuristic Cyber Grid Pattern */
+.cyber-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+}
+
+/* Premium Cyber-Luxe Glass Panel */
+.cyber-glass-card {
+  background: rgba(8, 12, 22, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cyber-glass-card:hover {
+  border-color: rgba(6, 182, 212, 0.45);
+  box-shadow: 0 12px 40px -8px rgba(6, 182, 212, 0.25), 0 0 20px rgba(59, 130, 246, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Subtle scanline overlay */
+.cyber-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
   );
+  background-size: 100% 4px;
 }
 
-/* TUI Box Panel Base */
-.tui-pane {
-  background: rgba(11, 15, 25, 0.85);
-  border: 1px solid #1e293b;
-  backdrop-filter: blur(8px);
+/* Glowing Neon Text */
+.neon-text-blue {
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.3);
 }
 
-.tui-pane-active {
-  border-color: #3b82f6;
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.08);
+.neon-text-cyan {
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.7), 0 0 25px rgba(6, 182, 212, 0.4);
 }
 
-/* Status bar & header bar styling */
-.tui-statusline {
-  background: #090d16;
-  border-top: 1px solid #1e293b;
-  color: #94a3b8;
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 0.75rem;
-}
-
-/* Focus visible styles for keyboard navigation */
-:focus-visible {
-  outline: 1px solid #3b82f6;
-  outline-offset: 1px;
-}
-
-/* Cursor blink */
-@keyframes cursorBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-.tui-cursor {
-  display: inline-block;
+/* Animated Corner Brackets */
+.cyber-bracket-tl {
+  position: absolute;
+  top: -1px;
+  left: -1px;
   width: 8px;
-  height: 15px;
-  background-color: #3b82f6;
-  vertical-align: middle;
-  animation: cursorBlink 1s step-end infinite;
+  height: 8px;
+  border-top: 2px solid #06b6d4;
+  border-left: 2px solid #06b6d4;
+}
+
+.cyber-bracket-br {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-bottom: 2px solid #06b6d4;
+  border-right: 2px solid #06b6d4;
 }
 
 /* Selection */
 ::selection {
-  background: #1e3a8a;
+  background: #1d4ed8;
   color: #f8fafc;
 }

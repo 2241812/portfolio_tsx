@@ -1,23 +1,22 @@
 "use client";
 import React, { memo } from 'react';
-import { motion } from 'framer-motion';
 import { resumeData } from '@/data/resumeData';
 
 const FooterSection = memo(function FooterSection() {
   return (
-    <footer className="w-full bg-[#06090e] border-t border-slate-800 py-8 px-4 font-mono text-xs text-slate-500">
+    <footer className="w-full bg-[#040711]/90 backdrop-blur-md border-t border-blue-900/30 py-8 px-4 font-mono text-xs text-slate-400">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-blue-500" />
-          <span>narcisoiii.dev • Posix Terminal UI • Next.js 16</span>
+          <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)] animate-pulse" />
+          <span className="text-slate-300">narcisoiii.dev • Cyber-Luxe Architecture • Next.js 16</span>
         </div>
 
         <div className="flex items-center gap-4 text-slate-400">
           <a
-            href="https://github.com/2241812"
+            href="https://github.com/narcisoJavier"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-colors"
+            className="hover:text-cyan-300 transition-colors"
           >
             GitHub
           </a>
@@ -26,21 +25,21 @@ const FooterSection = memo(function FooterSection() {
             href={resumeData.personalInfo.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-colors"
+            className="hover:text-cyan-300 transition-colors"
           >
             LinkedIn
           </a>
           <span>•</span>
           <a
             href={`mailto:${resumeData.personalInfo.email}`}
-            className="hover:text-blue-400 transition-colors"
+            className="hover:text-cyan-300 transition-colors"
           >
             Email
           </a>
           <span>•</span>
           <a
             href="/break"
-            className="hover:text-blue-400 transition-colors text-blue-300 font-semibold"
+            className="hover:text-cyan-300 transition-colors text-cyan-400 font-semibold"
           >
             Typing Break
           </a>

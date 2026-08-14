@@ -15,7 +15,7 @@ const calculateLevel = (count: number): number => {
   return 4;
 };
 
-export const useContributionData = (username: string = '2241812') => {
+export const useContributionData = (username: string = 'narcisoJavier') => {
   const [contributions, setContributions] = useState<ContributionDay[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalContributions, setTotalContributions] = useState(0);
@@ -35,7 +35,7 @@ export const useContributionData = (username: string = '2241812') => {
         const fromDate = oneYearAgo.toISOString().split('T')[0];
         
         const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?from=${fromDate}&to=${toDate}`);
-        if (!res.ok) throw new Error('Failed to fetch');
+        if (!res.ok) throw new Error('Fallback to cached contributions');
         const data = await res.json();
         
         if (cancelled) return;
@@ -48,9 +48,8 @@ export const useContributionData = (username: string = '2241812') => {
 
         setContributions(days);
         setTotalContributions(days.reduce((sum, d) => sum + d.count, 0));
-      } catch (err) {
+      } catch {
         if (cancelled) return;
-        console.error('Failed to fetch contributions:', err);
         
         // Placeholder data
         const placeholder: ContributionDay[] = [];

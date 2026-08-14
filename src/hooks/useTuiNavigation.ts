@@ -37,14 +37,19 @@ export function useTuiNavigation() {
     setActiveSection(id);
     const element = document.getElementById(id);
     if (element) {
-      const topBarOffset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - topBarOffset;
+      const lenis = (window as unknown as { lenis?: { scrollTo: (target: HTMLElement | string | number, options?: Record<string, unknown>) => void } }).lenis;
+      if (lenis) {
+        lenis.scrollTo(element, { offset: -80, duration: 1.2 });
+      } else {
+        const topBarOffset = 80;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - topBarOffset;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
     }
   }, []);
 

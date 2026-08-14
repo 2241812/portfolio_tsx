@@ -19,7 +19,7 @@ interface SkillsSectionProps {
 
 const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSectionProps) {
   const { ref, isInView } = useInView({ rootMargin: '200px', once: true });
-  const { analysis, isLoading: isLoadingGitHub } = useGitHubAnalyzer('2241812', isInView);
+  const { analysis, isLoading: isLoadingGitHub } = useGitHubAnalyzer('narcisoJavier', isInView);
 
   const enhancedSkills = useMemo(() => {
     return mergeSkillsWithGitHub(analysis?.skills ?? []);
@@ -56,7 +56,7 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
     <section
       id="skills"
       ref={ref}
-      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-slate-800/80"
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-blue-900/30"
     >
       <motion.div
         variants={containerVariants}
@@ -68,58 +68,59 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
         {/* Section Header */}
         <motion.div
           variants={headingVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2"
+          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-blue-900/30 pb-3 gap-2"
         >
           <div className="flex items-center gap-3">
-            <span className="text-blue-500 text-sm font-bold">[03]</span>
-            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-mono">
-              SKILLS MATRIX & STACK INSPECTOR
+            <span className="text-cyan-400 text-sm font-bold font-orbitron">[03]</span>
+            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-orbitron">
+              SKILLS MATRIX &amp; STACK INSPECTOR
             </h2>
           </div>
-          <span className="text-xs text-slate-500 font-mono">
-            {isLoadingGitHub ? '// analyzing github tree...' : '// 2-pane interactive inspector'}
+          <span className="text-xs text-cyan-400/80 font-mono">
+            {isLoadingGitHub ? '// telemetry: analyzing github tree...' : '// status: 2-pane interactive inspector'}
           </span>
         </motion.div>
 
         {/* 2-Pane Split Container */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* LEFT PANE: Categorized Skill Tree (7 cols) */}
           <motion.div
             variants={cardVariants}
-            className="lg:col-span-7 bg-[#090d16] border border-slate-800 rounded p-4 sm:p-5 space-y-5"
+            className="lg:col-span-7 cyber-glass-card rounded-xl p-5 sm:p-6 space-y-5 relative"
           >
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 text-xs text-slate-400 font-mono">
-              <span>┌─ STACK SELECTION</span>
-              <span className="text-[10px] text-slate-500">Click or focus to inspect</span>
+            <div className="cyber-bracket-tl" />
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-xs text-slate-400 font-mono">
+              <span className="text-cyan-400 font-bold">┌─ STACK SELECTION MATRIX</span>
+              <span className="text-[10px] text-slate-400">Click to inspect linked projects</span>
             </div>
 
             {Object.entries(enhancedSkills).map(([category, skills]) => (
-              <div key={category} className="space-y-2">
-                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-2">
-                  <span className="text-blue-500">▶</span>
+              <div key={category} className="space-y-2.5">
+                <div className="text-[11px] font-bold text-slate-300 uppercase tracking-wider font-mono flex items-center gap-2">
+                  <span className="text-cyan-400 font-bold">▶</span>
                   <span>{category}</span>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5" role="group" aria-label={category}>
+                <div className="flex flex-wrap gap-2" role="group" aria-label={category}>
                   {skills.map((skill) => {
                     const isSelected = activeSkill === skill.name;
                     return (
                       <button
                         key={skill.name}
                         onClick={() => setActiveSkill(skill.name)}
-                        className={`px-2.5 py-1 rounded text-xs font-mono transition-all duration-150 cursor-pointer select-none flex items-center gap-1.5 ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-150 cursor-pointer select-none flex items-center gap-2 ${
                           isSelected
-                            ? 'bg-blue-950 text-blue-200 border border-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.2)] font-bold'
-                            : 'bg-[#06090e] text-slate-400 border border-slate-800 hover:border-slate-600 hover:text-slate-200'
+                            ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold shadow-[0_0_15px_rgba(6,182,212,0.4)] border border-cyan-400'
+                            : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:border-cyan-500/50 hover:text-cyan-200'
                         }`}
                       >
                         <span>{skill.name}</span>
                         {skill.verified && (skill.endorsements || 0) > 0 && (
                           <span
-                            className={`text-[9px] px-1 rounded ${
+                            className={`text-[9px] px-1.5 py-0.2 rounded-full ${
                               isSelected
-                                ? 'bg-blue-800 text-blue-100'
-                                : 'bg-slate-900 text-slate-500'
+                                ? 'bg-black/40 text-cyan-200'
+                                : 'bg-slate-800 text-slate-400'
                             }`}
                             title={`Referenced in ${skill.endorsements} repository(ies)`}
                           >
@@ -137,49 +138,50 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
           {/* RIGHT PANE: Live Inspector / Matching Projects (5 cols) */}
           <motion.div
             variants={cardVariants}
-            className="lg:col-span-5 bg-[#090d16] border border-slate-800 rounded p-4 sm:p-5 flex flex-col justify-between space-y-4"
+            className="lg:col-span-5 cyber-glass-card rounded-xl p-5 sm:p-6 flex flex-col justify-between space-y-4 relative"
           >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 text-xs font-mono">
-                <span className="text-blue-400 font-bold">INSPECTOR: {activeSkill}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-900">
-                  ACTIVE
+            <div className="cyber-bracket-tl" />
+            <div className="space-y-3.5">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-xs font-mono">
+                <span className="text-cyan-400 font-bold font-orbitron">INSPECTOR // {activeSkill}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 font-bold">
+                  ACTIVE_INSPECTOR
                 </span>
               </div>
 
               {/* Definition */}
-              <div className="p-3 rounded bg-[#06090e] border border-slate-800/80 text-xs text-slate-300 font-mono leading-relaxed">
+              <div className="p-3.5 rounded-lg bg-[#02050c] border border-cyan-900/40 text-xs text-slate-300 font-mono leading-relaxed shadow-inner">
                 {activeDescription}
               </div>
 
               {/* Associated Deliverables */}
               <div className="space-y-2 pt-2">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono flex items-center justify-between">
-                  <span>Linked Projects</span>
-                  <span className="text-[10px] text-slate-500">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center justify-between">
+                  <span className="text-cyan-400">Linked Deliverables</span>
+                  <span className="text-[10px] text-slate-400">
                     ({matchingProjects.length} found)
                   </span>
                 </div>
 
-                <div className="space-y-2 max-h-60 overflow-y-auto pr-1 thin-scrollbar">
+                <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1 thin-scrollbar">
                   {matchingProjects.length === 0 ? (
-                    <div className="p-3 text-center text-xs text-slate-500 font-mono bg-[#06090e] rounded border border-slate-900">
+                    <div className="p-3 text-center text-xs text-slate-400 font-mono bg-[#02050c] rounded-lg border border-slate-800">
                       Core competency across multiple workflows and academic modules.
                     </div>
                   ) : (
                     matchingProjects.map((proj) => (
                       <div
                         key={proj.title}
-                        className="p-2.5 rounded bg-[#06090e] border border-slate-800/80 text-xs font-mono space-y-1"
+                        className="p-3 rounded-lg bg-[#02050c] border border-slate-800 hover:border-cyan-500/50 transition-colors text-xs font-mono space-y-1.5"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-slate-200">{proj.title}</span>
+                          <span className="font-bold text-slate-100">{proj.title}</span>
                           {proj.url && (
                             <a
                               href={proj.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-400 hover:text-blue-300 text-[11px]"
+                              className="text-cyan-400 hover:text-cyan-300 text-[11px] font-bold"
                             >
                               ↗
                             </a>
@@ -196,9 +198,9 @@ const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSection
             </div>
 
             {/* Quick Status Note */}
-            <div className="pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 font-mono flex justify-between">
+            <div className="pt-3 border-t border-slate-800 text-[10px] text-slate-400 font-mono flex justify-between">
               <span>Stack analyzer: SWR synchronized</span>
-              <span className="text-emerald-400">● 100% verified</span>
+              <span className="text-emerald-400 font-bold">● 100% verified</span>
             </div>
           </motion.div>
         </div>

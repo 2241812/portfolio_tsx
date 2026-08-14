@@ -15,7 +15,7 @@ import {
 
 const Sections = memo(function Sections() {
   // GitHub pinned repos with SWR - automatic caching and revalidation
-  const { pinnedRepos, isLoading, isError, retry } = usePinnedRepos('2241812');
+  const { pinnedRepos, isLoading, isError, retry } = usePinnedRepos('narcisoJavier');
 
   // Unified project data from resume + GitHub
   const allProjects: UnifiedProject[] = useMemo(

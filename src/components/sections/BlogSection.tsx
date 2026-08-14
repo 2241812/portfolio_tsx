@@ -7,7 +7,7 @@ import { useGistData } from '@/hooks/useGistData';
 
 const BlogSection = memo(function BlogSection() {
   const { ref, isInView } = useInView({ rootMargin: '200px', once: true });
-  const { gists, isLoading, isError, error, retry } = useGistData('2241812', isInView);
+  const { gists, isLoading, isError, error, retry } = useGistData('narcisoJavier', isInView);
 
   // Filter for gists that have markdown files or specific descriptions to act as "blogs"
   const blogGists = gists
@@ -23,7 +23,7 @@ const BlogSection = memo(function BlogSection() {
     <section
       id="gists"
       ref={ref}
-      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-slate-800/80"
+      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-blue-900/30"
     >
       <motion.div
         variants={containerVariants}
@@ -35,16 +35,16 @@ const BlogSection = memo(function BlogSection() {
         {/* Section Header */}
         <motion.div
           variants={headingVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2"
+          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-blue-900/30 pb-3 gap-2"
         >
           <div className="flex items-center gap-3">
-            <span className="text-blue-500 text-sm font-bold">[05]</span>
-            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-mono">
-              DOCUMENTATION, NOTES & GISTS
+            <span className="text-cyan-400 text-sm font-bold font-orbitron">[05]</span>
+            <h2 className="text-base sm:text-lg font-bold text-slate-100 uppercase tracking-wider font-orbitron">
+              DOCUMENTATION, NOTES &amp; GISTS
             </h2>
           </div>
-          <span className="text-xs text-slate-500 font-mono">
-            {isLoading ? '// fetching gists...' : '// glow: markdown reader'}
+          <span className="text-xs text-slate-400 font-mono">
+            {isLoading ? '// telemetry: fetching gists...' : '// status: live markdown reader'}
           </span>
         </motion.div>
 
@@ -85,25 +85,26 @@ const BlogSection = memo(function BlogSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   variants={cardVariants}
-                  className="bg-[#090d16] border border-slate-800 hover:border-blue-500/70 rounded p-4 transition-all flex flex-col justify-between group cursor-pointer font-mono"
+                  className="cyber-glass-card rounded p-4 transition-all flex flex-col justify-between group cursor-pointer font-mono relative"
                 >
+                  <div className="cyber-bracket-tl" />
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <span className="text-[11px] text-blue-400"># {gist.id.substring(0, 7)}</span>
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span className="text-[11px] text-cyan-400 font-bold"># {gist.id.substring(0, 7)}</span>
                       <span>{date}</span>
                     </div>
 
-                    <h3 className="text-sm font-bold text-slate-100 group-hover:text-blue-300 transition-colors line-clamp-2">
+                    <h3 className="text-sm font-bold text-slate-100 group-hover:text-cyan-300 transition-colors line-clamp-2">
                       {gist.description || file.filename || `Gist ${gist.id.substring(0, 7)}`}
                     </h3>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-900 text-xs">
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-900">
+                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-800/80 text-xs">
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800">
                       {file.language || 'Markdown'}
                     </span>
-                    <span className="text-blue-400 group-hover:text-blue-300 text-xs flex items-center gap-1">
-                      <span>Read Log</span>
+                    <span className="text-cyan-400 group-hover:text-cyan-300 text-xs flex items-center gap-1 font-bold">
+                      <span>Read Document</span>
                       <span>↗</span>
                     </span>
                   </div>

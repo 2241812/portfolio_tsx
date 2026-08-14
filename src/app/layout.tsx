@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Orbitron, Rajdhani } from "next/font/google";
+import LenisProvider from "@/components/ui/LenisProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -88,7 +89,9 @@ export default function RootLayout({
         <link rel="icon" href="/logo.jpg" sizes="any" />
         <link rel="apple-touch-icon" href="/logo.jpg" />
       </head>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <LenisProvider>{children}</LenisProvider>
+      </body>
     </html>
   );
 }

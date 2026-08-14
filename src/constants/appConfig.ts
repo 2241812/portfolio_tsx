@@ -22,7 +22,7 @@ export const API_CONFIG = {
 
 // ==================== GitHub Configuration ====================
 export const GITHUB_CONFIG = {
-  DEFAULT_USERNAME: '2241812',
+  DEFAULT_USERNAME: 'narcisoJavier',
   CONTRIBUTIONS_DAYS_BACK: 364, // 1 year
   MAX_REPOS_PER_PAGE: 30,
 };
