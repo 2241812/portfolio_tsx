@@ -17,20 +17,32 @@ interface TopProject {
 
 const TOP_PROJECTS: TopProject[] = [
   {
-    id: 'multitask',
+    id: 'tether',
     rank: '#01',
-    title: 'MultiTask_ContextSwitch',
-    role: 'Python & Automation Developer',
-    tech: ['Python', 'PyQt6', 'Process Polling', 'Win32 API', 'Automation'],
+    title: 'Tether',
+    role: 'Mobile Systems & Security Architect',
+    tech: ['Dart', 'Flutter', 'SSH', 'End-to-End Encryption', 'Server Administration'],
     description:
-      'Engineered a desktop workflow automator that continuously monitors asynchronous web-based AI generation tasks, triggering real-time window focus switching and state alerts via a custom PyQt6 engine.',
-    architecture: 'Background Poller ──► Event Trigger ──► PyQt6 Focus Switcher ──► OS Window Target',
-    link: 'https://github.com/narcisoJavier/MultiTask_ContextSwitch',
-    badge: 'FLAGSHIP AUTOMATION',
+      'Your server in your pocket. Engineered a mobile-first remote server administration platform delivering one-tap encrypted connections, intuitive swipe-to-command controls, and end-to-end encrypted infrastructure management.',
+    architecture: 'Mobile Client ──► Encrypted Tunnel / SSH ──► Daemon Agent ──► Remote Server Management',
+    link: 'https://github.com/narcisoJavier/Tether',
+    badge: 'MOBILE & ENCRYPTED INFRASTRUCTURE',
+  },
+  {
+    id: 'geocradle',
+    rank: '#02',
+    title: 'geoCradle',
+    role: 'Geospatial & Full-Stack Developer',
+    tech: ['JavaScript', 'GeoJSON', 'Leaflet', 'GIS Mapping', 'Spatial Analysis'],
+    description:
+      'Interactive geospatial web map for exploring watersheds and administrative boundaries of the Cordillera Administrative Region (CAR), Philippines — engineered for DENR environmental analysis and spatial planning.',
+    architecture: 'GeoJSON Spatial Layers ──► Web GIS Engine ──► Watershed / Admin Analysis ──► Client GIS Dashboard',
+    link: 'https://github.com/narcisoJavier/geoCradle',
+    badge: 'GEOSPATIAL & GIS ENGINE',
   },
   {
     id: 'campus-navigator',
-    rank: '#02',
+    rank: '#03',
     title: 'WebDev_Campus-Navigator_CS312',
     role: 'Full-Stack & Systems Developer',
     tech: ['Go', 'Docker Compose', 'Node.js', 'PHP', 'Dijkstra Algorithm'],
@@ -39,18 +51,6 @@ const TOP_PROJECTS: TopProject[] = [
     architecture: 'Client UI ──► Go Routing Service (Dijkstra) ──► Docker Compose Mesh ──► API Gateway',
     link: 'https://github.com/narcisoJavier/WebDev_Campus-Navigator_CS312',
     badge: 'MICROSERVICES & ALGORITHMS',
-  },
-  {
-    id: 'hand-sign',
-    rank: '#03',
-    title: 'Basic Hand Sign Recognition System',
-    role: 'AI & Computer Vision Prototype',
-    tech: ['Python', 'CNN', 'Computer Vision', 'OpenCV', 'Colab'],
-    description:
-      'Constructed a convolutional neural network (CNN) image classification pipeline to interpret hand gestures from real-time webcam video feeds, benchmarking inference accuracy across multiple sign categories.',
-    architecture: 'Webcam Stream ──► Frame Preprocessor ──► CNN Classifier ──► Gesture Output',
-    link: 'https://colab.research.google.com/drive/1JtmdmGKfQzO4xnSUnl4rRVXulx5v6TJG?usp=sharing',
-    badge: 'VISION & AI PIPELINE',
   },
 ];
 

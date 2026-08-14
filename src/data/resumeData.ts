@@ -91,18 +91,32 @@ export const resumeData = {
         "Personal game development projects exploring Unity 3D mechanics and player-centric design through hands-on experimentation and iterative prototyping.",
     },
     {
-      title: "MultiTask_ContextSwitch",
-      role: "Python Developer",
+      title: "Tether",
+      role: "Mobile Systems & Security Developer",
       description:
-        "Developed a Python-based workflow automator that monitors web-based AI generation statuses, with a PyQt6 focus-switching engine and robust process monitoring to manage real-time window focus and UI states.",
-      link: "https://github.com/2241812/MultiTask_ContextSwitch"
+        "Engineered a mobile-first remote server administration tool with Flutter & Dart, delivering one-tap encrypted connections, intuitive swipe-to-command controls, and end-to-end encrypted terminal management.",
+      link: "https://github.com/narcisoJavier/Tether"
+    },
+    {
+      title: "geoCradle",
+      role: "Geospatial & Full-Stack Developer",
+      description:
+        "Interactive web mapping platform for exploring watersheds and administrative boundaries of the Cordillera Administrative Region (CAR), Philippines — built for DENR environmental analysis and spatial planning.",
+      link: "https://github.com/narcisoJavier/geoCradle"
     },
     {
       title: "WebDev_Campus-Navigator_CS312",
       role: "Full-Stack Developer",
       description:
-        "Designed a containerized microservices web application using Docker, Go, Node.js, and PHP to handle scalable campus navigation requests powered by Dijkstra's algorithm.",
-      link: "https://github.com/2241812/WebDev_Campus-Navigator_CS312"
+        "Designed a containerized microservices web application using Docker, Go, Node.js, and PHP to handle scalable campus navigation requests powered by Dijkstra's shortest-path algorithm.",
+      link: "https://github.com/narcisoJavier/WebDev_Campus-Navigator_CS312"
+    },
+    {
+      title: "MultiTask_ContextSwitch",
+      role: "Python Developer",
+      description:
+        "Developed a Python-based workflow automator that monitors web-based AI generation statuses, with a PyQt6 focus-switching engine and robust process monitoring to manage real-time window focus and UI states.",
+      link: "https://github.com/narcisoJavier/MultiTask_ContextSwitch"
     },
     {
       title: "OpenCode-VSCode-Setup",
@@ -113,7 +127,8 @@ export const resumeData = {
     {
       title: "Basic Hand Sign Recognition System",
       role: "AI Engineer",
-      description:         "Built a computer vision prototype using a CNN model to interpret hand signs from a webcam feed. Developed as a learning project to explore AI and image classification.",
+      description:
+        "Built a computer vision prototype using a CNN model to interpret hand signs from a webcam feed. Developed as a learning project to explore AI and image classification.",
       link: "https://colab.research.google.com/drive/1JtmdmGKfQzO4xnSUnl4rRVXulx5v6TJG?usp=sharing"
     }
   ]

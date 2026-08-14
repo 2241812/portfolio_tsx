@@ -7,7 +7,6 @@ import LoadingScreen from '@/components/ui/LoadingScreen';
 import ChatWidget from '@/components/ChatWidget';
 import CommandPalette from '@/components/tui/CommandPalette';
 import ShortcutsModal from '@/components/tui/ShortcutsModal';
-import CyberTitle from '@/components/ui/CyberTitle';
 import { useTuiNavigation } from '@/hooks/useTuiNavigation';
 import { resumeData } from '@/data/resumeData';
 
@@ -75,8 +74,10 @@ export default function Home() {
 
                   {/* Hero Title & Identity */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-1">
-                    <div className="space-y-2">
-                      <CyberTitle text={resumeData.personalInfo.name} />
+                    <div className="space-y-1.5">
+                      <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-100 font-orbitron drop-shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+                        {resumeData.personalInfo.name}
+                      </h1>
                       <p className="text-xs sm:text-sm text-cyan-400 font-mono flex items-center gap-2">
                         <span>{resumeData.personalInfo.title}</span>
                         <span className="text-slate-600">•</span>
