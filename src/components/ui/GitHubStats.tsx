@@ -1,9 +1,10 @@
 "use client";
-import React, { useState, useEffect, memo, useRef } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { motion } from 'framer-motion';
-import ContributionCalendar from './ContributionCalendar';
 import { useInView } from '@/hooks/useInView';
 import { containerVariants, cardVariants, headingVariants } from '@/components/sections/shared';
+import { Activity } from 'lucide-react';
+import { fetchGitHubContributions } from '@/services/api';
 
 interface GitHubUser {
   public_repos: number;
@@ -28,10 +29,10 @@ interface GitHubEvent {
   };
 }
 
-interface StreakData {
-  currentStreak: number;
-  longestStreak: number;
-  totalContributions: number;
+interface ContributionDay {
+  date: string;
+  count: number;
+  level: number;
 }
 
 function getRelativeTime(dateString: string): string {
@@ -45,18 +46,16 @@ function getRelativeTime(dateString: string): string {
   return `${days}d ago`;
 }
 
-const GitHubStats = memo(function GitHubStats() {
+export const GitHubStats = memo(function GitHubStats() {
   const { ref: sectionRef, isInView } = useInView({ rootMargin: '200px', once: true });
   const [userData, setUserData] = useState<GitHubUser | null>(null);
   const [events, setEvents] = useState<GitHubEvent[]>([]);
-  const [streak] = useState<StreakData>({ currentStreak: 7, longestStreak: 18, totalContributions: 240 });
-  const [isGameActive, setIsGameActive] = useState(false);
-
-  // Calendar component ref for controlling game mode
-  const calendarRef = useRef<{ toggleGame: () => void; isGameMode: boolean } | null>(null);
+  const [contributions, setContributions] = useState<ContributionDay[]>([]);
+  const [totalContribs, setTotalContribs] = useState<number>(240);
 
   useEffect(() => {
     let cancelled = false;
+
     async function fetchData() {
       try {
         const [userRes, eventsRes] = await Promise.allSettled([
@@ -70,7 +69,6 @@ const GitHubStats = memo(function GitHubStats() {
           const userJson = await userRes.value.json();
           setUserData(userJson);
         } else {
-          // Fallback realistic user data
           setUserData({
             public_repos: 25,
             followers: 4,
@@ -88,148 +86,220 @@ const GitHubStats = memo(function GitHubStats() {
             setEvents(eventsJson);
           }
         }
+
+        // Fetch contribution days
+        const today = new Date();
+        const oneYearAgo = new Date();
+        oneYearAgo.setDate(today.getDate() - 364);
+        const toDate = today.toISOString().split('T')[0];
+        const fromDate = oneYearAgo.toISOString().split('T')[0];
+
+        try {
+          const data = await fetchGitHubContributions('narcisoJavier', fromDate, toDate);
+          if (!cancelled && data?.contributions?.length) {
+            const days: ContributionDay[] = data.contributions.map((c: { date: string; count: number }) => ({
+              date: c.date,
+              count: c.count,
+              level: c.count === 0 ? 0 : c.count <= 2 ? 1 : c.count <= 5 ? 2 : c.count <= 8 ? 3 : 4,
+            }));
+            setContributions(days);
+            setTotalContribs(days.reduce((s, d) => s + d.count, 0));
+          } else if (!cancelled) {
+            generatePlaceholderContributions();
+          }
+        } catch {
+          if (!cancelled) generatePlaceholderContributions();
+        }
       } catch {
-        // Silently use fallbacks
+        // Silent fallback
       }
+    }
+
+    function generatePlaceholderContributions() {
+      const placeholder: ContributionDay[] = [];
+      const today = new Date();
+      for (let i = 364; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const count = Math.random() > 0.65 ? Math.floor(Math.random() * 7) + 1 : 0;
+        placeholder.push({
+          date: d.toISOString().split('T')[0],
+          count,
+          level: count === 0 ? 0 : count <= 2 ? 1 : count <= 4 ? 2 : count <= 6 ? 3 : 4,
+        });
+      }
+      setContributions(placeholder);
+      setTotalContribs(placeholder.reduce((sum, d) => sum + d.count, 0));
     }
 
     if (isInView) {
       fetchData();
     }
+
     return () => {
       cancelled = true;
     };
   }, [isInView]);
 
-  const handleToggleGame = () => {
-    if (calendarRef.current) {
-      calendarRef.current.toggleGame();
+  // Organize contributions into weeks
+  const weeks: ContributionDay[][] = [];
+  let currentWeek: ContributionDay[] = [];
+  contributions.forEach((day) => {
+    currentWeek.push(day);
+    if (currentWeek.length === 7) {
+      weeks.push(currentWeek);
+      currentWeek = [];
     }
-  };
+  });
+  if (currentWeek.length > 0) {
+    while (currentWeek.length < 7) {
+      currentWeek.push({ date: '', count: 0, level: 0 });
+    }
+    weeks.push(currentWeek);
+  }
+
+  const levelStyles = [
+    'bg-[#14141a] border-transparent', // level 0 (empty)
+    'bg-zinc-800 border-zinc-700',      // level 1
+    'bg-zinc-600 border-zinc-500',      // level 2
+    'bg-zinc-300 border-zinc-200',      // level 3
+    'bg-white border-white',            // level 4 (highest)
+  ];
 
   return (
-    <section
-      id="github"
-      ref={sectionRef}
-      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-zinc-800"
-    >
+    <section id="github" ref={sectionRef} className="scroll-mt-20 w-full py-12 border-b border-white/10">
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.05 }}
-        className="w-full space-y-6"
+        className="w-full space-y-8"
       >
-        {/* Section Header */}
+        {/* Studio Section Header */}
         <motion.div
           variants={headingVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-800 pb-3 gap-2"
+          className="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4 gap-4"
         >
-          <div className="flex items-center gap-3">
-            <span className="text-zinc-400 text-sm font-bold font-mono">[04]</span>
-            <h2 className="text-base sm:text-lg font-bold text-white uppercase tracking-wider font-mono">
-              GITHUB ACTIVITY &amp; CONTRIBUTIONS
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase tracking-widest">
+              <span>04 // TELEMETRY</span>
+              <span className="text-zinc-600">/</span>
+              <span>GITHUB REPOSITORY ACTIVITY</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white uppercase font-display tracking-tight">
+              Activity &amp; Contributions
             </h2>
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleToggleGame}
-              className={`px-3 py-1.5 text-xs font-mono rounded border transition-all cursor-pointer flex items-center gap-1.5 ${
-                isGameActive
-                  ? 'bg-zinc-800 text-white border-zinc-500 font-bold shadow-sm'
-                  : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:bg-zinc-800 hover:border-zinc-600'
-              }`}
-            >
-              <span>🎮</span>
-              <span>{isGameActive ? 'Exit Breaker Mode' : 'Play Contribution Breaker'}</span>
-            </button>
-          </div>
+
+          <span className="text-xs font-mono text-zinc-400">
+            [USER: @narcisoJavier // {totalContribs} CONTRIBUTIONS]
+          </span>
         </motion.div>
 
         {/* Telemetry Metric Cards */}
-        <motion.div variants={containerVariants} className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="cyber-glass-card rounded p-3 text-center space-y-1 relative">
-            <div className="cyber-bracket-tl" />
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-mono">Public Repos</div>
-            <div className="text-xl font-bold text-white font-mono">
-              {userData ? userData.public_repos : '25'}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div className="studio-card p-4 space-y-1">
+            <div className="studio-corner-tl" />
+            <div className="studio-corner-br" />
+            <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
+              Public Repos
             </div>
-            <div className="text-[10px] text-zinc-400 font-mono">Active Repositories</div>
+            <div className="text-2xl font-bold text-white font-mono">
+              {userData?.public_repos ?? 25}
+            </div>
+            <div className="text-[10px] text-zinc-400 font-mono">Verified Repositories</div>
           </div>
 
-          <div className="cyber-glass-card rounded p-3 text-center space-y-1 relative">
-            <div className="cyber-bracket-tl" />
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-mono">Current Streak</div>
-            <div className="text-xl font-bold text-zinc-200 font-mono">
-              {streak.currentStreak} Days
+          <div className="studio-card p-4 space-y-1">
+            <div className="studio-corner-tl" />
+            <div className="studio-corner-br" />
+            <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
+              Annual Activity
             </div>
-            <div className="text-[10px] text-zinc-500 font-mono">Continuous Commits</div>
+            <div className="text-2xl font-bold text-white font-mono">{totalContribs}</div>
+            <div className="text-[10px] text-zinc-400 font-mono">Yearly Contributions</div>
           </div>
 
-          <div className="cyber-glass-card rounded p-3 text-center space-y-1 relative">
-            <div className="cyber-bracket-tl" />
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-mono">Followers</div>
-            <div className="text-xl font-bold text-white font-mono">
-              {userData ? userData.followers : '4'}
+          <div className="studio-card p-4 space-y-1">
+            <div className="studio-corner-tl" />
+            <div className="studio-corner-br" />
+            <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
+              Network
             </div>
-            <div className="text-[10px] text-zinc-500 font-mono">Network</div>
+            <div className="text-2xl font-bold text-white font-mono">
+              {userData?.followers ?? 4}
+            </div>
+            <div className="text-[10px] text-zinc-400 font-mono">Followers</div>
           </div>
 
-          <div className="cyber-glass-card rounded p-3 text-center space-y-1 relative">
-            <div className="cyber-bracket-tl" />
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-mono">Total Activity</div>
-            <div className="text-xl font-bold text-white font-mono">
-              {streak.totalContributions}
+          <div className="studio-card p-4 space-y-1">
+            <div className="studio-corner-tl" />
+            <div className="studio-corner-br" />
+            <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
+              Status
             </div>
-            <div className="text-[10px] text-zinc-500 font-mono">Annual Contributions</div>
+            <div className="text-2xl font-bold text-emerald-400 font-mono flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              Active
+            </div>
+            <div className="text-[10px] text-zinc-400 font-mono">Continuous Commits</div>
+          </div>
+        </div>
+
+        {/* Contribution Calendar Heatmap */}
+        <motion.div variants={cardVariants} className="studio-card p-5 sm:p-6 space-y-4">
+          <div className="studio-corner-tl" />
+          <div className="studio-corner-br" />
+
+          <div className="flex items-center justify-between border-b border-white/10 pb-3 text-xs font-mono">
+            <span className="text-white font-bold uppercase tracking-wider">
+              CONTRIBUTION HEATMAP (52 WEEKS)
+            </span>
+            <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 font-mono">
+              <span>Less</span>
+              {levelStyles.map((style, idx) => (
+                <div key={idx} className={`w-2.5 h-2.5 ${style}`} />
+              ))}
+              <span>More</span>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto pb-2">
+            <div className="flex gap-[3px] min-w-[720px]">
+              {weeks.map((week, wIdx) => (
+                <div key={wIdx} className="flex flex-col gap-[3px]">
+                  {week.map((day, dIdx) => (
+                    <div
+                      key={day.date || `${wIdx}-${dIdx}`}
+                      className={`w-[11px] h-[11px] transition-all ${
+                        levelStyles[day.level] || levelStyles[0]
+                      }`}
+                      title={day.date ? `${day.date}: ${day.count} contributions` : ''}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </motion.div>
 
-        {/* Contribution Calendar & Breaker Game Container */}
-        <motion.div
-          variants={cardVariants}
-          className="cyber-glass-card rounded p-4 sm:p-5 space-y-3 relative overflow-hidden"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono border-b border-zinc-800 pb-2 gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-zinc-200 font-bold">CONTRIBUTION MATRIX (365 DAYS)</span>
-              {isGameActive && (
-                <span className="px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-600 text-[10px]">
-                  BREAKER GAME ACTIVE
-                </span>
-              )}
-            </div>
-            <span className="text-[10px] text-zinc-500">
-              {isGameActive ? 'Press [ESC] or button to stop' : 'Hover cell for details • Click button to break'}
+        {/* Live Git Commit Stream */}
+        <motion.div variants={cardVariants} className="studio-card p-5 sm:p-6 space-y-3 font-mono">
+          <div className="studio-corner-tl" />
+          <div className="studio-corner-br" />
+
+          <div className="flex items-center justify-between text-xs border-b border-white/10 pb-3">
+            <span className="text-white font-bold flex items-center gap-2">
+              <Activity className="w-3.5 h-3.5" />
+              <span>RECENT COMMITS &amp; REPOSITORY EVENTS</span>
             </span>
+            <span className="text-[10px] text-zinc-500 font-mono">AUTO-POLLING SYNC</span>
           </div>
 
-          <div className="pt-2 overflow-x-auto thin-scrollbar">
-            <ContributionCalendar
-              ref={calendarRef}
-              username="narcisoJavier"
-              onGameModeChange={(active) => setIsGameActive(active)}
-            />
-          </div>
-        </motion.div>
-
-        {/* Git Log / Activity Stream */}
-        <motion.div
-          variants={cardVariants}
-          className="cyber-glass-card rounded p-4 sm:p-5 space-y-3 font-mono"
-        >
-          <div className="flex items-center justify-between text-xs border-b border-zinc-800 pb-2">
-            <span className="text-zinc-300 font-bold flex items-center gap-2">
-              <span className="text-zinc-400 font-bold">$</span>
-              <span>git log --graph --oneline -n 5</span>
-            </span>
-            <span className="text-[10px] text-zinc-500">Live Activity Feed</span>
-          </div>
-
-          <div className="space-y-2 text-xs divide-y divide-zinc-800/60">
+          <div className="space-y-2 text-xs divide-y divide-white/5">
             {events.length === 0 ? (
-              <div className="text-zinc-400 py-2">
-                * e4d1f6a (HEAD -&gt; main) fix: resolve SkillsSection type error and pin Node 20 (recent)
+              <div className="text-zinc-400 py-2 font-mono">
+                * e4d1f6a (HEAD -&gt; main) fix: update skills matrix and optimize studio build
               </div>
             ) : (
               events.slice(0, 5).map((evt) => {
@@ -238,13 +308,20 @@ const GitHubStats = memo(function GitHubStats() {
                   `${evt.payload.action || 'updated'} ${evt.payload.ref_type || 'repository'}`;
 
                 return (
-                  <div key={evt.id} className="flex flex-col sm:flex-row sm:items-center justify-between pt-2 gap-1">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-zinc-400 shrink-0 font-bold">* {evt.id.substring(0, 7)}</span>
-                      <span className="text-zinc-500 shrink-0">({evt.repo.name.split('/')[1] || evt.repo.name})</span>
-                      <span className="text-zinc-300 truncate">{commitMsg}</span>
+                  <div
+                    key={evt.id}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between pt-2.5 gap-1.5"
+                  >
+                    <div className="flex items-center gap-2 min-w-0 font-mono">
+                      <span className="text-zinc-400 font-bold shrink-0">
+                        * {evt.id.substring(0, 7)}
+                      </span>
+                      <span className="text-zinc-500 shrink-0">
+                        [{evt.repo.name.split('/')[1] || evt.repo.name}]
+                      </span>
+                      <span className="text-zinc-200 truncate">{commitMsg}</span>
                     </div>
-                    <span className="text-[10px] text-zinc-500 shrink-0 sm:ml-4">
+                    <span className="text-[10px] text-zinc-500 shrink-0 font-mono sm:ml-4">
                       {getRelativeTime(evt.created_at)}
                     </span>
                   </div>

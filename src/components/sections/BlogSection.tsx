@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 import { containerVariants, cardVariants, headingVariants } from './shared';
 import { useInView } from '@/hooks/useInView';
 import { useGistData } from '@/hooks/useGistData';
+import { FileText, ExternalLink, BookOpen } from 'lucide-react';
 
-const BlogSection = memo(function BlogSection() {
+export const BlogSection = memo(function BlogSection() {
   const { ref, isInView } = useInView({ rootMargin: '200px', once: true });
   const { gists, isLoading, isError, error, retry } = useGistData('narcisoJavier', isInView);
 
-  // Filter for gists that have markdown files or specific descriptions to act as "blogs"
   const blogGists = gists
     .filter(
       (gist) =>
@@ -20,51 +20,52 @@ const BlogSection = memo(function BlogSection() {
     .slice(0, 4);
 
   return (
-    <section
-      id="gists"
-      ref={ref}
-      className="scroll-mt-24 w-full py-8 md:py-12 border-b border-zinc-800"
-    >
+    <section id="notes" ref={ref} className="scroll-mt-20 w-full py-12 border-b border-white/10">
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.05 }}
-        className="w-full space-y-6"
+        className="w-full space-y-8"
       >
-        {/* Section Header */}
+        {/* Studio Section Header */}
         <motion.div
           variants={headingVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-800 pb-3 gap-2"
+          className="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4 gap-4"
         >
-          <div className="flex items-center gap-3">
-            <span className="text-zinc-400 text-sm font-bold font-mono">[05]</span>
-            <h2 className="text-base sm:text-lg font-bold text-white uppercase tracking-wider font-mono">
-              DOCUMENTATION, NOTES &amp; GISTS
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase tracking-widest">
+              <span>05 // WRITING &amp; NOTES</span>
+              <span className="text-zinc-600">/</span>
+              <span>TECHNICAL DOCUMENTATION &amp; GISTS</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white uppercase font-display tracking-tight">
+              Publications &amp; Notes
             </h2>
           </div>
-          <span className="text-xs text-zinc-400 font-mono">
-            {isLoading ? '// telemetry: fetching gists...' : '// status: live markdown reader'}
+
+          <span className="text-xs font-mono text-zinc-400">
+            {isLoading ? '// fetching gists...' : '// live markdown archives'}
           </span>
         </motion.div>
 
         {isError ? (
-          <div className="w-full bg-zinc-900 border border-zinc-800 rounded p-6 flex flex-col items-center justify-center font-mono">
-            <span className="text-zinc-400 text-xs mb-1">ERR_GIST_FETCH_FAILED</span>
+          <div className="studio-card p-6 flex flex-col items-center justify-center font-mono text-center">
+            <span className="text-zinc-400 text-xs mb-1">GIST_SYNC_OFFLINE</span>
             <span className="text-zinc-500 text-[11px] mb-3">{error}</span>
             <button
               onClick={retry}
-              className="px-4 py-1.5 text-xs text-zinc-200 border border-zinc-700 bg-zinc-800 rounded hover:bg-zinc-700 transition-colors cursor-pointer"
+              className="px-4 py-1.5 text-xs text-black bg-white font-bold cursor-pointer"
             >
-              Retry
+              Retry Sync
             </button>
           </div>
         ) : blogGists.length === 0 && !isLoading ? (
-          <div className="w-full bg-[#0e1015] border border-zinc-800 rounded p-6 text-center font-mono">
+          <div className="studio-card p-6 text-center font-mono">
             <span className="text-zinc-400 text-xs">
               {gists.length > 0
                 ? `Found ${gists.length} public gist(s).`
-                : 'No external gists detected. Technical notes are published to GitHub repositories.'}
+                : 'Technical notes and architectural documentation are maintained in repository READMEs.'}
             </span>
           </div>
         ) : (
@@ -85,27 +86,29 @@ const BlogSection = memo(function BlogSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   variants={cardVariants}
-                  className="cyber-glass-card rounded p-4 transition-all flex flex-col justify-between group cursor-pointer font-mono relative"
+                  className="studio-card p-5 flex flex-col justify-between group cursor-pointer"
                 >
-                  <div className="cyber-bracket-tl" />
+                  <div className="studio-corner-tl" />
+                  <div className="studio-corner-br" />
+
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-zinc-400">
-                      <span className="text-[11px] text-zinc-400 font-bold"># {gist.id.substring(0, 7)}</span>
+                    <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                      <span className="text-white font-bold"># {gist.id.substring(0, 7)}</span>
                       <span>{date}</span>
                     </div>
 
-                    <h3 className="text-sm font-bold text-zinc-100 group-hover:text-white transition-colors line-clamp-2">
+                    <h3 className="text-sm font-bold text-white group-hover:text-zinc-200 line-clamp-2 font-display">
                       {gist.description || file.filename || `Gist ${gist.id.substring(0, 7)}`}
                     </h3>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-zinc-800 text-xs">
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-900 text-zinc-300 border border-zinc-700">
+                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-white/5 text-xs font-mono">
+                    <span className="text-[10px] px-2 py-0.5 bg-[#14141a] text-zinc-300 border border-white/10">
                       {file.language || 'Markdown'}
                     </span>
-                    <span className="text-zinc-400 group-hover:text-white text-xs flex items-center gap-1 font-bold">
-                      <span>Read Document</span>
-                      <span>↗</span>
+                    <span className="text-zinc-400 group-hover:text-white flex items-center gap-1">
+                      <span>Read Note</span>
+                      <ExternalLink className="w-3 h-3" />
                     </span>
                   </div>
                 </motion.a>

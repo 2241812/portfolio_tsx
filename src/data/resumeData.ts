@@ -1,5 +1,5 @@
 export const credentials = [
-  { icon: '🎓', title: 'B.S. Computer Science', description: `Saint Louis University | GPA: 3.53` },
+  { icon: '🎓', title: 'B.S. Computer Science', description: 'Saint Louis University | Class of 2027' },
   { icon: '⭐', title: 'Smart City Challenge', description: 'Certified Participant - 2024' },
   { icon: '🏆', title: 'AI Development', description: 'Industry Specialization Certificate' },
 ];

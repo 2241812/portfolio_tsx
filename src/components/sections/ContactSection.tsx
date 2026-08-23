@@ -3,8 +3,23 @@ import React, { memo, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { resumeData, credentials } from '@/data/resumeData';
 import { containerVariants, cardVariants, headingVariants, fireConfetti } from './shared';
+import {
+  Mail,
+  Phone,
+  Check,
+  Copy,
+  ExternalLink,
+  Award,
+  Send,
+} from 'lucide-react';
 
-const ContactSection = memo(function ContactSection() {
+const LinkedinIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.25c-.9 0-1.63.73-1.63 1.63s.73 1.63 1.63 1.63 1.63-.73 1.63-1.63-.73-1.63-1.63-1.63Z" />
+  </svg>
+);
+
+export const ContactSection = memo(function ContactSection() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const copyToClipboard = useCallback((text: string, label: string) => {
@@ -15,170 +30,199 @@ const ContactSection = memo(function ContactSection() {
   }, []);
 
   return (
-    <section
-      id="contact"
-      className="scroll-mt-24 w-full py-8 md:py-16"
-    >
+    <section id="contact" className="scroll-mt-20 w-full py-12 border-b border-white/10">
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.05 }}
-        className="w-full space-y-6"
+        className="w-full space-y-8"
       >
-        {/* Section Header */}
+        {/* Studio Section Header */}
         <motion.div
           variants={headingVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-800 pb-3 gap-2"
+          className="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4 gap-4"
         >
-          <div className="flex items-center gap-3">
-            <span className="text-zinc-400 text-sm font-bold font-mono">[06]</span>
-            <h2 className="text-base sm:text-lg font-bold text-white uppercase tracking-wider font-mono">
-              COMMUNICATION &amp; DISPATCH
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase tracking-widest">
+              <span>05 // DISPATCH</span>
+              <span className="text-zinc-600">/</span>
+              <span>ESTABLISH DIRECT PROTOCOL</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white uppercase font-display tracking-tight">
+              Contact &amp; Engagement
             </h2>
           </div>
+
+          <span className="text-xs font-mono text-zinc-400">
+            [AVAILABLE FOR SWE &amp; GAME DEV OPPORTUNITIES // 2026]
+          </span>
         </motion.div>
 
-        {/* 2-Column Split: Interactive Terminal Dispatch Left, Credentials & Info Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* LEFT: Contact Terminal Box (7 cols) */}
-          <motion.div
-            variants={cardVariants}
-            className="lg:col-span-7 cyber-glass-card rounded-xl p-5 sm:p-7 space-y-5 font-mono relative overflow-hidden shadow-xl"
-          >
-            <div className="cyber-bracket-tl" />
-            <div className="cyber-bracket-br" />
+        {/* 2-Column Split */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          {/* Left Column: Direct Communication Channels (7 cols) */}
+          <motion.div variants={cardVariants} className="lg:col-span-7 studio-card p-6 sm:p-8 space-y-6">
+            <div className="studio-corner-tl" />
+            <div className="studio-corner-br" />
 
-            <div className="flex items-center justify-between text-xs text-zinc-400 border-b border-zinc-800 pb-2">
-              <span className="text-zinc-200 font-bold flex items-center gap-2">
-                <span className="text-zinc-400 font-bold">$</span>
-                <span>./initiate_direct_connection.sh</span>
+            <div className="flex items-center justify-between border-b border-white/10 pb-3 text-xs font-mono">
+              <span className="text-white font-bold uppercase tracking-wider flex items-center gap-2">
+                <Send className="w-3.5 h-3.5" />
+                <span>DIRECT INQUIRY &amp; REACH</span>
               </span>
-              <span className="text-zinc-300 text-[10px] flex items-center gap-1.5 font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                <span>ONLINE</span>
+              <span className="inline-flex items-center gap-1.5 text-zinc-300 font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                ONLINE
               </span>
             </div>
 
-            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-              Available for software engineering roles, systems automation projects, and research opportunities.
-              Feel free to establish direct contact via any channel below.
+            <p className="text-sm text-zinc-300 font-sans leading-relaxed">
+              Seeking software engineering and game development roles, systems architecture projects,
+              or technical collaboration. Connect directly via email or LinkedIn below.
             </p>
 
-            {/* Direct Copyable Fields */}
-            <div className="space-y-3 pt-1">
+            {/* Direct Copyable Rows */}
+            <div className="space-y-3 pt-2">
               {/* Email */}
-              <div className="flex items-center justify-between p-3.5 rounded-lg bg-[#0e1015] border border-zinc-800 hover:border-zinc-600 transition-all shadow-inner">
-                <div className="min-w-0 flex items-center gap-3">
-                  <span className="text-base">📧</span>
+              <div className="flex items-center justify-between p-4 bg-[#121217] border border-white/10 hover:border-white/25 transition-all">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="p-2 bg-white/5 border border-white/10 text-white">
+                    <Mail className="w-4 h-4" />
+                  </div>
                   <div className="min-w-0">
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Direct Email</div>
-                    <div className="text-xs sm:text-sm font-bold text-zinc-100 truncate font-mono">
+                    <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+                      Direct Email
+                    </div>
+                    <div className="text-xs sm:text-sm font-bold text-white font-mono truncate">
                       {resumeData.personalInfo.email}
                     </div>
                   </div>
                 </div>
+
                 <button
                   onClick={() => copyToClipboard(resumeData.personalInfo.email, 'email')}
-                  className={`px-3 py-1.5 text-xs font-mono rounded-lg border transition-all cursor-pointer shrink-0 font-bold ${
+                  className={`px-3.5 py-1.5 text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                     copiedField === 'email'
-                      ? 'bg-zinc-800 text-white border-zinc-500 shadow-sm'
-                      : 'bg-zinc-100 text-zinc-950 border-transparent hover:bg-white shadow-sm'
+                      ? 'bg-emerald-400 text-black'
+                      : 'bg-white hover:bg-zinc-200 text-black'
                   }`}
                 >
-                  {copiedField === 'email' ? '✓ Copied' : 'Copy'}
+                  {copiedField === 'email' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedField === 'email' ? 'Copied' : 'Copy'}</span>
                 </button>
               </div>
 
               {/* Phone */}
-              <div className="flex items-center justify-between p-3.5 rounded-lg bg-[#0e1015] border border-zinc-800 hover:border-zinc-600 transition-all shadow-inner">
-                <div className="min-w-0 flex items-center gap-3">
-                  <span className="text-base">📱</span>
+              <div className="flex items-center justify-between p-4 bg-[#121217] border border-white/10 hover:border-white/25 transition-all">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="p-2 bg-white/5 border border-white/10 text-white">
+                    <Phone className="w-4 h-4" />
+                  </div>
                   <div className="min-w-0">
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Mobile Voice / SMS</div>
-                    <div className="text-xs sm:text-sm font-bold text-zinc-100 truncate font-mono">
+                    <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+                      Voice / Phone
+                    </div>
+                    <div className="text-xs sm:text-sm font-bold text-white font-mono truncate">
                       {resumeData.personalInfo.phone}
                     </div>
                   </div>
                 </div>
+
                 <button
                   onClick={() => copyToClipboard(resumeData.personalInfo.phone, 'phone')}
-                  className={`px-3 py-1.5 text-xs font-mono rounded-lg border transition-all cursor-pointer shrink-0 font-bold ${
+                  className={`px-3.5 py-1.5 text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                     copiedField === 'phone'
-                      ? 'bg-zinc-800 text-white border-zinc-500 shadow-sm'
-                      : 'bg-zinc-100 text-zinc-950 border-transparent hover:bg-white shadow-sm'
+                      ? 'bg-emerald-400 text-black'
+                      : 'bg-white hover:bg-zinc-200 text-black'
                   }`}
                 >
-                  {copiedField === 'phone' ? '✓ Copied' : 'Copy'}
+                  {copiedField === 'phone' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedField === 'phone' ? 'Copied' : 'Copy'}</span>
                 </button>
               </div>
 
               {/* LinkedIn */}
-              <div className="flex items-center justify-between p-3.5 rounded-lg bg-[#0e1015] border border-zinc-800 hover:border-zinc-600 transition-all shadow-inner">
-                <div className="min-w-0 flex items-center gap-3">
-                  <span className="text-base">💼</span>
+              <div className="flex items-center justify-between p-4 bg-[#121217] border border-white/10 hover:border-white/25 transition-all">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="p-2 bg-white/5 border border-white/10 text-white">
+                    <LinkedinIcon className="w-4 h-4" />
+                  </div>
                   <div className="min-w-0">
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Professional Network</div>
-                    <div className="text-xs sm:text-sm font-bold text-zinc-100 truncate font-mono">
+                    <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+                      Professional Network
+                    </div>
+                    <div className="text-xs sm:text-sm font-bold text-white font-mono truncate">
                       linkedin.com/in/narcisoiii-javier
                     </div>
                   </div>
                 </div>
+
                 <a
                   href={resumeData.personalInfo.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 text-xs font-mono rounded-lg bg-zinc-900 text-zinc-200 border border-zinc-700 hover:bg-zinc-800 hover:text-white transition-all shrink-0 flex items-center gap-1.5 font-bold"
+                  className="px-3.5 py-1.5 text-xs font-mono font-bold bg-[#181820] hover:bg-zinc-800 text-white border border-white/20 transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Connect</span>
-                  <span>↗</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
             </div>
           </motion.div>
 
-          {/* RIGHT: Status & Credentials (5 cols) */}
-          <motion.div variants={cardVariants} className="lg:col-span-5 space-y-4 font-mono">
-            {/* Status Box */}
-            <div className="cyber-glass-card rounded-xl p-5 space-y-3 relative">
-              <div className="cyber-bracket-tl" />
-              <div className="text-xs font-bold text-zinc-200 border-b border-zinc-800 pb-2 flex items-center justify-between">
-                <span className="text-white font-mono">SYSTEM DISPATCH STATUS</span>
-                <span className="text-zinc-400 text-[11px]">{resumeData.personalInfo.location}</span>
+          {/* Right Column: Dispatch Specs & Verified Accreditations (5 cols) */}
+          <motion.div variants={cardVariants} className="lg:col-span-5 space-y-4">
+            {/* Dispatch Specifications Card */}
+            <div className="studio-card p-6 space-y-4">
+              <div className="studio-corner-tl" />
+              <div className="studio-corner-br" />
+
+              <div className="flex items-center justify-between text-xs font-mono border-b border-white/10 pb-3">
+                <span className="text-white font-bold uppercase tracking-wider">
+                  DISPATCH PROTOCOL
+                </span>
+                <span className="text-zinc-500">{resumeData.personalInfo.location}</span>
               </div>
-              <div className="space-y-2 text-xs text-zinc-300">
-                <div className="flex justify-between py-1 border-b border-zinc-800/60">
-                  <span className="text-zinc-400">University</span>
-                  <span className="text-zinc-100 font-semibold">{resumeData.education.university}</span>
+
+              <div className="space-y-2.5 text-xs font-mono">
+                <div className="flex justify-between py-1 border-b border-white/5">
+                  <span className="text-zinc-400">Response SLA</span>
+                  <span className="text-white font-bold">&lt; 24 Hours</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-zinc-800/60">
-                  <span className="text-zinc-400">Discipline</span>
-                  <span className="text-zinc-100">B.S. Computer Science</span>
+                <div className="flex justify-between py-1 border-b border-white/5">
+                  <span className="text-zinc-400">Timezone</span>
+                  <span className="text-zinc-200">GMT+8 (PHT)</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-zinc-800/60">
-                  <span className="text-zinc-400">Academic Standing</span>
-                  <span className="text-zinc-100 font-bold font-mono">GPA: {resumeData.education.gpa} / 4.00</span>
+                <div className="flex justify-between py-1 border-b border-white/5">
+                  <span className="text-zinc-400">Work Model</span>
+                  <span className="text-zinc-200">Remote / Hybrid / On-Site</span>
                 </div>
                 <div className="flex justify-between py-1">
-                  <span className="text-zinc-400">Response SLA</span>
-                  <span className="text-zinc-200 font-bold">&lt; 24 hours</span>
+                  <span className="text-zinc-400">Affiliation</span>
+                  <span className="text-white font-bold font-mono">Saint Louis University &apos;27</span>
                 </div>
               </div>
             </div>
 
-            {/* Verified Specialization Badges */}
-            <div className="cyber-glass-card rounded-xl p-5 space-y-3 relative">
-              <div className="cyber-bracket-tl" />
-              <div className="text-xs font-bold text-white border-b border-zinc-800 pb-2 font-mono">
-                ACCREDITATIONS &amp; CERTIFICATIONS
+            {/* Accreditations Badges */}
+            <div className="studio-card p-6 space-y-3">
+              <div className="studio-corner-tl" />
+              <div className="studio-corner-br" />
+
+              <div className="text-xs font-bold text-white uppercase tracking-wider font-mono border-b border-white/10 pb-2">
+                VERIFIED ACCREDITATIONS
               </div>
-              <div className="space-y-2.5">
-                {credentials.map((c) => (
-                  <div key={c.title} className="flex items-center gap-3 text-xs">
-                    <span className="text-lg shrink-0">{c.icon}</span>
-                    <div className="min-w-0">
-                      <div className="font-semibold text-zinc-100 font-mono">{c.title}</div>
-                      <div className="text-[11px] text-zinc-400 font-mono">{c.description}</div>
+
+              <div className="space-y-3 pt-1">
+                {credentials.map((cred) => (
+                  <div key={cred.title} className="flex items-center gap-3 text-xs">
+                    <div className="p-1.5 bg-white/5 border border-white/10 text-white">
+                      <Award className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="min-w-0 font-mono">
+                      <div className="font-semibold text-white truncate">{cred.title}</div>
+                      <div className="text-[11px] text-zinc-400 truncate">{cred.description}</div>
                     </div>
                   </div>
                 ))}

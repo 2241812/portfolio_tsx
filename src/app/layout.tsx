@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Orbitron, Rajdhani } from "next/font/google";
+import { Geist, Geist_Mono, Syne } from "next/font/google";
 import LenisProvider from "@/components/ui/LenisProvider";
 import "./globals.css";
 
@@ -13,16 +13,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const orbitron = Orbitron({
-  variable: "--font-orbitron",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
-
-const rajdhani = Rajdhani({
-  variable: "--font-rajdhani",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -83,7 +77,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${rajdhani.variable} h-full antialiased`}
+      className={`${syne.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
         <link rel="icon" href="/logo.jpg" sizes="any" />

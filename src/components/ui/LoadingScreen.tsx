@@ -1,132 +1,76 @@
 "use client";
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import ErrorBoundary from '@/components/ui/ErrorBoundary';
-
-const Scene = dynamic(() => import('@/components/3d/Scene'), {
-  ssr: false,
-});
 
 interface LoadingScreenProps {
   onComplete: () => void;
 }
 
 export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
-  const [loadingPhase, setLoadingPhase] = useState<'typing' | 'finished' | 'settled'>('typing');
   const [loadProgress, setLoadProgress] = useState(0);
+  const [isSettled, setIsSettled] = useState(false);
 
   useEffect(() => {
-    if (loadingPhase !== 'typing') {
-      setLoadProgress(100);
-      return;
-    }
-
-    const duration = 2000;
-    const intervalTime = 40;
+    const duration = 1200;
+    const intervalTime = 30;
     const steps = duration / intervalTime;
     let currentStep = 0;
 
     const interval = setInterval(() => {
       currentStep++;
-      setLoadProgress((currentStep / steps) * 100);
+      const nextProgress = Math.min((currentStep / steps) * 100, 100);
+      setLoadProgress(nextProgress);
 
       if (currentStep >= steps) {
         clearInterval(interval);
+        setTimeout(() => {
+          setIsSettled(true);
+          onComplete();
+        }, 200);
       }
     }, intervalTime);
 
-    const timer = setTimeout(() => {
-      setLoadingPhase('finished');
-      setTimeout(() => {
-        setLoadingPhase('settled');
-      }, 400);
-    }, 2000);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timer);
-    };
-  }, [loadingPhase]);
-
-  useEffect(() => {
-    if (loadingPhase !== 'settled') {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [loadingPhase]);
-
-  useEffect(() => {
-    if (loadingPhase === 'settled') {
-      onComplete();
-    }
-  }, [loadingPhase, onComplete]);
+    return () => clearInterval(interval);
+  }, [onComplete]);
 
   return (
     <AnimatePresence>
-      {loadingPhase !== 'settled' && (
+      {!isSettled && (
         <motion.div
-          key="loading-container"
+          key="studio-loader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.4, ease: "easeInOut" } }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-[#06090e] font-mono"
+          exit={{ opacity: 0, transition: { duration: 0.45, ease: [0.76, 0, 0.24, 1] } }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-between p-8 sm:p-12 bg-[#08080a] text-white select-none pointer-events-none"
         >
-          <div className="absolute inset-0 z-20" aria-hidden="true">
-            <ErrorBoundary fallback={<div className="w-full h-full bg-[#06090e]" />}>
-              <Scene isSettled={false} />
-            </ErrorBoundary>
+          {/* Top Stamp */}
+          <div className="w-full flex items-center justify-between text-[11px] font-mono text-zinc-400">
+            <span>NARCISO III JAVIER // STUDIO</span>
+            <span>CAR // PH [16.40°N]</span>
           </div>
 
-          <motion.div
-            key="loading-top"
-            initial={{ y: 0, opacity: 1 }}
-            exit={{ y: '-100%', opacity: 0, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
-            className="absolute top-0 left-0 w-full h-[15%] bg-gradient-to-b from-[#09090b] via-[#09090b] to-transparent z-10 flex items-center justify-center"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-              className="text-center"
-            >
-              <div className="font-mono text-xs tracking-[0.3em] text-zinc-300 uppercase mb-1">
-                SYSTEM BOOT // POSIX ENVIRONMENT
-              </div>
-            </motion.div>
-          </motion.div>
+          {/* Center Brand Title in Syne */}
+          <div className="text-center space-y-3">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight uppercase font-display">
+              NARCISO JAVIER
+            </h1>
+            <p className="text-xs sm:text-sm font-mono text-zinc-400 tracking-widest uppercase">
+              Systems Architecture • Game Development
+            </p>
+          </div>
 
-          <motion.div
-            key="loading-bottom"
-            initial={{ y: 0, opacity: 1 }}
-            exit={{ y: '100%', opacity: 0, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
-            className="absolute bottom-0 left-0 w-full h-[25%] bg-gradient-to-t from-[#09090b] via-[#09090b] to-transparent z-10 flex flex-col items-center justify-center pb-8"
-          >
-            <div className="w-64 max-w-xs space-y-2">
-              <div className="flex justify-between text-[11px] text-zinc-400 font-mono">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                  <span>INITIALIZING TUI</span>
-                </span>
-                <span className="text-white font-bold">{Math.round(loadProgress)}%</span>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="w-full h-1 bg-zinc-900 border border-zinc-800 rounded overflow-hidden">
-                <motion.div
-                  className="h-full bg-white rounded"
-                  style={{ width: `${loadProgress}%` }}
-                />
-              </div>
-
-              <div className="text-[10px] text-zinc-600 font-mono text-center">
-                Press [:] or [?] anytime for command mode
-              </div>
+          {/* Bottom Progress Bar & Percent */}
+          <div className="w-full max-w-sm space-y-2">
+            <div className="flex items-center justify-between text-[10px] font-mono text-zinc-400">
+              <span className="uppercase tracking-widest">INITIALIZING STUDIO WORKSPACE</span>
+              <span className="text-white font-bold">{Math.round(loadProgress)}%</span>
             </div>
-          </motion.div>
+            <div className="w-full h-0.5 bg-zinc-900 border border-white/10 overflow-hidden">
+              <motion.div
+                className="h-full bg-white"
+                style={{ width: `${loadProgress}%` }}
+              />
+            </div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

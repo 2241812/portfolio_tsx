@@ -4,6 +4,7 @@ import { resumeData } from '@/data/resumeData';
 import { usePinnedRepos } from '@/hooks/useGitHubData';
 import GitHubStats from '@/components/ui/GitHubStats';
 import {
+  HeroSection,
   AboutSection,
   SkillsSection,
   ProjectsSection,
@@ -13,7 +14,7 @@ import {
   type UnifiedProject,
 } from '@/components/sections';
 
-const Sections = memo(function Sections() {
+export const Sections = memo(function Sections() {
   // GitHub pinned repos with SWR - automatic caching and revalidation
   const { pinnedRepos, isLoading, isError, retry } = usePinnedRepos('narcisoJavier');
 
@@ -41,7 +42,8 @@ const Sections = memo(function Sections() {
   );
 
   return (
-    <div className="relative z-10 flex flex-col w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="relative z-10 flex flex-col w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 space-y-12">
+      <HeroSection />
       <AboutSection />
       <ProjectsSection
         pinnedRepos={pinnedRepos}
