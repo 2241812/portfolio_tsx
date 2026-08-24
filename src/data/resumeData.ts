@@ -1,18 +1,19 @@
 export const credentials = [
   { icon: '🎓', title: 'B.S. Computer Science', description: 'Saint Louis University | Class of 2027' },
   { icon: '⭐', title: 'Smart City Challenge', description: 'Certified Participant - 2024' },
-  { icon: '🏆', title: 'AI Development', description: 'Industry Specialization Certificate' },
+  { icon: '🏆', title: 'AI Development Track', description: 'Specialization Certificate' },
 ];
 
 export const resumeData = {
   personalInfo: {
     name: "Narciso III Javier",
     title: "Computer Science Student",
-    titleAnimated: ["Full-Stack Developer", "Game Developer", "AI Engineer"],
+    titleAnimated: ["Systems & Go Developer", "Game Developer (Unity)", "Software Engineering Student"],
     location: "Baguio City, Philippines",
     phone: "+63-976-451-1638",
     email: "2241812@slu.edu.ph",
-    linkedin: "https://www.linkedin.com/in/narcisoiii-javier/"
+    linkedin: "https://www.linkedin.com/in/narcisoiii-javier/",
+    github: "https://github.com/narcisoJavier"
   },
   education: {
     university: "Saint Louis University",
@@ -24,112 +25,109 @@ export const resumeData = {
     programming: [
       "Python",
       "Go",
+      "C++",
+      "C#",
+      "Dart",
       "JavaScript (ES6+)",
       "Node.js",
-      "PHP",
-      "C++",
-      "Java",
-      "HTML",
-      "CSS"
+      "PHP"
     ],
     frameworks: [
+      "Unity 3D",
+      "Flutter",
       "PyQt6",
-      "AR Foundation",
-      "AI Frameworks"
+      "Leaflet.js",
+      "Next.js"
     ],
     infrastructure: [
       "Docker",
       "Docker Compose",
       "VSCode Remote Containers",
-      "CI/CD Pipelines",
-      "Git/GitHub",
-      "Visual Studio"
+      "Git & GitHub",
+      "Linux / Bash"
     ],
     coreCompetencies: [
-      "Game Development",
-      "Systems Architecture",
-      "Player-Centric Design",
-      "Microservices Architecture",
-      "Containerization",
-      "System Automation",
-      "Technical Documentation"
-    ],
+      "Systems Programming",
+      "Game Mechanics & Physics",
+      "Containerization & Microservices",
+      "Desktop Automation",
+      "Geospatial Mapping (GIS)",
+      "REST APIs & Algorithms"
+    ]
   },
   skillDescriptions: {
-    "Python": "Versatile programming language known for simplicity and readability, widely used in web development, data science, AI, and automation.",
-    "Go": "Efficient, statically typed language developed by Google, excellent for concurrent programming and microservices.",
-    "JavaScript (ES6+)": "Modern version of JavaScript with features like arrow functions, destructuring, and modules for dynamic web development.",
-    "Node.js": "JavaScript runtime built on Chrome's V8 engine for building scalable server-side applications.",
-    "PHP": "Server-side scripting language designed for web development but also used as a general-purpose programming language.",
-    "C++": "Powerful systems programming language with object-oriented features, used for game development, operating systems, and performance-critical applications.",
-    "Java": "Platform-independent, object-oriented language widely used for enterprise applications, Android development, and big data processing.",
-    "HTML": "Standard markup language for creating web pages and web applications.",
-    "CSS": "Style sheet language used for describing the presentation of a document written in HTML or XML.",
-    "PyQt6": "Python binding of the cross-platform GUI toolkit Qt, used for creating desktop applications with Python.",
-    "AR Foundation": "Unity's cross-platform framework for building augmented reality experiences for iOS and Android devices.",
-    "AI Frameworks": "Collection of libraries and tools for building artificial intelligence models and pipelines.",
-    "Docker": "Platform for developing, shipping, and running applications in containers for consistent environments across systems.",
-    "Docker Compose": "Tool for defining and running multi-container Docker applications using YAML configuration files.",
-    "VSCode Remote Containers": "Extension that allows you to use a Docker container as a full-featured development environment.",
-    "CI/CD Pipelines": "Automated processes for continuously integrating code changes and delivering applications to production.",
-    "Git/GitHub": "Distributed version control system and web-based hosting service for collaborative software development.",
-    "Microservices Architecture": "Architectural style that structures an application as a collection of loosely coupled, independently deployable services.",
-    "Containerization": "Lightweight alternative to virtualization that encapsulates an application in a container with its own operating environment.",
-    "Environment Isolation": "Practice of separating development, testing, and production environments to prevent interference and ensure consistency.",
-    "System Automation": "Use of technology to perform tasks with minimal human intervention, increasing efficiency and reducing errors.",
-    "AI Workflow Integration": "Process of incorporating artificial intelligence capabilities into existing business processes and systems.",
-    "Visual Studio": "Comprehensive integrated development environment (IDE) by Microsoft for building .NET, C#, and C++ applications with powerful debugging and profiling tools.",
-    "Game Development": "Art and science of creating interactive entertainment experiences using engines like Unity 3D, focusing on gameplay mechanics, physics, and player experience.",
-    "Player-Centric Design": "Design philosophy that prioritizes player enjoyment and user experience when developing games and interactive applications.",
-    "Systems Architecture": "Design and structure of software systems, including how components interact, communicate, and scale efficiently."
+    "Python": "Used for workflow automation scripts, computer vision prototyping, and backend tooling.",
+    "Go": "Statically typed systems language used for building concurrent microservices and shortest-path routing algorithms.",
+    "C++": "Used in computer science coursework and exploring low-level algorithms and data structures.",
+    "C#": "Primary language for Unity 3D gameplay scripting, physics loops, and player movement systems.",
+    "Dart": "Used alongside Flutter to build mobile applications with SSH socket connectivity.",
+    "JavaScript (ES6+)": "Modern client-side web development and interactive geospatial mapping with Leaflet.",
+    "Node.js": "JavaScript runtime for lightweight API gateways and backend services.",
+    "PHP": "Server-side scripting used in full-stack web applications and microservices integrations.",
+    "Unity 3D": "Game engine used for prototyping 3D character physics, combat mechanics, and level ergonomics.",
+    "Flutter": "Cross-platform mobile UI toolkit used to build the Tether server management client.",
+    "PyQt6": "Python GUI toolkit used for desktop tools that manage window focus and process monitoring.",
+    "Leaflet.js": "Lightweight open-source JavaScript library for interactive web maps and GeoJSON rendering.",
+    "Docker": "Container platform used to isolate development environments and package microservices.",
+    "Docker Compose": "Orchestration tool for multi-container microservices on local development networks.",
+    "VSCode Remote Containers": "Extension used to develop inside isolated, reproducible Docker containers.",
+    "Git & GitHub": "Version control and open-source project collaboration.",
+    "Systems Programming": "Designing efficient, clean software that communicates reliably with OS and network layers.",
+    "Game Mechanics & Physics": "Building responsive player movement, collision detection, and weapon states in Unity.",
+    "Containerization & Microservices": "Packaging independent service layers for consistent local and production deployment.",
+    "Desktop Automation": "Writing background scripts that monitor system states and streamline developer workflows.",
+    "Geospatial Mapping (GIS)": "Processing and displaying GeoJSON boundary maps and watershed topography.",
+    "REST APIs & Algorithms": "Implementing algorithm-backed endpoints such as Dijkstra shortest-path calculations."
   },
   projects: [
     {
-      title: "Unity 3D Game Projects",
-      role: "Game Developer (Learning)",
-      description:
-        "Personal game development projects exploring Unity 3D mechanics and player-centric design through hands-on experimentation and iterative prototyping.",
-    },
-    {
       title: "Tether",
-      role: "Mobile Systems & Security Developer",
+      role: "Mobile Developer & Creator",
       description:
-        "Engineered a mobile-first remote server administration tool with Flutter & Dart, delivering one-tap encrypted connections, intuitive swipe-to-command controls, and end-to-end encrypted terminal management.",
+        "A mobile server administration tool built with Flutter & Dart. Enables one-tap encrypted SSH socket connections, quick swipe-to-run commands, and remote terminal management directly from your phone.",
       link: "https://github.com/narcisoJavier/Tether"
     },
     {
       title: "geoCradle",
-      role: "Geospatial & Full-Stack Developer",
+      role: "Full-Stack GIS Developer",
       description:
-        "Interactive web mapping platform for exploring watersheds and administrative boundaries of the Cordillera Administrative Region (CAR), Philippines — built for DENR environmental analysis and spatial planning.",
+        "An interactive web mapping tool built with Leaflet.js and GeoJSON to visualize watershed areas and administrative boundaries across the Cordillera region, created for DENR environmental analysis.",
       link: "https://github.com/narcisoJavier/geoCradle"
     },
     {
-      title: "WebDev_Campus-Navigator_CS312",
-      role: "Full-Stack Developer",
+      title: "Campus Navigator CS312",
+      role: "Backend & Systems Developer",
       description:
-        "Designed a containerized microservices web application using Docker, Go, Node.js, and PHP to handle scalable campus navigation requests powered by Dijkstra's shortest-path algorithm.",
+        "A containerized web service built with Go and Docker Compose that calculates optimal walking routes across academic buildings using Dijkstra's shortest-path algorithm.",
       link: "https://github.com/narcisoJavier/WebDev_Campus-Navigator_CS312"
     },
     {
-      title: "MultiTask_ContextSwitch",
-      role: "Python Developer",
+      title: "MultiTask ContextSwitch",
+      role: "Python Desktop Developer",
       description:
-        "Developed a Python-based workflow automator that monitors web-based AI generation statuses, with a PyQt6 focus-switching engine and robust process monitoring to manage real-time window focus and UI states.",
+        "A desktop utility built with Python and PyQt6 that tracks long-running background tasks and smoothly shifts window focus when jobs complete, keeping multitasking seamless.",
       link: "https://github.com/narcisoJavier/MultiTask_ContextSwitch"
     },
     {
-      title: "OpenCode-VSCode-Setup",
-      role: "Dev Environment Setup",
+      title: "Unity 3D Game Prototypes",
+      role: "Game Developer (Prototyping)",
       description:
-        "Created a setup guide and Docker-based configuration for running OpenCode inside a VSCode terminal using Remote Containers, providing an isolated and reproducible development sandbox.",
+        "Hands-on experiments in Unity 3D and C# exploring kinetic player controllers, physics-driven combat mechanics, state machines, and player feedback loops.",
+      link: "https://github.com/narcisoJavier"
     },
     {
-      title: "Basic Hand Sign Recognition System",
-      role: "AI Engineer",
+      title: "Hand Sign Recognition CNN",
+      role: "Computer Vision Prototype",
       description:
-        "Built a computer vision prototype using a CNN model to interpret hand signs from a webcam feed. Developed as a learning project to explore AI and image classification.",
+        "A convolutional neural network (CNN) prototype built in Python on Google Colab that classifies basic hand gesture signs from webcam frames.",
       link: "https://colab.research.google.com/drive/1JtmdmGKfQzO4xnSUnl4rRVXulx5v6TJG?usp=sharing"
+    },
+    {
+      title: "OpenCode DevContainer Setup",
+      role: "Tooling & Environment Setup",
+      description:
+        "A reproducible development setup and guide for running OpenCode inside VSCode Remote Containers with Docker, ensuring clean environment isolation.",
+      link: "https://github.com/narcisoJavier"
     }
   ]
 };

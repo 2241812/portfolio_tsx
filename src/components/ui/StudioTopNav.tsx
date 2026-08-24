@@ -12,12 +12,9 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { id: 'hero', label: 'Hero', number: '00' },
-  { id: 'about', label: 'About', number: '01' },
-  { id: 'projects', label: 'Archives', number: '02' },
-  { id: 'skills', label: 'Matrix', number: '03' },
-  { id: 'github', label: 'Telemetry', number: '04' },
-  { id: 'notes', label: 'Gists', number: '05' },
-  { id: 'contact', label: 'Dispatch', number: '06' },
+  { id: 'about', label: 'Profile', number: '01' },
+  { id: 'projects', label: 'Works', number: '02' },
+  { id: 'contact', label: 'Dispatch', number: '03' },
 ];
 
 export const StudioTopNav = memo(function StudioTopNav() {
@@ -85,15 +82,15 @@ export const StudioTopNav = memo(function StudioTopNav() {
           </span>
         </div>
 
-        {/* Center: Full-Screen Studio Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1 bg-[#0e0e13] p-1 border border-white/10">
+        {/* Center: Clean 4-Section Studio Navigation Links */}
+        <nav className="hidden md:flex items-center gap-1 bg-[#0e0e13] p-1 border border-white/10">
           {NAV_ITEMS.map((item) => {
             const isActive = activeSection === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                className={`px-3 py-1.5 text-xs font-mono transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3.5 py-1.5 text-xs font-mono transition-all flex items-center gap-1.5 cursor-pointer ${
                   isActive
                     ? 'bg-white text-black font-bold shadow-sm'
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'
@@ -125,7 +122,7 @@ export const StudioTopNav = memo(function StudioTopNav() {
           {/* Social Links */}
           <div className="flex items-center gap-1">
             <a
-              href="https://github.com/narcisoJavier"
+              href={resumeData.personalInfo.github}
               target="_blank"
               rel="noopener noreferrer"
               className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors"
@@ -147,7 +144,7 @@ export const StudioTopNav = memo(function StudioTopNav() {
           {/* Inquire Action Button */}
           <button
             onClick={() => scrollTo('contact')}
-            className="px-3.5 py-1.5 bg-white text-black font-bold font-mono text-xs uppercase tracking-wider hover:bg-zinc-200 transition-all cursor-pointer flex items-center gap-1.5 shadow-md"
+            className="kokonut-btn-primary py-1.5 px-3 text-xs"
           >
             <span>Inquire</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -155,15 +152,15 @@ export const StudioTopNav = memo(function StudioTopNav() {
         </div>
       </div>
 
-      {/* Mobile / Tablet Horizontal Navigation Scroll Strip */}
-      <div className="flex lg:hidden overflow-x-auto no-scrollbar gap-1 pt-2.5 mt-2 border-t border-white/5">
+      {/* Mobile Horizontal Navigation Strip */}
+      <div className="flex md:hidden overflow-x-auto no-scrollbar gap-1 pt-2.5 mt-2 border-t border-white/5">
         {NAV_ITEMS.map((item) => {
           const isActive = activeSection === item.id;
           return (
             <button
               key={item.id}
               onClick={() => scrollTo(item.id)}
-              className={`px-2.5 py-1 text-[11px] font-mono whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
+              className={`px-3 py-1 text-[11px] font-mono whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
                 isActive
                   ? 'bg-white text-black font-bold'
                   : 'text-zinc-400 hover:text-white bg-white/5'

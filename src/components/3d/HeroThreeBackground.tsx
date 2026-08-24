@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, memo, useState, useEffect } from 'react';
+import React, { useRef, memo, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -100,24 +100,18 @@ function ParticleField() {
   );
 }
 
+function checkWebGL(): boolean {
+  if (typeof window === 'undefined') return true;
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+  } catch {
+    return false;
+  }
+}
+
 export const HeroThreeBackground = memo(function HeroThreeBackground() {
-  const [hasWebGL, setHasWebGL] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if (gl) {
-        setHasWebGL(true);
-      }
-    } catch {
-      setHasWebGL(false);
-    }
-  }, []);
-
-  if (!mounted) return null;
+  const [hasWebGL] = useState(checkWebGL);
 
   return (
     <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-60">

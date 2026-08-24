@@ -1,45 +1,17 @@
 "use client";
-import React, { memo, useMemo } from 'react';
-import { resumeData } from '@/data/resumeData';
+import React, { memo } from 'react';
 import { usePinnedRepos } from '@/hooks/useGitHubData';
-import GitHubStats from '@/components/ui/GitHubStats';
 import {
   HeroSection,
   AboutSection,
-  SkillsSection,
   ProjectsSection,
   ContactSection,
-  BlogSection,
   FooterSection,
-  type UnifiedProject,
 } from '@/components/sections';
 
 export const Sections = memo(function Sections() {
   // GitHub pinned repos with SWR - automatic caching and revalidation
   const { pinnedRepos, isLoading, isError, retry } = usePinnedRepos('narcisoJavier');
-
-  // Unified project data from resume + GitHub
-  const allProjects: UnifiedProject[] = useMemo(
-    () => [
-      ...resumeData.projects.map((p) => ({
-        title: p.title,
-        description: p.description,
-        url: p.link,
-        source: 'resume' as const,
-        role: p.role,
-      })),
-      ...pinnedRepos.map((r) => ({
-        title: r.name,
-        description: r.description,
-        language: r.language,
-        url: r.url,
-        stars: r.stars,
-        forks: r.forks,
-        source: 'github' as const,
-      })),
-    ],
-    [pinnedRepos]
-  );
 
   return (
     <div className="relative z-10 flex flex-col w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 space-y-12">
@@ -51,9 +23,6 @@ export const Sections = memo(function Sections() {
         reposError={isError}
         onRetry={retry}
       />
-      <SkillsSection allProjects={allProjects} />
-      <GitHubStats />
-      <BlogSection />
       <ContactSection />
       <FooterSection />
     </div>

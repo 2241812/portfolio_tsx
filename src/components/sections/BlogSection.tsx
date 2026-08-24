@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { containerVariants, cardVariants, headingVariants } from './shared';
 import { useInView } from '@/hooks/useInView';
 import { useGistData } from '@/hooks/useGistData';
-import { FileText, ExternalLink, BookOpen } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 export const BlogSection = memo(function BlogSection() {
   const { ref, isInView } = useInView({ rootMargin: '200px', once: true });

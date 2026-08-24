@@ -15,17 +15,17 @@ export const FooterSection = memo(function FooterSection() {
           <div className="flex items-center justify-center md:justify-start gap-2">
             <span className="w-2 h-2 bg-white" />
             <span className="text-white font-bold uppercase tracking-wider">
-              {resumeData.personalInfo.name} // STUDIO
+              {resumeData.personalInfo.name} &apos;//&apos; STUDIO
             </span>
           </div>
           <p className="text-[11px] text-zinc-400 font-sans">
-            Software Engineering &amp; Game Development Architecture • Saint Louis University &apos;27
+            Computer Science • Saint Louis University &apos;27 • Baguio City, Philippines
           </p>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-5 text-zinc-400 text-xs">
           <a
-            href="https://github.com/narcisoJavier"
+            href={resumeData.personalInfo.github}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white transition-colors"

@@ -29,10 +29,10 @@ export const AboutSection = memo(function AboutSection() {
             <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase tracking-widest">
               <span>01 // PROFILE</span>
               <span className="text-zinc-600">/</span>
-              <span>BIOGRAPHY &amp; ENGINEERING CORE</span>
+              <span>BACKGROUND &amp; FOCUS</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white uppercase font-display tracking-tight">
-              About &amp; Specialization
+              About &amp; Focus
             </h2>
           </div>
 
@@ -43,46 +43,46 @@ export const AboutSection = memo(function AboutSection() {
 
         {/* 2-Column Studio Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* Left Column: Narrative Bio & Philosophy (7 cols) */}
+          {/* Left Column: Narrative Bio (7 cols) */}
           <motion.div variants={cardVariants} className="lg:col-span-7 space-y-5">
-            <div className="studio-card p-6 sm:p-8 space-y-5">
+            <div className="kokonut-card-glow p-6 sm:p-8 space-y-5">
               <div className="studio-corner-tl" />
               <div className="studio-corner-br" />
+              <div className="kokonut-spotlight-layer" />
 
-              <div className="flex items-center justify-between text-xs font-mono text-zinc-400 border-b border-white/10 pb-3">
+              <div className="relative z-10 flex items-center justify-between text-xs font-mono text-zinc-400 border-b border-white/10 pb-3">
                 <span className="text-white font-bold uppercase tracking-wider">
-                  STUDIO MANIFESTO // PERSPECTIVE
+                  ENGINEERING STATEMENT
                 </span>
                 <span>SWE &amp; GAME DEV</span>
               </div>
 
-              <div className="space-y-4 text-zinc-300 font-sans text-sm sm:text-base leading-relaxed">
+              <div className="relative z-10 space-y-4 text-zinc-300 font-sans text-sm sm:text-base leading-relaxed">
                 <p>
-                  I am a Computer Science undergraduate at{' '}
+                  I am a Computer Science student at{' '}
                   <strong className="text-white font-semibold">
                     {resumeData.education.university}
                   </strong>{' '}
-                  with a career interest in scalable system architecture, containerization, and
-                  interactive game development.
+                  in Baguio City, focusing on software engineering, backend systems, and interactive
+                  game mechanics.
                 </p>
                 <p className="text-zinc-400 text-sm">
-                  My work bridges low-level systems programming with responsive user experiences.
-                  Whether architecting Go microservices mesh in Docker, automating desktop workflows
-                  with PyQt6 and process monitors, or experimenting with Unity 3D physics mechanics and
-                  player ergonomics, I prioritize clean architectural boundaries, zero-drift environments,
-                  and player-centric design.
+                  I enjoy building practical tools that solve real problems — whether that means
+                  connecting to remote servers on mobile via SSH, designing algorithm-backed
+                  microservices in Go and Docker, automating repetitive desktop workflows with Python,
+                  or programming responsive character mechanics in Unity 3D.
                 </p>
               </div>
 
               {/* Specialization Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                 <div className="p-3.5 bg-[#121217] border border-white/10 space-y-1">
                   <div className="flex items-center gap-2 text-white text-xs font-mono font-bold">
                     <Cpu className="w-3.5 h-3.5" />
                     <span>Systems</span>
                   </div>
                   <p className="text-[11px] text-zinc-400 font-sans leading-normal">
-                    Go microservices, Docker compose, and Linux devcontainers.
+                    Go microservices, Docker Compose, and remote Linux containers.
                   </p>
                 </div>
 
@@ -92,17 +92,17 @@ export const AboutSection = memo(function AboutSection() {
                     <span>Game Dev</span>
                   </div>
                   <p className="text-[11px] text-zinc-400 font-sans leading-normal">
-                    Unity 3D mechanics, C#, spatial logic, and player ergonomics.
+                    Unity 3D gameplay physics, C#, state logic, and player mechanics.
                   </p>
                 </div>
 
                 <div className="p-3.5 bg-[#121217] border border-white/10 space-y-1">
                   <div className="flex items-center gap-2 text-white text-xs font-mono font-bold">
                     <Layers className="w-3.5 h-3.5" />
-                    <span>Automation</span>
+                    <span>Tooling</span>
                   </div>
                   <p className="text-[11px] text-zinc-400 font-sans leading-normal">
-                    Python PyQt6 workflow automation and computer vision models.
+                    Python desktop automation, PyQt6, and GIS data visualization.
                   </p>
                 </div>
               </div>
@@ -112,18 +112,19 @@ export const AboutSection = memo(function AboutSection() {
           {/* Right Column: Academic Specs & Credentials (5 cols) */}
           <motion.div variants={cardVariants} className="lg:col-span-5 space-y-4">
             {/* Academic Specification Card */}
-            <div className="studio-card p-6 space-y-4">
+            <div className="kokonut-card-glow p-6 space-y-4">
               <div className="studio-corner-tl" />
               <div className="studio-corner-br" />
+              <div className="kokonut-spotlight-layer" />
 
-              <div className="flex items-center justify-between text-xs font-mono border-b border-white/10 pb-3">
+              <div className="relative z-10 flex items-center justify-between text-xs font-mono border-b border-white/10 pb-3">
                 <span className="text-white font-bold uppercase tracking-wider">
-                  ACADEMIC SPECIFICATIONS
+                  ACADEMIC BACKGROUND
                 </span>
                 <span className="text-zinc-500">VERIFIED</span>
               </div>
 
-              <div className="space-y-2.5 text-xs font-mono">
+              <div className="relative z-10 space-y-2.5 text-xs font-mono">
                 <div className="flex justify-between py-1 border-b border-white/5">
                   <span className="text-zinc-400">University</span>
                   <span className="text-white font-semibold">{resumeData.education.university}</span>
@@ -133,7 +134,7 @@ export const AboutSection = memo(function AboutSection() {
                   <span className="text-white font-semibold">{resumeData.education.degree}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-white/5">
-                  <span className="text-zinc-400">Field</span>
+                  <span className="text-zinc-400">Track</span>
                   <span className="text-white font-semibold">Systems &amp; Game Development</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-white/5">
@@ -152,14 +153,15 @@ export const AboutSection = memo(function AboutSection() {
               {credentials.map((cred) => (
                 <div
                   key={cred.title}
-                  className="studio-card p-3.5 flex items-center gap-3.5 group"
+                  className="kokonut-card-glow p-3.5 flex items-center gap-3.5 group"
                 >
                   <div className="studio-corner-tl" />
                   <div className="studio-corner-br" />
-                  <div className="p-2 bg-white/5 border border-white/10 text-white">
+                  <div className="kokonut-spotlight-layer" />
+                  <div className="relative z-10 p-2 bg-white/5 border border-white/10 text-white">
                     <Award className="w-4 h-4" />
                   </div>
-                  <div className="min-w-0">
+                  <div className="relative z-10 min-w-0">
                     <div className="font-bold text-white text-xs font-mono uppercase tracking-wide">
                       {cred.title}
                     </div>

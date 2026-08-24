@@ -110,6 +110,109 @@ html::-webkit-scrollbar-thumb:hover {
   background-color: #121218;
 }
 
+/* Kokonut UI Mouse Spotlight Container & Card Glow */
+.kokonut-card-glow {
+  position: relative;
+  background-color: #0c0c11;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.kokonut-card-glow:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 25px -8px rgba(255, 255, 255, 0.08);
+}
+
+.kokonut-spotlight-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.065),
+    transparent 60%
+  );
+}
+
+.kokonut-card-glow:hover .kokonut-spotlight-layer {
+  opacity: 1;
+}
+
+/* Kokonut Tactile Buttons */
+.kokonut-btn-primary {
+  background-color: #ffffff;
+  color: #000000;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 16px;
+  border: 1px solid #ffffff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.kokonut-btn-primary:hover {
+  background-color: #e4e4e7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+.kokonut-btn-primary:active {
+  transform: translateY(0);
+}
+
+.kokonut-btn-secondary {
+  background-color: #121217;
+  color: #d4d4d8;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.kokonut-btn-secondary:hover {
+  background-color: #181820;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.kokonut-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Kokonut Telemetry Pill */
+.kokonut-telemetry-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  color: #a1a1aa;
+  letter-spacing: 0.03em;
+}
+
 /* Precise Technical Corner Marks */
 .studio-corner-tl {
   position: absolute;
@@ -136,7 +239,9 @@ html::-webkit-scrollbar-thumb:hover {
 }
 
 .studio-card:hover .studio-corner-tl,
-.studio-card:hover .studio-corner-br {
+.studio-card:hover .studio-corner-br,
+.kokonut-card-glow:hover .studio-corner-tl,
+.kokonut-card-glow:hover .studio-corner-br {
   opacity: 1;
 }
 

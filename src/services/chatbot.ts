@@ -107,7 +107,7 @@ export const CHATBOT_RULES = [
   {
     patterns: ['game development', 'unity', '3d', 'ar', 'augmented reality', 'game', 'graphics'],
     responses: [
-      `I've explored game development concepts and AR through personal projects, including work with ${CHATBOT_TRAINING_DATA.skillDescriptions['AR Foundation']}.`,
+      `I've explored game development concepts through personal projects, including work with ${CHATBOT_TRAINING_DATA.skillDescriptions['Unity 3D']}.`,
     ],
   },
   {
