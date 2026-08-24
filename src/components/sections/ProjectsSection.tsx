@@ -13,6 +13,7 @@ import {
   Cpu,
 } from 'lucide-react';
 import { GithubIcon } from '@/components/ui/StudioIcons';
+import { ProjectVectorVisual } from '@/components/ui/ProjectVectorVisual';
 import {
   containerVariants,
   cardVariants,
@@ -332,6 +333,9 @@ export const ProjectsSection = memo(function ProjectsSection({
                       {proj.tagline}
                     </p>
                   </div>
+
+                  {/* Bespoke Kinetic Vector Model / Animation */}
+                  <ProjectVectorVisual projectId={proj.id} isCompact className="my-1.5" />
 
                   {/* Clean grounded description */}
                   <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed">

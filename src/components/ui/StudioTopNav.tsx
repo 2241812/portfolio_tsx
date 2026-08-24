@@ -68,7 +68,7 @@ export const StudioTopNav = memo(function StudioTopNav() {
   return (
     <header className="sticky top-0 z-50 w-full bg-[#08080a]/95 backdrop-blur-md border-b border-white/10 px-4 sm:px-6 lg:px-12 py-3 transition-all">
       <div className="w-full max-w-[1720px] mx-auto flex items-center justify-between gap-4">
-        {/* Left: Studio Mark & Status */}
+        {/* Left: Mark */}
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => scrollTo('hero')}
@@ -76,10 +76,6 @@ export const StudioTopNav = memo(function StudioTopNav() {
           >
             {resumeData.personalInfo.name}
           </button>
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 bg-white/5 border border-white/10 text-[10px] font-mono text-zinc-400 uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            STUDIO &apos;26
-          </span>
         </div>
 
         {/* Center: Clean 4-Section Studio Navigation Links */}

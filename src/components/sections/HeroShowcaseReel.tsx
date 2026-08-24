@@ -3,13 +3,14 @@ import React, { useState, useEffect, useRef, memo } from 'react';
 import { animate } from 'animejs';
 import { ArrowUpRight, ChevronRight, Sparkles, Terminal, Shield, Globe } from 'lucide-react';
 import { GithubIcon } from '@/components/ui/StudioIcons';
+import { ProjectVectorVisual } from '@/components/ui/ProjectVectorVisual';
 
 interface ShowcaseProject {
   id: string;
   index: string;
   title: string;
   subtitle: string;
-  category: 'MOBILE_APP' | 'GEOSPATIAL' | 'SYSTEMS' | 'DESKTOP';
+  category: string;
   icon: React.ReactNode;
   tags: string[];
   description: string;
@@ -22,11 +23,11 @@ const SHOWCASE_PROJECTS: ShowcaseProject[] = [
     index: '01',
     title: 'Tether',
     subtitle: 'Mobile Server Admin & SSH Client',
-    category: 'MOBILE_APP',
+    category: 'MOBILE // SYSTEMS',
     icon: <Shield className="w-4 h-4 text-white" />,
-    tags: ['Flutter', 'Dart', 'SSH Socket', 'Terminal Management'],
+    tags: ['Flutter', 'Dart', 'SSH Socket', 'Terminal Ops'],
     description:
-      'A mobile-first server administration app built with Flutter. Execute commands, manage active SSH sessions, and monitor server status straight from your phone.',
+      'A mobile server administration tool built with Flutter & Dart. Enables one-tap encrypted SSH socket connections and remote terminal ops directly from your phone.',
     link: 'https://github.com/narcisoJavier/Tether',
   },
   {
@@ -34,7 +35,7 @@ const SHOWCASE_PROJECTS: ShowcaseProject[] = [
     index: '02',
     title: 'geoCradle',
     subtitle: 'Cordillera Watershed Web GIS Map',
-    category: 'GEOSPATIAL',
+    category: 'GEOSPATIAL // GIS',
     icon: <Globe className="w-4 h-4 text-white" />,
     tags: ['Leaflet.js', 'GeoJSON', 'JavaScript', 'DENR Analysis'],
     description:
@@ -46,7 +47,7 @@ const SHOWCASE_PROJECTS: ShowcaseProject[] = [
     index: '03',
     title: 'Campus Navigator CS312',
     subtitle: 'Go Shortest-Path Route Service',
-    category: 'SYSTEMS',
+    category: 'MICROSERVICES // GRAPH',
     icon: <Terminal className="w-4 h-4 text-white" />,
     tags: ['Go', 'Dijkstra Algorithm', 'Docker Compose', 'Node.js'],
     description:
@@ -57,8 +58,8 @@ const SHOWCASE_PROJECTS: ShowcaseProject[] = [
     id: 'multitask',
     index: '04',
     title: 'MultiTask ContextSwitch',
-    subtitle: 'Desktop Background Task Monitor',
-    category: 'DESKTOP',
+    subtitle: 'Desktop Task Monitor & Switcher',
+    category: 'DESKTOP // OS AUTOMATION',
     icon: <Sparkles className="w-4 h-4 text-white" />,
     tags: ['Python', 'PyQt6', 'Process Monitor', 'OS Automation'],
     description:
@@ -87,9 +88,9 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
     if (cardRef.current) {
       animate(cardRef.current, {
         opacity: [0.4, 1],
-        translateY: [10, 0],
+        translateY: [8, 0],
         ease: 'outExpo',
-        duration: 550,
+        duration: 450,
       });
     }
 
@@ -109,19 +110,19 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
   };
 
   return (
-    <div className="kokonut-card-glow p-6 sm:p-7 flex flex-col justify-between select-none shadow-2xl">
+    <div className="kokonut-card-glow p-6 sm:p-7 flex flex-col justify-between select-none shadow-2xl min-h-[480px]">
       <div className="studio-corner-tl" />
       <div className="studio-corner-br" />
       <div className="kokonut-spotlight-layer" />
 
-      {/* Top Slide Header */}
-      <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-3.5 text-xs font-mono">
+      {/* Top Slide Header: Clean, Uniform Typography */}
+      <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-3 text-xs font-mono">
         <div className="flex items-center gap-2">
-          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-white text-black font-bold uppercase text-[10px]">
-            <Sparkles className="w-3 h-3 text-black" />
-            SPOTLIGHT // 0{currentIndex + 1}
+          <span className="text-white font-bold tracking-wider text-[11px]">
+            FEATURED // 0{currentIndex + 1} OF 04
           </span>
-          <span className="text-zinc-400 text-[10px] uppercase tracking-wider hidden sm:inline">
+          <span className="text-zinc-600">•</span>
+          <span className="text-zinc-400 text-[10px] tracking-wider uppercase hidden sm:inline">
             {active.category}
           </span>
         </div>
@@ -144,24 +145,31 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
         </div>
       </div>
 
-      {/* Main Slide Card Content */}
-      <div ref={cardRef} className="relative z-10 my-4 sm:my-5 space-y-3.5">
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-white/5 border border-white/10 text-white">{active.icon}</div>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-white uppercase font-display tracking-tight">
+      {/* Main Slide Card Content with Kinetic Vector Preview */}
+      <div ref={cardRef} className="relative z-10 my-4 space-y-3.5 flex-1 flex flex-col justify-between">
+        {/* Bespoke Interactive Kinetic Vector Visualizer */}
+        <ProjectVectorVisual projectId={active.id} isCompact />
+
+        {/* Project Header */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="p-1 bg-white/5 border border-white/10 text-white shrink-0">
+              {active.icon}
+            </div>
+            <h3 className="text-xl sm:text-2xl font-extrabold text-white uppercase font-display tracking-tight truncate">
               {active.title}
             </h3>
           </div>
-          <span className="text-xs font-mono text-zinc-400">{active.subtitle}</span>
+          <p className="text-xs font-mono text-zinc-400 truncate">{active.subtitle}</p>
         </div>
 
-        <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed">
+        {/* Grounded Description with fixed min-height for uniformity */}
+        <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed line-clamp-2 min-h-[40px]">
           {active.description}
         </p>
 
-        {/* Tech Stack Badges */}
-        <div className="flex flex-wrap gap-1.5 pt-1">
+        {/* Tech Stack Badges with uniform height */}
+        <div className="flex flex-wrap gap-1.5 pt-1 min-h-[26px]">
           {active.tags.map((tag) => (
             <span
               key={tag}
