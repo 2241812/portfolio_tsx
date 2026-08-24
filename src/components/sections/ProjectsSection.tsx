@@ -11,9 +11,12 @@ import {
   Shield,
   Globe,
   Cpu,
+  Columns,
+  LayoutGrid,
 } from 'lucide-react';
 import { GithubIcon } from '@/components/ui/StudioIcons';
 import { ProjectVectorVisual } from '@/components/ui/ProjectVectorVisual';
+import { ProjectPhysicsDeck, type DeckProjectItem } from '@/components/ui/ProjectPhysicsDeck';
 import {
   containerVariants,
   cardVariants,
@@ -22,27 +25,7 @@ import {
   type PinnedRepo,
 } from './shared';
 
-interface ProjectItem {
-  id: string;
-  rank: string;
-  title: string;
-  tagline: string;
-  category: 'SWE' | 'SYSTEMS';
-  icon: React.ReactNode;
-  tech: string[];
-  description: string;
-  highlights: string[];
-  link?: string;
-  demoLink?: string;
-  badge: string;
-  telemetry: {
-    status: string;
-    language: string;
-    langColor: string;
-  };
-}
-
-const ALL_STUDIO_PROJECTS: ProjectItem[] = [
+const ALL_STUDIO_PROJECTS: DeckProjectItem[] = [
   {
     id: 'tether',
     rank: '01',
@@ -198,6 +181,7 @@ export const ProjectsSection = memo(function ProjectsSection({
   onRetry,
 }: ProjectsSectionProps) {
   const [selectedFilter, setSelectedFilter] = useState<'ALL' | 'SWE' | 'SYSTEMS'>('ALL');
+  const [viewMode, setViewMode] = useState<'DECK' | 'GRID'>('DECK');
   const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -220,17 +204,17 @@ export const ProjectsSection = memo(function ProjectsSection({
   };
 
   useEffect(() => {
-    if (gridRef.current) {
+    if (gridRef.current && viewMode === 'GRID') {
       const cards = gridRef.current.children;
       animate(cards, {
         opacity: [0, 1],
         translateY: [14, 0],
         ease: 'outExpo',
-        duration: 500,
-        delay: stagger(40),
+        duration: 450,
+        delay: stagger(35),
       });
     }
-  }, [selectedFilter]);
+  }, [selectedFilter, viewMode]);
 
   return (
     <section id="projects" className="scroll-mt-20 w-full py-12 border-b border-white/10">
@@ -241,7 +225,7 @@ export const ProjectsSection = memo(function ProjectsSection({
         viewport={{ once: true, amount: 0.05 }}
         className="w-full space-y-8"
       >
-        {/* Studio Section Header */}
+        {/* Studio Section Header with Filter & View Switcher */}
         <motion.div
           variants={headingVariants}
           className="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4 gap-4"
@@ -257,175 +241,219 @@ export const ProjectsSection = memo(function ProjectsSection({
             </h2>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex flex-wrap items-center gap-1 p-1 bg-[#0d0d12] border border-white/10">
-            {(['ALL', 'SWE', 'SYSTEMS'] as const).map((filter) => (
+          {/* Right Controls: Filter Pills + View Switcher */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Category Filter Pills */}
+            <div className="flex items-center gap-1 p-1 bg-[#09090d] border border-white/10">
+              {(['ALL', 'SWE', 'SYSTEMS'] as const).map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setSelectedFilter(filter)}
+                  className={`px-3 py-1 text-[11px] font-mono uppercase tracking-wider transition-all cursor-pointer ${
+                    selectedFilter === filter
+                      ? 'bg-white text-black font-bold'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  {filter === 'ALL'
+                    ? 'All'
+                    : filter === 'SWE'
+                    ? 'Software'
+                    : 'Systems'}
+                </button>
+              ))}
+            </div>
+
+            {/* View Mode Toggle ([ SURF DECK ] / [ GRID ]) */}
+            <div className="flex items-center gap-1 p-1 bg-[#09090d] border border-white/10">
               <button
-                key={filter}
-                onClick={() => setSelectedFilter(filter)}
-                className={`px-3 py-1 text-[11px] font-mono uppercase tracking-wider transition-all cursor-pointer ${
-                  selectedFilter === filter
+                onClick={() => setViewMode('DECK')}
+                className={`px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'DECK'
                     ? 'bg-white text-black font-bold'
                     : 'text-zinc-400 hover:text-white'
                 }`}
+                title="Horizontal Physics Deck"
               >
-                {filter === 'ALL'
-                  ? 'All Works'
-                  : filter === 'SWE'
-                  ? 'Software & Mobile'
-                  : 'Systems & Tools'}
+                <Columns className="w-3 h-3" />
+                <span className="hidden sm:inline">Deck</span>
               </button>
-            ))}
+              <button
+                onClick={() => setViewMode('GRID')}
+                className={`px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'GRID'
+                    ? 'bg-white text-black font-bold'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+                title="3x2 Grid View"
+              >
+                <LayoutGrid className="w-3 h-3" />
+                <span className="hidden sm:inline">Grid</span>
+              </button>
+            </div>
           </div>
         </motion.div>
 
-        {/* Uniform Balanced 3-Column Bento Grid (No uneven spans or holes) */}
-        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {filteredProjects.map((proj) => {
-            const isExpanded = expandedProjectId === proj.id;
+        {/* View Mode 1: Horizontal Momentum Physics Deck ("Scroll to Surf") */}
+        {viewMode === 'DECK' ? (
+          <ProjectPhysicsDeck
+            projects={filteredProjects}
+            expandedProjectId={expandedProjectId}
+            onToggleExpand={toggleExpand}
+          />
+        ) : (
+          /* View Mode 2: Uniform Balanced 3-Column blkUI Grid */
+          <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {filteredProjects.map((proj) => {
+              const isExpanded = expandedProjectId === proj.id;
 
-            return (
-              <motion.div
-                key={proj.id}
-                variants={cardVariants}
-                onMouseMove={handleMouseMove}
-                className="kokonut-card-glow p-5 sm:p-6 flex flex-col justify-between h-full group"
-              >
-                <div className="studio-corner-tl" />
-                <div className="studio-corner-br" />
-                <div className="kokonut-spotlight-layer" />
+              return (
+                <motion.div
+                  key={proj.id}
+                  variants={cardVariants}
+                  onMouseMove={handleMouseMove}
+                  className="blk-card p-5 sm:p-6 flex flex-col justify-between h-full group relative"
+                >
+                  {/* blkUI 4-Corner Crosshairs */}
+                  <span className="blk-crosshair-tl">+</span>
+                  <span className="blk-crosshair-tr">+</span>
+                  <span className="blk-crosshair-bl">+</span>
+                  <span className="blk-crosshair-br">+</span>
 
-                <div className="relative z-10 space-y-4">
-                  {/* Card Header: Stamp, Category & Integrated Telemetry Pill */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3 text-xs font-mono">
-                    <div className="flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 bg-white text-black font-bold text-[10px]">
-                        [{proj.rank}]
-                      </span>
-                      <span className="text-[10px] text-zinc-400 uppercase tracking-wider">
-                        {proj.badge}
-                      </span>
-                    </div>
+                  <div className="kokonut-spotlight-layer" />
 
-                    {/* Integrated Telemetry Pill */}
-                    <div className="kokonut-telemetry-pill">
-                      <span
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: proj.telemetry.langColor }}
-                      />
-                      <span>{proj.telemetry.language}</span>
-                      <span className="text-zinc-600">•</span>
-                      <span className="text-zinc-300">{proj.telemetry.status}</span>
-                    </div>
-                  </div>
-
-                  {/* Title & Tagline */}
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <div className="p-1 bg-white/5 border border-white/10 text-white">
-                        {proj.icon}
+                  <div className="relative z-10 space-y-3.5">
+                    {/* Card Header: Stamp, Category & Integrated Telemetry Pill */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3 text-xs font-mono">
+                      <div className="flex items-center gap-2">
+                        <span className="px-1.5 py-0.5 bg-white text-black font-bold text-[10px]">
+                          [{proj.rank}]
+                        </span>
+                        <span className="text-[10px] text-zinc-400 uppercase tracking-wider">
+                          {proj.badge}
+                        </span>
                       </div>
-                      <h3 className="text-lg sm:text-xl font-bold text-white font-display uppercase tracking-tight">
-                        {proj.title}
-                      </h3>
+
+                      {/* Integrated Telemetry Pill */}
+                      <div className="kokonut-telemetry-pill">
+                        <span
+                          className="w-1.5 h-1.5 rounded-full"
+                          style={{ backgroundColor: proj.telemetry.langColor }}
+                        />
+                        <span>{proj.telemetry.language}</span>
+                        <span className="text-zinc-600">•</span>
+                        <span className="text-zinc-300">{proj.telemetry.status}</span>
+                      </div>
                     </div>
-                    <p className="text-xs text-zinc-400 font-mono mt-1">
-                      {proj.tagline}
-                    </p>
-                  </div>
 
-                  {/* Bespoke Kinetic Vector Model / Animation */}
-                  <ProjectVectorVisual projectId={proj.id} isCompact className="my-1.5" />
-
-                  {/* Clean grounded description */}
-                  <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed">
-                    {proj.description}
-                  </p>
-
-                  {/* Expandable Key Takeaways Drawer */}
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.25, ease: 'easeInOut' }}
-                        className="overflow-hidden pt-2 border-t border-white/10 space-y-2"
-                      >
-                        <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
-                          Key Technical Highlights:
+                    {/* Title & Tagline */}
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <div className="p-1 bg-white/5 border border-white/10 text-white">
+                          {proj.icon}
                         </div>
-                        <ul className="space-y-1.5 text-xs text-zinc-300 font-sans">
-                          {proj.highlights.map((h, i) => (
-                            <li key={i} className="flex items-start gap-2">
-                              <span className="text-white font-mono font-bold">›</span>
-                              <span>{h}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                        <h3 className="text-lg sm:text-xl font-bold text-white font-display uppercase tracking-tight">
+                          {proj.title}
+                        </h3>
+                      </div>
+                      <p className="text-xs text-zinc-400 font-mono mt-1">
+                        {proj.tagline}
+                      </p>
+                    </div>
 
-                  {/* Tech Stack Tags */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {proj.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="px-2 py-0.5 bg-[#14141a] text-zinc-300 border border-white/10 text-[10px] font-mono"
-                      >
-                        {t}
-                      </span>
-                    ))}
+                    {/* Bespoke Kinetic Vector Model / Animation */}
+                    <ProjectVectorVisual projectId={proj.id} isCompact className="my-1" />
+
+                    {/* Clean grounded description */}
+                    <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed">
+                      {proj.description}
+                    </p>
+
+                    {/* Expandable Key Takeaways Drawer */}
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: 'easeInOut' }}
+                          className="overflow-hidden pt-2 border-t border-white/10 space-y-2"
+                        >
+                          <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+                            Key Technical Highlights:
+                          </div>
+                          <ul className="space-y-1.5 text-xs text-zinc-300 font-sans">
+                            {proj.highlights.map((h, i) => (
+                              <li key={i} className="flex items-start gap-2">
+                                <span className="text-white font-mono font-bold">›</span>
+                                <span>{h}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Tech Stack Tags */}
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {proj.tech.map((t) => (
+                        <span
+                          key={t}
+                          className="px-2 py-0.5 bg-[#121218] text-zinc-300 border border-white/10 text-[10px] font-mono"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Card Action Bar */}
-                <div className="relative z-10 pt-4 mt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    {proj.link && (
-                      <a
-                        href={proj.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="kokonut-btn-secondary"
-                      >
-                        <GithubIcon className="w-3.5 h-3.5" />
-                        <span>Source</span>
-                      </a>
-                    )}
+                  {/* Card Action Bar */}
+                  <div className="relative z-10 pt-4 mt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      {proj.link && (
+                        <a
+                          href={proj.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="blk-btn-secondary py-1.5 px-3 text-[10px]"
+                        >
+                          <GithubIcon className="w-3.5 h-3.5" />
+                          <span>Source</span>
+                        </a>
+                      )}
 
-                    {proj.demoLink && (
-                      <a
-                        href={proj.demoLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="kokonut-btn-primary"
-                      >
-                        <Sparkles className="w-3 h-3 text-black" />
-                        <span>Colab</span>
-                        <ExternalLink className="w-3 h-3 text-black" />
-                      </a>
-                    )}
+                      {proj.demoLink && (
+                        <a
+                          href={proj.demoLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="blk-btn-primary py-1.5 px-3 text-[10px]"
+                        >
+                          <Sparkles className="w-3 h-3 text-black" />
+                          <span>Colab</span>
+                          <ExternalLink className="w-3 h-3 text-black" />
+                        </a>
+                      )}
+                    </div>
+
+                    {/* Expand Specs Drawer Toggle */}
+                    <button
+                      onClick={() => toggleExpand(proj.id)}
+                      className="text-[11px] font-mono text-zinc-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <span>{isExpanded ? 'Hide Specs' : 'Specs'}</span>
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 transition-transform ${
+                          isExpanded ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
                   </div>
-
-                  {/* Expand Specs Drawer Toggle */}
-                  <button
-                    onClick={() => toggleExpand(proj.id)}
-                    className="text-[11px] font-mono text-zinc-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
-                  >
-                    <span>{isExpanded ? 'Hide Specs' : 'Specs'}</span>
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 transition-transform ${
-                        isExpanded ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </button>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Live GitHub Repositories Strip */}
         <div className="pt-6 space-y-4">
@@ -444,7 +472,7 @@ export const ProjectsSection = memo(function ProjectsSection({
           {reposLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[1, 2].map((i) => (
-                <div key={i} className="kokonut-card-glow p-4 space-y-2 animate-pulse">
+                <div key={i} className="blk-card p-4 space-y-2 animate-pulse">
                   <div className="h-4 bg-zinc-800 rounded w-1/3" />
                   <div className="h-3 bg-zinc-800/60 rounded w-full" />
                 </div>
@@ -468,10 +496,12 @@ export const ProjectsSection = memo(function ProjectsSection({
                   href={repo.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="kokonut-card-glow p-4 flex flex-col justify-between group cursor-pointer"
+                  className="blk-card p-4 flex flex-col justify-between group cursor-pointer relative"
                 >
-                  <div className="studio-corner-tl" />
-                  <div className="studio-corner-br" />
+                  <span className="blk-crosshair-tl">+</span>
+                  <span className="blk-crosshair-tr">+</span>
+                  <span className="blk-crosshair-bl">+</span>
+                  <span className="blk-crosshair-br">+</span>
                   <div className="kokonut-spotlight-layer" />
 
                   <div className="relative z-10 space-y-1.5">

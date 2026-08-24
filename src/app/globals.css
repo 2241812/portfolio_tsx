@@ -204,13 +204,152 @@ html::-webkit-scrollbar-thumb:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 8px;
-  background-color: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 2px 8px;
+  background-color: #14141c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   font-family: var(--font-geist-mono), monospace;
   font-size: 10px;
   color: #a1a1aa;
-  letter-spacing: 0.03em;
+}
+
+/* ==========================================================================
+   blkUI Design Kit — Brutalist Luxury Dark UI
+   ========================================================================== */
+
+/* Pure Black blkUI Surface Card */
+.blk-card {
+  position: relative;
+  background-color: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.blk-card:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 30px -10px rgba(255, 255, 255, 0.12);
+}
+
+/* blkUI Corner Crosshairs (+) */
+.blk-crosshair-tl {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.blk-crosshair-tr {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.blk-crosshair-bl {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.blk-crosshair-br {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.blk-card:hover .blk-crosshair-tl,
+.blk-card:hover .blk-crosshair-tr,
+.blk-card:hover .blk-crosshair-bl,
+.blk-card:hover .blk-crosshair-br {
+  color: #ffffff;
+}
+
+/* blkUI Tactile Action Buttons */
+.blk-btn-primary {
+  background-color: #ffffff;
+  color: #000000;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 8px 16px;
+  border: 1px solid #ffffff;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.blk-btn-primary:hover {
+  background-color: #e4e4e7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.18);
+}
+
+.blk-btn-primary:active {
+  transform: translateY(1px);
+}
+
+.blk-btn-secondary {
+  background-color: #0a0a0e;
+  color: #e4e4e7;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.blk-btn-secondary:hover {
+  background-color: #14141b;
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.blk-btn-secondary:active {
+  transform: translateY(1px);
+}
+
+/* blkUI 3D Deck Perspective Container */
+.blk-deck-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
 }
 
 /* Precise Technical Corner Marks */
