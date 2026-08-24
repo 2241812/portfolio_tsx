@@ -109,13 +109,6 @@ export const resumeData = {
       link: "https://github.com/narcisoJavier/MultiTask_ContextSwitch"
     },
     {
-      title: "Unity 3D Game Prototypes",
-      role: "Game Developer (Prototyping)",
-      description:
-        "Hands-on experiments in Unity 3D and C# exploring kinetic player controllers, physics-driven combat mechanics, state machines, and player feedback loops.",
-      link: "https://github.com/narcisoJavier"
-    },
-    {
       title: "Hand Sign Recognition CNN",
       role: "Computer Vision Prototype",
       description:

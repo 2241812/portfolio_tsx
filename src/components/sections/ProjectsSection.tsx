@@ -10,7 +10,6 @@ import {
   Terminal,
   Shield,
   Globe,
-  Gamepad2,
   Cpu,
 } from 'lucide-react';
 import { GithubIcon } from '@/components/ui/StudioIcons';
@@ -27,7 +26,7 @@ interface ProjectItem {
   rank: string;
   title: string;
   tagline: string;
-  category: 'ALL' | 'SWE' | 'GAME_DEV' | 'SYSTEMS';
+  category: 'SWE' | 'SYSTEMS';
   icon: React.ReactNode;
   tech: string[];
   description: string;
@@ -51,7 +50,7 @@ const ALL_STUDIO_PROJECTS: ProjectItem[] = [
     category: 'SWE',
     icon: <Shield className="w-4 h-4 text-white" />,
     badge: 'MOBILE & INFRASTRUCTURE',
-    tech: ['Flutter', 'Dart', 'SSH Socket', 'Terminal Management'],
+    tech: ['Flutter', 'Dart', 'SSH Socket', 'Terminal Ops'],
     description:
       'A mobile server administration tool built with Flutter & Dart. Enables one-tap encrypted SSH connections, swipe-to-run sysadmin commands, and remote terminal management directly from your phone.',
     highlights: [
@@ -67,31 +66,8 @@ const ALL_STUDIO_PROJECTS: ProjectItem[] = [
     },
   },
   {
-    id: 'unity-game',
-    rank: '02',
-    title: 'Unity 3D Game Prototypes',
-    tagline: 'Physics Mechanics & Player Controller',
-    category: 'GAME_DEV',
-    icon: <Gamepad2 className="w-4 h-4 text-white" />,
-    badge: 'GAME DEVELOPMENT',
-    tech: ['Unity 3D', 'C#', 'Kinetic Physics', 'State Machines'],
-    description:
-      'Hands-on experimental projects in Unity 3D exploring responsive 3D character controllers, kinetic physics loops, state-driven combat animations, and player feedback systems.',
-    highlights: [
-      'Custom physics-based movement controller and dynamic camera',
-      'State machine architecture for combat and weapon states',
-      'Focus on player ergonomics, game feel, and collision response',
-    ],
-    link: 'https://github.com/narcisoJavier',
-    telemetry: {
-      status: 'Active Lab',
-      language: 'C#',
-      langColor: '#178600',
-    },
-  },
-  {
     id: 'geocradle',
-    rank: '03',
+    rank: '02',
     title: 'geoCradle',
     tagline: 'Cordillera Watershed Web GIS Map',
     category: 'SWE',
@@ -114,13 +90,13 @@ const ALL_STUDIO_PROJECTS: ProjectItem[] = [
   },
   {
     id: 'campus-nav',
-    rank: '04',
+    rank: '03',
     title: 'Campus Navigator CS312',
     tagline: 'Go Shortest-Path Routing Service',
     category: 'SYSTEMS',
     icon: <Terminal className="w-4 h-4 text-white" />,
-    badge: 'MICROSERVICES & ALGORITHMS',
-    tech: ['Go', 'Docker Compose', 'Dijkstra Algorithm', 'Node.js'],
+    badge: 'MICROSERVICES & GRAPH',
+    tech: ['Go', 'Docker Compose', 'Dijkstra', 'Node.js'],
     description:
       'A containerized web microservice that calculates optimal walking paths across academic buildings using Dijkstra’s shortest-path algorithm, packaged with Docker Compose.',
     highlights: [
@@ -137,9 +113,9 @@ const ALL_STUDIO_PROJECTS: ProjectItem[] = [
   },
   {
     id: 'multitask-contextswitch',
-    rank: '05',
+    rank: '04',
     title: 'MultiTask ContextSwitch',
-    tagline: 'Desktop Background Task Monitor & Switcher',
+    tagline: 'Desktop Task Monitor & Window Switcher',
     category: 'SYSTEMS',
     icon: <Cpu className="w-4 h-4 text-white" />,
     badge: 'DESKTOP AUTOMATION',
@@ -160,9 +136,9 @@ const ALL_STUDIO_PROJECTS: ProjectItem[] = [
   },
   {
     id: 'hand-sign-recognition',
-    rank: '06',
+    rank: '05',
     title: 'Hand Sign Recognition CNN',
-    tagline: 'Computer Vision Prototype',
+    tagline: 'Computer Vision Gesture Prototype',
     category: 'SYSTEMS',
     icon: <Layers className="w-4 h-4 text-white" />,
     badge: 'COMPUTER VISION',
@@ -184,7 +160,7 @@ const ALL_STUDIO_PROJECTS: ProjectItem[] = [
   },
   {
     id: 'opencode-setup',
-    rank: '07',
+    rank: '06',
     title: 'OpenCode DevContainer Setup',
     tagline: 'Isolated Docker Development Sandbox',
     category: 'SYSTEMS',
@@ -220,7 +196,7 @@ export const ProjectsSection = memo(function ProjectsSection({
   reposError,
   onRetry,
 }: ProjectsSectionProps) {
-  const [selectedFilter, setSelectedFilter] = useState<'ALL' | 'SWE' | 'GAME_DEV' | 'SYSTEMS'>('ALL');
+  const [selectedFilter, setSelectedFilter] = useState<'ALL' | 'SWE' | 'SYSTEMS'>('ALL');
   const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -250,7 +226,7 @@ export const ProjectsSection = memo(function ProjectsSection({
         translateY: [14, 0],
         ease: 'outExpo',
         duration: 500,
-        delay: stagger(50),
+        delay: stagger(40),
       });
     }
   }, [selectedFilter]);
@@ -282,7 +258,7 @@ export const ProjectsSection = memo(function ProjectsSection({
 
           {/* Filter Pills */}
           <div className="flex flex-wrap items-center gap-1 p-1 bg-[#0d0d12] border border-white/10">
-            {(['ALL', 'SWE', 'GAME_DEV', 'SYSTEMS'] as const).map((filter) => (
+            {(['ALL', 'SWE', 'SYSTEMS'] as const).map((filter) => (
               <button
                 key={filter}
                 onClick={() => setSelectedFilter(filter)}
@@ -294,28 +270,25 @@ export const ProjectsSection = memo(function ProjectsSection({
               >
                 {filter === 'ALL'
                   ? 'All Works'
-                  : filter === 'GAME_DEV'
-                  ? 'Game Dev'
-                  : filter}
+                  : filter === 'SWE'
+                  ? 'Software & Mobile'
+                  : 'Systems & Tools'}
               </button>
             ))}
           </div>
         </motion.div>
 
-        {/* Kokonut UI Interactive Bento Grid */}
-        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {filteredProjects.map((proj, idx) => {
+        {/* Uniform Balanced 3-Column Bento Grid (No uneven spans or holes) */}
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {filteredProjects.map((proj) => {
             const isExpanded = expandedProjectId === proj.id;
-            const isFeatured = idx === 0 || idx === 1;
 
             return (
               <motion.div
                 key={proj.id}
                 variants={cardVariants}
                 onMouseMove={handleMouseMove}
-                className={`kokonut-card-glow p-5 sm:p-6 flex flex-col justify-between group ${
-                  isFeatured ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'
-                }`}
+                className="kokonut-card-glow p-5 sm:p-6 flex flex-col justify-between h-full group"
               >
                 <div className="studio-corner-tl" />
                 <div className="studio-corner-br" />
@@ -360,7 +333,7 @@ export const ProjectsSection = memo(function ProjectsSection({
                     </p>
                   </div>
 
-                  {/* Clean 2-3 sentence grounded description */}
+                  {/* Clean grounded description */}
                   <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed">
                     {proj.description}
                   </p>

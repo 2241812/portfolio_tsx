@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, memo } from 'react';
 import { animate } from 'animejs';
-import { ArrowUpRight, ChevronRight, Sparkles, Terminal, Gamepad2, Shield, Globe } from 'lucide-react';
+import { ArrowUpRight, ChevronRight, Sparkles, Terminal, Shield, Globe } from 'lucide-react';
 import { GithubIcon } from '@/components/ui/StudioIcons';
 
 interface ShowcaseProject {
@@ -9,7 +9,7 @@ interface ShowcaseProject {
   index: string;
   title: string;
   subtitle: string;
-  category: 'MOBILE_APP' | 'GAME_DEV' | 'GEOSPATIAL' | 'SYSTEMS';
+  category: 'MOBILE_APP' | 'GEOSPATIAL' | 'SYSTEMS' | 'DESKTOP';
   icon: React.ReactNode;
   tags: string[];
   description: string;
@@ -30,20 +30,8 @@ const SHOWCASE_PROJECTS: ShowcaseProject[] = [
     link: 'https://github.com/narcisoJavier/Tether',
   },
   {
-    id: 'unity-game',
-    index: '02',
-    title: 'Unity 3D Game Prototypes',
-    subtitle: 'Character Physics & Mechanics Sandbox',
-    category: 'GAME_DEV',
-    icon: <Gamepad2 className="w-4 h-4 text-white" />,
-    tags: ['Unity 3D', 'C#', 'Kinetic Physics', 'State Machines'],
-    description:
-      'Iterative game development prototypes in Unity 3D focused on fluid player movement, state-driven weapon mechanics, and physics-based interactions.',
-    link: 'https://github.com/narcisoJavier',
-  },
-  {
     id: 'geocradle',
-    index: '03',
+    index: '02',
     title: 'geoCradle',
     subtitle: 'Cordillera Watershed Web GIS Map',
     category: 'GEOSPATIAL',
@@ -55,7 +43,7 @@ const SHOWCASE_PROJECTS: ShowcaseProject[] = [
   },
   {
     id: 'campus-nav',
-    index: '04',
+    index: '03',
     title: 'Campus Navigator CS312',
     subtitle: 'Go Shortest-Path Route Service',
     category: 'SYSTEMS',
@@ -64,6 +52,18 @@ const SHOWCASE_PROJECTS: ShowcaseProject[] = [
     description:
       'A containerized Go microservice that calculates fast, optimal routes between campus buildings using Dijkstra\'s shortest-path graph algorithm.',
     link: 'https://github.com/narcisoJavier/WebDev_Campus-Navigator_CS312',
+  },
+  {
+    id: 'multitask',
+    index: '04',
+    title: 'MultiTask ContextSwitch',
+    subtitle: 'Desktop Background Task Monitor',
+    category: 'DESKTOP',
+    icon: <Sparkles className="w-4 h-4 text-white" />,
+    tags: ['Python', 'PyQt6', 'Process Monitor', 'OS Automation'],
+    description:
+      'A desktop productivity utility built with Python and PyQt6 that monitors background task execution and shifts window focus when jobs complete.',
+    link: 'https://github.com/narcisoJavier/MultiTask_ContextSwitch',
   },
 ];
 
