@@ -17,12 +17,11 @@ import {
 import { GithubIcon } from '@/components/ui/StudioIcons';
 import { ProjectVectorVisual } from '@/components/ui/ProjectVectorVisual';
 import { ProjectPhysicsDeck, type DeckProjectItem } from '@/components/ui/ProjectPhysicsDeck';
+import { GitHubTelemetryHUD } from '@/components/ui/GitHubTelemetryHUD';
 import {
   containerVariants,
   cardVariants,
   headingVariants,
-  langColors,
-  type PinnedRepo,
 } from './shared';
 
 const ALL_STUDIO_PROJECTS: DeckProjectItem[] = [
@@ -168,18 +167,12 @@ const ALL_STUDIO_PROJECTS: DeckProjectItem[] = [
 ];
 
 interface ProjectsSectionProps {
-  pinnedRepos: PinnedRepo[];
-  reposLoading: boolean;
-  reposError: boolean;
-  onRetry: () => void;
+  className?: string;
 }
 
 export const ProjectsSection = memo(function ProjectsSection({
-  pinnedRepos,
-  reposLoading,
-  reposError,
-  onRetry,
-}: ProjectsSectionProps) {
+  className = '',
+}: ProjectsSectionProps = {}) {
   const [selectedFilter, setSelectedFilter] = useState<'ALL' | 'SWE' | 'SYSTEMS'>('ALL');
   const [viewMode, setViewMode] = useState<'DECK' | 'GRID'>('DECK');
   const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
@@ -217,7 +210,7 @@ export const ProjectsSection = memo(function ProjectsSection({
   }, [selectedFilter, viewMode]);
 
   return (
-    <section id="projects" className="scroll-mt-20 w-full py-12 border-b border-white/10">
+    <section id="projects" className={`scroll-mt-20 w-full py-12 border-b border-white/10 ${className}`}>
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -455,85 +448,8 @@ export const ProjectsSection = memo(function ProjectsSection({
           </div>
         )}
 
-        {/* Live GitHub Repositories Strip */}
-        <div className="pt-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-white/10 pb-2">
-            <div className="text-xs font-mono text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-              <GithubIcon className="w-3.5 h-3.5 text-white" />
-              <span>LIVE GITHUB REPOSITORIES [@narcisoJavier]</span>
-            </div>
-            {reposLoading && (
-              <span className="text-[11px] font-mono text-zinc-400 animate-pulse">
-                Syncing GitHub API...
-              </span>
-            )}
-          </div>
-
-          {reposLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {[1, 2].map((i) => (
-                <div key={i} className="blk-card p-4 space-y-2 animate-pulse">
-                  <div className="h-4 bg-zinc-800 rounded w-1/3" />
-                  <div className="h-3 bg-zinc-800/60 rounded w-full" />
-                </div>
-              ))}
-            </div>
-          ) : reposError ? (
-            <div className="p-4 bg-[#0e0e13] border border-white/10 text-xs text-zinc-400 font-mono flex items-center justify-between">
-              <span>[!] Live GitHub sync cached.</span>
-              <button
-                onClick={onRetry}
-                className="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-white font-mono text-[11px] cursor-pointer"
-              >
-                Retry Fetch
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {pinnedRepos.map((repo) => (
-                <a
-                  key={repo.name}
-                  href={repo.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="blk-card p-4 flex flex-col justify-between group cursor-pointer relative"
-                >
-                  <span className="blk-crosshair-tl">+</span>
-                  <span className="blk-crosshair-tr">+</span>
-                  <span className="blk-crosshair-bl">+</span>
-                  <span className="blk-crosshair-br">+</span>
-                  <div className="kokonut-spotlight-layer" />
-
-                  <div className="relative z-10 space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white group-hover:text-zinc-200 font-mono">
-                        {repo.name}
-                      </span>
-                      <ExternalLink className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors" />
-                    </div>
-                    <p className="text-[11px] text-zinc-400 font-sans line-clamp-2">
-                      {repo.description || 'Repository maintained by Narciso Javier.'}
-                    </p>
-                  </div>
-
-                  <div className="relative z-10 flex items-center gap-4 pt-3 mt-2 border-t border-white/5 text-[10px] text-zinc-400 font-mono">
-                    {repo.language && (
-                      <span className="flex items-center gap-1.5">
-                        <span
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: langColors[repo.language] || '#ffffff' }}
-                        />
-                        <span className="text-zinc-300">{repo.language}</span>
-                      </span>
-                    )}
-                    <span>★ {repo.stars} stars</span>
-                    <span>⑂ {repo.forks} forks</span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* blkUI GitHub Telemetry HUD */}
+        <GitHubTelemetryHUD />
       </motion.div>
     </section>
   );
