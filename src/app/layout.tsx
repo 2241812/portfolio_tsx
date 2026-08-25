@@ -80,8 +80,8 @@ export default function RootLayout({
       className={`${syne.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        <link rel="icon" href="/logo.jpg" sizes="any" />
-        <link rel="apple-touch-icon" href="/logo.jpg" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
       <body className="min-h-full">
         <LenisProvider>{children}</LenisProvider>

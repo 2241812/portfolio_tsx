@@ -103,7 +103,6 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
   // Smooth Horizontal Trackpad / Shift-Wheel Handler (No vertical scroll hijacking)
   const handleWheel = (e: React.WheelEvent) => {
     if (maxScroll <= 0) return;
-    // Only scroll horizontally if user is explicitly horizontal scrolling (trackpad deltaX) or holding Shift
     if (Math.abs(e.deltaX) > 0 || e.shiftKey) {
       const delta = Math.abs(e.deltaX) > 0 ? e.deltaX : e.deltaY;
       const currentX = x.get();
@@ -140,6 +139,23 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
     target.style.setProperty('--mouse-x', `${mouseX}px`);
     target.style.setProperty('--mouse-y', `${mouseY}px`);
   };
+
+  // Deselect active card cleanly on outside click/tap
+  useEffect(() => {
+    if (!expandedProjectId) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      // If the clicked element is not inside the currently expanded card, deselect it
+      if (!target.closest(`[data-card-id="${expandedProjectId}"]`)) {
+        onToggleExpand(expandedProjectId);
+      }
+    };
+
+    window.addEventListener('pointerdown', handlePointerDown);
+    return () => window.removeEventListener('pointerdown', handlePointerDown);
+  }, [expandedProjectId, onToggleExpand]);
 
   const hasAnyExpanded = expandedProjectId !== null;
 
@@ -226,17 +242,22 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
             return (
               <motion.div
                 key={proj.id}
+                data-card-id={proj.id}
                 onMouseMove={handleMouseMove}
-                onClick={() => {
+                onClick={(e) => {
                   if (isDimmed) {
-                    onToggleExpand(proj.id);
+                    e.stopPropagation();
+                    // Deselect active card first instead of switching immediately
+                    if (expandedProjectId) {
+                      onToggleExpand(expandedProjectId);
+                    }
                   }
                 }}
                 className={`blk-card p-5 sm:p-6 w-[320px] sm:w-[380px] flex flex-col justify-between shrink-0 group relative select-none transition-all duration-300 ${
                   isExpanded
                     ? 'scale-[1.03] sm:scale-105 z-30 ring-1 ring-white/40 shadow-2xl shadow-black bg-black'
                     : isDimmed
-                    ? 'opacity-30 blur-[2px] scale-95 filter grayscale-[40%] cursor-pointer hover:opacity-75'
+                    ? 'opacity-30 blur-[2px] scale-95 filter grayscale-[40%] cursor-pointer hover:opacity-60'
                     : 'opacity-100 scale-100 z-10'
                 }`}
               >

@@ -18,6 +18,7 @@ export interface GitHubEvent {
   created_at: string;
   payload?: {
     commits?: Array<{
+      sha?: string;
       message: string;
     }>;
     action?: string;
