@@ -65,8 +65,8 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
   });
 
   // Dynamic Velocity-Based Motion Skew and Tilt (Resting flat at 0°)
-  const skewX = useTransform(smoothVelocity, [-1800, 0, 1800], [-3.5, 0, 3.5]);
-  const rotateY = useTransform(smoothVelocity, [-1800, 0, 1800], [-5, 0, 5]);
+  const skewX = useTransform(smoothVelocity, [-1800, 0, 1800], [-3, 0, 3]);
+  const rotateY = useTransform(smoothVelocity, [-1800, 0, 1800], [-4, 0, 4]);
 
   // Recalculate drag boundaries
   const updateConstraints = useCallback(() => {
@@ -100,6 +100,27 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
     });
   }, [x, maxScroll]);
 
+  // Smooth Horizontal Trackpad / Shift-Wheel Handler (No vertical scroll hijacking)
+  const handleWheel = (e: React.WheelEvent) => {
+    if (maxScroll <= 0) return;
+    // Only scroll horizontally if user is explicitly horizontal scrolling (trackpad deltaX) or holding Shift
+    if (Math.abs(e.deltaX) > 0 || e.shiftKey) {
+      const delta = Math.abs(e.deltaX) > 0 ? e.deltaX : e.deltaY;
+      const currentX = x.get();
+      const newX = Math.min(0, Math.max(-maxScroll, currentX - delta * 0.85));
+      x.set(newX);
+    }
+  };
+
+  // Keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      stepScroll('left');
+    } else if (e.key === 'ArrowRight') {
+      stepScroll('right');
+    }
+  };
+
   // Step navigation buttons
   const stepScroll = (direction: 'left' | 'right') => {
     const cardWidth = 380;
@@ -120,8 +141,14 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
     target.style.setProperty('--mouse-y', `${mouseY}px`);
   };
 
+  const hasAnyExpanded = expandedProjectId !== null;
+
   return (
-    <div className="w-full space-y-4 select-none">
+    <div
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      className="w-full space-y-4 select-none outline-none focus:ring-0"
+    >
       {/* Top Deck Status & Surf Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-400 border-b border-white/10 pb-3">
         <div className="flex items-center gap-2">
@@ -131,7 +158,7 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
           </span>
           <span className="text-zinc-600 hidden sm:inline">•</span>
           <span className="text-zinc-400 text-[10px] hidden sm:inline uppercase">
-            [DRAG OR TOUCH]
+            [DRAG OR SWIPE]
           </span>
         </div>
 
@@ -177,10 +204,11 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
         </div>
       </div>
 
-      {/* Main 3D Physics Momentum Deck Track (No wheel hijack) */}
+      {/* Main 3D Physics Momentum Deck Track */}
       <div
         ref={containerRef}
-        className="relative w-full overflow-hidden blk-deck-container py-2 cursor-grab active:cursor-grabbing"
+        onWheel={handleWheel}
+        className="relative w-full overflow-hidden blk-deck-container py-3 cursor-grab active:cursor-grabbing select-none"
       >
         <motion.div
           ref={trackRef}
@@ -189,16 +217,28 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
           dragConstraints={{ left: -maxScroll, right: 0 }}
           dragElastic={0.08}
           dragTransition={{ bounceStiffness: 300, bounceDamping: 35 }}
-          className="flex gap-5 sm:gap-6 w-max"
+          className="flex gap-5 sm:gap-6 w-max select-none"
         >
           {projects.map((proj) => {
             const isExpanded = expandedProjectId === proj.id;
+            const isDimmed = hasAnyExpanded && !isExpanded;
 
             return (
               <motion.div
                 key={proj.id}
                 onMouseMove={handleMouseMove}
-                className="blk-card p-5 sm:p-6 w-[320px] sm:w-[380px] flex flex-col justify-between shrink-0 group relative select-text"
+                onClick={() => {
+                  if (isDimmed) {
+                    onToggleExpand(proj.id);
+                  }
+                }}
+                className={`blk-card p-5 sm:p-6 w-[320px] sm:w-[380px] flex flex-col justify-between shrink-0 group relative select-none transition-all duration-300 ${
+                  isExpanded
+                    ? 'scale-[1.03] sm:scale-105 z-30 ring-1 ring-white/40 shadow-2xl shadow-black bg-black'
+                    : isDimmed
+                    ? 'opacity-30 blur-[2px] scale-95 filter grayscale-[40%] cursor-pointer hover:opacity-75'
+                    : 'opacity-100 scale-100 z-10'
+                }`}
               >
                 {/* blkUI 4-Corner Crosshairs */}
                 <span className="blk-crosshair-tl">+</span>
@@ -209,7 +249,7 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
                 {/* Subtle Radial Cursor Spotlight Layer */}
                 <div className="kokonut-spotlight-layer" />
 
-                <div className="relative z-10 space-y-3.5">
+                <div className="relative z-10 space-y-3.5 pointer-events-auto">
                   {/* Top Corner Metadata Anchors */}
                   <div className="flex items-center justify-between border-b border-white/10 pb-3 text-xs font-mono">
                     <div className="flex items-center gap-2">
@@ -246,8 +286,13 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
                     <p className="text-xs text-zinc-400 font-mono truncate">{proj.tagline}</p>
                   </div>
 
-                  {/* Bespoke Interactive Kinetic Vector Model */}
-                  <ProjectVectorVisual projectId={proj.id} isCompact className="my-1" />
+                  {/* Bespoke Kinetic Vector Model (Enlarges with high detail on Specs expansion) */}
+                  <ProjectVectorVisual
+                    projectId={proj.id}
+                    isCompact={!isExpanded}
+                    isExpanded={isExpanded}
+                    className="my-1"
+                  />
 
                   {/* Clean Grounded Description */}
                   <p className="text-xs text-zinc-300 font-sans leading-relaxed line-clamp-2">
@@ -293,7 +338,7 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
                 </div>
 
                 {/* Card Action Bar */}
-                <div className="relative z-10 pt-3.5 mt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
+                <div className="relative z-10 pt-3.5 mt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
                   <div className="flex items-center gap-2">
                     {proj.link && (
                       <a
@@ -323,10 +368,13 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
 
                   {/* Expand Specs Drawer Toggle */}
                   <button
-                    onClick={() => onToggleExpand(proj.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleExpand(proj.id);
+                    }}
                     className="text-[11px] font-mono text-zinc-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
                   >
-                    <span>{isExpanded ? 'Hide Specs' : 'Specs'}</span>
+                    <span>{isExpanded ? 'Close Specs' : 'Specs'}</span>
                     <ChevronDown
                       className={`w-3.5 h-3.5 transition-transform ${
                         isExpanded ? 'rotate-180' : ''

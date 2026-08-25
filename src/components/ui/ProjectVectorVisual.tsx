@@ -6,14 +6,20 @@ interface ProjectVectorVisualProps {
   projectId: string;
   className?: string;
   isCompact?: boolean;
+  isExpanded?: boolean;
 }
 
 export const ProjectVectorVisual = memo(function ProjectVectorVisual({
   projectId,
   className = '',
   isCompact = false,
+  isExpanded = false,
 }: ProjectVectorVisualProps) {
-  const heightClass = isCompact ? 'h-24 sm:h-28' : 'h-32 sm:h-36';
+  const heightClass = isExpanded
+    ? 'h-44 sm:h-52 transition-all duration-300'
+    : isCompact
+    ? 'h-24 sm:h-28 transition-all duration-300'
+    : 'h-32 sm:h-36 transition-all duration-300';
 
   // 1. Tether: Mobile Encrypted SSH Socket & Data Packets
   if (projectId === 'tether') {
