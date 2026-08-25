@@ -100,17 +100,6 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
     });
   }, [x, maxScroll]);
 
-  // Mouse wheel horizontal surf listener
-  const handleWheel = (e: React.WheelEvent) => {
-    if (maxScroll <= 0) return;
-    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    if (Math.abs(delta) > 5) {
-      const currentX = x.get();
-      const newX = Math.min(0, Math.max(-maxScroll, currentX - delta * 0.85));
-      x.set(newX);
-    }
-  };
-
   // Step navigation buttons
   const stepScroll = (direction: 'left' | 'right') => {
     const cardWidth = 380;
@@ -142,7 +131,7 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
           </span>
           <span className="text-zinc-600 hidden sm:inline">•</span>
           <span className="text-zinc-400 text-[10px] hidden sm:inline uppercase">
-            [DRAG OR MOUSE WHEEL]
+            [DRAG OR TOUCH]
           </span>
         </div>
 
@@ -188,10 +177,9 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
         </div>
       </div>
 
-      {/* Main 3D Physics Momentum Deck Track */}
+      {/* Main 3D Physics Momentum Deck Track (No wheel hijack) */}
       <div
         ref={containerRef}
-        onWheel={handleWheel}
         className="relative w-full overflow-hidden blk-deck-container py-2 cursor-grab active:cursor-grabbing"
       >
         <motion.div
