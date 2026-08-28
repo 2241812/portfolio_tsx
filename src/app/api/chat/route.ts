@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { resumeData } from '@/data/resumeData';
+import { getProjectEvidence } from '@/data/projectEvidence';
 import { generateResponse } from '@/services/chatbot';
 
 interface ChatMessage {
@@ -24,8 +25,12 @@ function buildPortfolioContext(): string {
   ].join('\n');
 
   const projectsList = projects
-    .slice(0, 5)
-    .map(p => `- ${p.title} (${p.role}): ${p.description}`)
+    .map(p => {
+      const evidence = getProjectEvidence(p.id);
+      const claims = evidence?.verifiedClaims.join('; ') || 'No repository evidence snapshot is available.';
+      const limitations = evidence?.limitations?.join('; ');
+      return `- ${p.title} (${p.role}): ${p.description}\n  Evidence source: ${evidence?.sourceUrl || p.link}\n  Repository-confirmed details: ${claims}${limitations ? `\n  Limitations: ${limitations}` : ''}`;
+    })
     .join('\n');
 
   return `
@@ -63,6 +68,8 @@ When answering questions:
 4. If asked about something technical, explain briefly but knowledgeably
 5. Keep responses concise (2-3 sentences unless more detail is needed)
 6. Be helpful and friendly
+7. Only present repository-confirmed details as verified facts; mention limitations when relevant
+8. Do not invent performance metrics, hiring rankings, frameworks, or current job titles
 `;
 }
 

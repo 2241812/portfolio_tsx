@@ -1,7 +1,7 @@
 # Devpost Submission — The WebMCP Challenge 2026
 
-**Project Title**: Systems Engineering Portfolio with W3C WebMCP & Autonomous Recruiter Agent  
-**Tagline**: A high-performance portfolio implementing W3C WebMCP with live UI synchronization, declarative forms, and an autonomous candidate screening engine.  
+**Project Title**: Systems Engineering Portfolio with W3C WebMCP & Evidence Audit Demo
+**Tagline**: An interactive portfolio implementing W3C WebMCP with live UI synchronization, declarative forms, and repository-grounded evidence summaries.
 
 - **Live URL**: [https://narcisojavier.vercel.app](https://narcisojavier.vercel.app)
 - **GitHub Repository**: [https://github.com/narcisoJavier/larp-portfolio-vc](https://github.com/narcisoJavier/larp-portfolio-vc)
@@ -16,24 +16,24 @@ Technical portfolios and candidate discovery represent the quintessential use ca
 2. **Missing Authoritative & Structured Grounding**: AI recruiters often hallucinate candidate experience or miss verified credentials because websites lack typed, schema-validated queries.
 3. **The "Black Box" Problem**: When AI agents browse sites on behalf of users, the human spectator sees nothing. There is no visual collaboration or real-time feedback.
 
-With **W3C WebMCP (`document.modelContext`)**, this portfolio ceases to be a static page and becomes an **interactive, bi-directional collaboration engine** where AI agents can query verified competencies with 100% accuracy and coordinate with the human spectator in real time.
+With **W3C WebMCP (`document.modelContext`)**, this portfolio becomes an **interactive, bi-directional collaboration surface** where AI agents can query declared profile data and reviewed project evidence while the human spectator sees the interaction in real time.
 
 ---
 
 ## ✨ 2. How It Creates a Better User Experience
 
-- **Zero-Friction Discovery**: Rather than manually digging through projects or reading long bios, hiring managers and recruiters can have their AI agents instantly inspect specific stacks (e.g., Go concurrency, Docker containerization, Unity physics) in milliseconds.
+- **Structured Discovery**: Rather than manually digging through projects or reading long bios, hiring managers and recruiters can have compatible AI agents inspect declared stacks and repository-backed project details.
 - **Bi-Directional Visual Synchronization**: When an AI agent invokes tools, the portfolio's **Live UI Event Bus (`src/lib/webmcpEvents.ts`)** visually reacts on-screen — illuminating skills badges with glowing indicators, auto-focusing cards in the horizontal physics project deck, and pulsing the kinetic telemetry waveform.
-- **Accessible AI Candidate Fit Dossier**: Agents can autonomously run a multi-step audit and synthesize the candidate's background into a structured evaluation dossier with role match breakdown, verified project proofs, print-to-PDF, and 1-click inquiry dispatch.
+- **Accessible Evidence Snapshot**: Visitors can run a multi-step audit and synthesize declared profile data, reviewed project proofs, limitations, and available GitHub activity into a structured, print-friendly snapshot.
 - **In-Page Agent Simulator Drawer (Judge Fallback)**: For judges and spectators browsing without Chrome 149+ flags or ChatGPT in-app browsers, the built-in simulator drawer provides 1-click tool presets, custom JSON payload execution, and live response inspection.
 
 ---
 
 ## 🤝 3. What People and Agents Can Do Together That Was Difficult or Impossible Before
 
-- **Collaborative Candidate Screening**: A hiring manager and their AI agent can review a candidate simultaneously. While the agent executes deep queries against live GitHub stats, academic credentials, and project highlights, the spectator watches matching visual components on the website light up and expand in real time.
-- **Automated Multi-Tool Candidate Fit Audit**: In a single click, an autonomous agent orchestrates 4 distinct WebMCP tools (`get_portfolio_overview`, `get_skills`, `get_project_details`, `get_github_stats`) to audit credentials, systems capabilities, project deliverables, and GitHub activity, generating a comprehensive, exportable evaluation dossier.
-- **Agent-Driven Inquiry Dispatch**: An agent can negotiate or dispatch a structured interview or collaboration request directly through the official **W3C Declarative HTML Forms API** (`toolname="send_inquiry"`) without relying on brittle DOM clicks.
+- **Collaborative Evidence Review**: A hiring manager and their AI agent can review a candidate simultaneously. While the agent queries profile data, project evidence, and available GitHub activity, the spectator watches matching visual components light up and expand in real time.
+- **Multi-Tool Evidence Audit**: In a single click, the demo orchestrates 4 distinct WebMCP tools (`get_portfolio_overview`, `get_skills`, `get_project_details`, `get_github_stats`) to assemble a source-backed snapshot without assigning an arbitrary hiring score.
+- **Agent-Driven Inquiry Dispatch**: An agent can dispatch a structured interview or collaboration request through the official **W3C Declarative HTML Forms API** (`toolname="send_inquiry"`), which forwards the inquiry through the configured email delivery service when Resend is configured.
 
 ---
 
@@ -44,13 +44,13 @@ This project implements the full **W3C WebMCP Specification** across both **Impe
 ### A. 11 Registered WebMCP Tools (`src/lib/webmcp.ts`)
 Exposes typed, schema-validated, and annotated tools into `document.modelContext` (with backward compatibility fallback to `navigator.modelContext`):
 - `get_portfolio_overview` — Read-only developer summary, specializations, and tool directory.
-- `get_profile` — Full profile, verified credentials, and direct contact details.
+- `get_profile` — Declared profile data, listed credentials, and direct contact details.
 - `get_skills` — Technical skills matrix with project-context descriptions and category filtering.
 - `get_projects` & `get_project_details` — Case-insensitive project lookup with technical highlights.
 - `get_education` — Academic credentials (Saint Louis University, BS CS '27) and certifications.
-- `get_github_stats` & `get_telemetry` — Live GitHub contribution counts (240+ commits) and architecture telemetry.
+- `get_github_stats` & `get_telemetry` — GitHub contribution counts and architecture telemetry when the external sources respond.
 - `search_portfolio` — Fuzzy keyword search across skills, descriptions, and projects.
-- `send_inquiry` — Mutating action tool allowing agents to dispatch structured job opportunities (`readOnlyHint: false`).
+- `send_inquiry` — Mutating action tool allowing agents to dispatch structured job opportunities through the configured email service (`readOnlyHint: false`).
 - `download_resume` — Direct access to the PDF resume.
 
 ### B. W3C Declarative HTML Forms API (`ContactSection.tsx`)
@@ -84,8 +84,8 @@ Per Hackathon Rules (Section 4), this project extends an existing 3D portfolio c
   1. Complete W3C WebMCP integration in [`src/lib/webmcp.ts`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/lib/webmcp.ts) with 11 registered tools.
   2. Declarative HTML Forms API annotations in [`ContactSection.tsx`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/components/sections/ContactSection.tsx).
   3. Real-time human-agent visual synchronization event bus in [`src/lib/webmcpEvents.ts`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/lib/webmcpEvents.ts).
-  4. Autonomous recruiter audit workflow engine in [`src/lib/webmcpWorkflow.ts`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/lib/webmcpWorkflow.ts).
-  5. AI Candidate Fit Dossier modal in [`CandidateDossierModal.tsx`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/components/ui/CandidateDossierModal.tsx).
+  4. Repository-grounded evidence audit workflow in [`src/lib/webmcpWorkflow.ts`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/lib/webmcpWorkflow.ts).
+  5. Evidence Snapshot modal in [`CandidateDossierModal.tsx`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/components/ui/CandidateDossierModal.tsx).
   6. Floating In-Page Agent Simulator Drawer & HUD in [`WebMCPAgentHUD.tsx`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/components/WebMCPAgentHUD.tsx).
   7. All verifiable via timestamped git commit history on `main` branch.
 
@@ -109,8 +109,8 @@ await document.modelContext.executeTool(searchTool, { query: 'Docker' });
 
 ### Option B: Via the In-Page Agent Simulator Drawer (Any Browser)
 1. Visit [https://narcisojavier.vercel.app](https://narcisojavier.vercel.app).
-2. Click the floating **`[🤖 WebMCP AGENT // SIMULATOR]`** pill in the bottom-left corner.
-3. Click **"Run Full Recruiter Screen"** to watch the multi-step autonomous audit and open the AI Dossier.
+2. Click the floating **WebMCP Agent // Simulator** pill in the bottom-right corner.
+3. Click **"Run Evidence Audit"** to watch the multi-step evidence review and open the Evidence Snapshot.
 4. Try the 1-click presets (*Inspect Skills*, *Project Lookup*, *Live Telemetry*, *Send Inquiry*) or execute custom JSON tools directly from the drawer!
 
 ---
@@ -119,6 +119,6 @@ await document.modelContext.executeTool(searchTool, { query: 'Docker' });
 
 - **0:00 – 0:30 (Problem & Intro)**: Show portfolio landing page. Explain the problem with AI scraping vs. structured W3C WebMCP tool calling.
 - **0:30 – 1:00 (WebMCP Chrome Console Demo)**: Open Chrome DevTools console, run `getTools()`, call `search_portfolio('Docker')`, and show the skills badge glowing and inspector switching automatically.
-- **1:00 – 1:40 (Autonomous Recruiter Screen)**: Open the WebMCP HUD in the bottom corner. Click "Run Full Recruiter Screen", showing the 4 steps resolving with live UI reactions, culminating in the AI Candidate Fit Dossier modal.
-- **1:40 – 2:10 (Declarative HTML Forms & Inquiry Action)**: Show the contact form with `toolname="send_inquiry"`, submit an inquiry, show the success confirmation and local persistence.
-- **2:10 – 2:30 (Conclusion & Spec Compliance)**: Recap dual API compliance, performance, and accessibility.
+- **1:00 – 1:40 (Evidence Audit Demo)**: Open the WebMCP HUD in the bottom corner. Click "Run Evidence Audit", showing the 4 steps resolving with live UI reactions, culminating in the Evidence Snapshot modal.
+- **1:40 – 2:10 (Declarative HTML Forms & Inquiry Action)**: Show the contact form with `toolname="send_inquiry"`, submit an inquiry, and show the email-delivery confirmation.
+- **2:10 – 2:30 (Conclusion & Spec Compliance)**: Recap the dual API surface, source-backed wording, and accessibility improvements.

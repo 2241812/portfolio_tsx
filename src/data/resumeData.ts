@@ -1,17 +1,17 @@
 export const credentials = [
-  { icon: '🎓', title: 'B.S. Computer Science', description: 'Saint Louis University | Class of 2027' },
-  { icon: '⭐', title: 'Smart City Challenge', description: 'Certified Participant - 2024' },
-  { icon: '🏆', title: 'AI Development Track', description: 'Specialization Certificate' },
+  { icon: 'academic', title: 'B.S. Computer Science', description: 'Saint Louis University | Class of 2027' },
+  { icon: 'award', title: 'Smart City Challenge', description: 'Certified Participant - 2024' },
+  { icon: 'certificate', title: 'AI Development Track', description: 'Specialization Certificate' },
 ];
 
 export const resumeData = {
   personalInfo: {
     name: "Narciso III Javier",
     title: "Computer Science Student",
-    titleAnimated: ["Systems & Go Developer", "Game Developer (Unity)", "Software Engineering Student"],
+    titleAnimated: ["Aspiring Systems & Go Developer", "Aspiring Game Developer (Unity)", "Software Engineering Student"],
     location: "Baguio City, Philippines",
     phone: "+63-976-451-1638",
-    email: "2241812@slu.edu.ph",
+    email: "renzoj156@gmail.com",
     linkedin: "https://www.linkedin.com/in/narcisoiii-javier/",
     github: "https://github.com/narcisoJavier"
   },
@@ -81,34 +81,39 @@ export const resumeData = {
   },
   projects: [
     {
+      id: "tether",
       title: "Tether",
       role: "Mobile Developer & Creator",
       description:
-        "A mobile server administration tool built with Flutter & Dart. Enables one-tap encrypted SSH socket connections, quick swipe-to-run commands, and remote terminal management directly from your phone.",
+        "An Android-first Flutter app for SSH and mesh-terminal workflows, combining a Dart SSH client, VT100 terminal, SFTP, port forwarding, and embedded Tailscale networking.",
       link: "https://github.com/narcisoJavier/Tether"
     },
     {
+      id: "geocradle",
       title: "geoCradle",
       role: "Full-Stack GIS Developer",
       description:
-        "An interactive web mapping tool built with Leaflet.js and GeoJSON to visualize watershed areas and administrative boundaries across the Cordillera region, created for DENR environmental analysis.",
+        "A React/Vite web mapping application for exploring 13 major watersheds and administrative boundaries across the Cordillera Administrative Region, built for DENR-oriented environmental analysis.",
       link: "https://github.com/narcisoJavier/geoCradle"
     },
     {
+      id: "campus-nav",
       title: "Campus Navigator CS312",
       role: "Backend & Systems Developer",
       description:
-        "A containerized web service built with Go and Docker Compose that calculates optimal walking routes across academic buildings using Dijkstra's shortest-path algorithm.",
+        "A Docker Compose campus-navigation system organized as Go, Node.js, and PHP services. Its Go service implements Dijkstra shortest-path routing with role-based access and accessibility rules.",
       link: "https://github.com/narcisoJavier/WebDev_Campus-Navigator_CS312"
     },
     {
+      id: "multitask-contextswitch",
       title: "MultiTask ContextSwitch",
       role: "Python Desktop Developer",
       description:
-        "A desktop utility built with Python and PyQt6 that tracks long-running background tasks and smoothly shifts window focus when jobs complete, keeping multitasking seamless.",
+        "A Python/PyQt6 Windows workflow automator that monitors generation state in AI browser apps and manages target-window focus. The repository currently labels it in development.",
       link: "https://github.com/narcisoJavier/MultiTask_ContextSwitch"
     },
     {
+      id: "hand-sign-recognition",
       title: "Hand Sign Recognition CNN",
       role: "Computer Vision Prototype",
       description:
@@ -116,11 +121,12 @@ export const resumeData = {
       link: "https://colab.research.google.com/drive/1JtmdmGKfQzO4xnSUnl4rRVXulx5v6TJG?usp=sharing"
     },
     {
+      id: "opencode-setup",
       title: "OpenCode DevContainer Setup",
       role: "Tooling & Environment Setup",
       description:
-        "A reproducible development setup and guide for running OpenCode inside VSCode Remote Containers with Docker, ensuring clean environment isolation.",
-      link: "https://github.com/narcisoJavier"
+        "A Docker and VS Code Dev Containers setup guide for running OpenCode in an isolated terminal environment with documented reproducibility and security boundaries.",
+      link: "https://github.com/narcisoJavier/OpenCode-VSCode-Setup"
     }
   ]
 };

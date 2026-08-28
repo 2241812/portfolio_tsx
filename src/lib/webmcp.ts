@@ -7,7 +7,9 @@
  */
 
 import { resumeData, credentials } from '@/data/resumeData';
+import { getProjectEvidence } from '@/data/projectEvidence';
 import { dispatchWebMCPToolCall } from '@/lib/webmcpEvents';
+import { submitInquiry } from '@/lib/inquiryClient';
 
 interface ModelContextTool {
   name: string;
@@ -146,18 +148,19 @@ export async function registerWebMCPTools(): Promise<void> {
   // ============ TOOL 4: get_projects ============
   await mc.registerTool({
     name: 'get_projects',
-    description: 'Get all 6 portfolio projects with titles, roles, descriptions, and repository links.',
+    description: 'Get all portfolio projects with titles, roles, descriptions, links, and reviewed evidence snapshots.',
     inputSchema: { type: 'object', properties: {} },
     annotations: { readOnlyHint: true },
     execute: async () => {
       const result = {
         count: resumeData.projects.length,
-        projects: resumeData.projects.map((p, i) => ({
-          id: i,
+        projects: resumeData.projects.map((p) => ({
+          id: p.id,
           title: p.title,
           role: p.role,
           description: p.description,
           link: p.link,
+          evidence: getProjectEvidence(p.id),
         })),
       };
       dispatchWebMCPToolCall({ tool: 'get_projects', result, summary: `Listed ${result.count} portfolio projects` });
@@ -186,7 +189,9 @@ export async function registerWebMCPTools(): Promise<void> {
       }
       const q = input.project_name.toLowerCase();
       const project = resumeData.projects.find((p) => p.title.toLowerCase().includes(q));
-      const result = project || { error: `No project matching "${input.project_name}".`, available: resumeData.projects.map((p) => p.title) };
+      const result = project
+        ? { ...project, evidence: getProjectEvidence(project.id) }
+        : { error: `No project matching "${input.project_name}".`, available: resumeData.projects.map((p) => p.title) };
 
       dispatchWebMCPToolCall({
         tool: 'get_project_details',
@@ -201,7 +206,7 @@ export async function registerWebMCPTools(): Promise<void> {
   // ============ TOOL 6: get_education ============
   await mc.registerTool({
     name: 'get_education',
-    description: 'Get academic credentials: university, degree, GPA, graduation cohort, and verified certifications.',
+    description: 'Get declared academic information: university, degree, GPA, graduation cohort, and listed certifications.',
     inputSchema: { type: 'object', properties: {} },
     annotations: { readOnlyHint: true },
     execute: async () => {
@@ -245,7 +250,7 @@ export async function registerWebMCPTools(): Promise<void> {
 
         result = {
           github_url: `https://github.com/${username}`,
-          total_contributions_last_year: contributions?.total?.lastYear ?? '240+',
+          total_contributions_last_year: contributions?.total?.lastYear ?? null,
           pinned_repos: pinned || [],
           recent_activity: Array.isArray(activity)
             ? activity.slice(0, 5).map((e: { type?: string; repo?: { name?: string }; created_at?: string }) => ({
@@ -300,7 +305,8 @@ export async function registerWebMCPTools(): Promise<void> {
           (p) =>
             p.title.toLowerCase().includes(q) ||
             p.description.toLowerCase().includes(q) ||
-            p.role.toLowerCase().includes(q)
+            p.role.toLowerCase().includes(q) ||
+            getProjectEvidence(p.id)?.verifiedClaims.some((claim) => claim.toLowerCase().includes(q))
         )
         .map((p) => `${p.title} (${p.role})`);
       if (projMatches.length) results.push({ category: 'projects', matches: projMatches });
@@ -327,7 +333,7 @@ export async function registerWebMCPTools(): Promise<void> {
   // ============ TOOL 9: send_inquiry ============
   await mc.registerTool({
     name: 'send_inquiry',
-    description: 'Send a professional inquiry, job offer, or message to the developer. The message is stored in localStorage for review.',
+    description: 'Send a professional inquiry, job offer, or message to the developer through the configured email delivery service.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -341,27 +347,23 @@ export async function registerWebMCPTools(): Promise<void> {
     annotations: { readOnlyHint: false },
     execute: async (input: { sender_name: string; sender_email: string; subject: string; message: string }) => {
       console.log('[WebMCP] Inquiry received:', input);
+      let result: { success: boolean; message?: string; error?: string; id?: string };
       try {
-        if (typeof localStorage !== 'undefined') {
-          const existing = JSON.parse(localStorage.getItem('webmcp-inquiries') || '[]');
-          existing.push({ ...input, timestamp: new Date().toISOString(), read: false });
-          localStorage.setItem('webmcp-inquiries', JSON.stringify(existing));
-        }
-      } catch (err) {
-        console.warn('[WebMCP] Failed to persist inquiry:', err);
+        result = await submitInquiry(input);
+      } catch (error) {
+        result = {
+          success: false,
+          error: error instanceof Error ? error.message : 'The inquiry could not be delivered.',
+        };
       }
-
-      const result = {
-        success: true,
-        message: `Inquiry from ${input.sender_name} received. The developer will review it.`,
-        developer_email: resumeData.personalInfo.email,
-      };
 
       dispatchWebMCPToolCall({
         tool: 'send_inquiry',
         input: input as Record<string, unknown>,
         result,
-        summary: `Dispatched inquiry from ${input.sender_name}: "${input.subject}"`,
+        summary: result.success
+          ? `Delivered inquiry from ${input.sender_name}: "${input.subject}"`
+          : `Inquiry delivery failed for "${input.subject}"`,
       });
       return result;
     },
@@ -386,7 +388,7 @@ export async function registerWebMCPTools(): Promise<void> {
   // ============ TOOL 11: get_telemetry ============
   await mc.registerTool({
     name: 'get_telemetry',
-    description: 'Get live architecture telemetry, stack synchronization state, active commit metrics, and system runtime specifications.',
+    description: 'Get portfolio runtime specifications, project counts, and live values when an external telemetry source is available.',
     inputSchema: { type: 'object', properties: {} },
     annotations: { readOnlyHint: true },
     execute: async () => {
@@ -394,11 +396,11 @@ export async function registerWebMCPTools(): Promise<void> {
         runtime: 'Next.js 16 + React 19 + Turbopack',
         architecture: 'Monochrome Studio Architecture (Syne / Geist Typography)',
         graphics_engine: 'Three.js / WebGL Constellation + Anime.js Kinetic Waveforms',
-        total_projects_in_deck: 6,
+        total_projects_in_deck: resumeData.projects.length,
         tracked_capabilities: Object.values(resumeData.skills).flat().length,
         timezone: 'GMT+8 (Asia/Manila)',
-        location: 'Baguio City, Philippines [16.40°N, 120.59°E]',
-        stack_status: 'SYNCED & VERIFIED',
+        location: 'Baguio City, Philippines',
+        stack_status: 'Portfolio configuration loaded',
       };
       dispatchWebMCPToolCall({ tool: 'get_telemetry', result, summary: 'Fetched live architecture telemetry specs' });
       return result;

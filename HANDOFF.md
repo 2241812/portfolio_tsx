@@ -110,7 +110,7 @@ export const resumeData = {
     titleAnimated: ["Systems & Go Developer", "Game Developer (Unity)", "Software Engineering Student"],
     location: "Baguio City, Philippines",
     phone: "+63-976-451-1638",
-    email: "2241812@slu.edu.ph",
+    email: "renzoj156@gmail.com",
     linkedin: "https://www.linkedin.com/in/narcisoiii-javier/",
     github: "https://github.com/narcisoJavier"
   },

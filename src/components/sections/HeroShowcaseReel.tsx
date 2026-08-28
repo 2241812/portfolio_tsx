@@ -5,6 +5,8 @@ import { animate } from 'animejs';
 import { ArrowUpRight, ChevronRight, Sparkles, Terminal, Shield, Globe } from 'lucide-react';
 import { GithubIcon } from '@/components/ui/StudioIcons';
 import { ProjectVectorVisual } from '@/components/ui/ProjectVectorVisual';
+import { resumeData } from '@/data/resumeData';
+import { getProjectEvidence } from '@/data/projectEvidence';
 
 interface ShowcaseProject {
   id: string;
@@ -18,56 +20,50 @@ interface ShowcaseProject {
   link?: string;
 }
 
-const SHOWCASE_PROJECTS: ShowcaseProject[] = [
-  {
-    id: 'tether',
+const SHOWCASE_PRESENTATION: Record<string, Omit<ShowcaseProject, 'id' | 'title' | 'tags' | 'description' | 'link'>> = {
+  tether: {
     index: '01',
-    title: 'Tether',
     subtitle: 'Mobile Server Admin & SSH Client',
     category: 'MOBILE // SYSTEMS',
     icon: <Shield className="w-4 h-4 text-white" />,
-    tags: ['Flutter', 'Dart', 'SSH Socket', 'Terminal Ops'],
-    description:
-      'A mobile server administration tool built with Flutter & Dart. Enables one-tap encrypted SSH socket connections and remote terminal ops directly from your phone.',
-    link: 'https://github.com/narcisoJavier/Tether',
   },
-  {
-    id: 'geocradle',
+  geocradle: {
     index: '02',
-    title: 'geoCradle',
     subtitle: 'Cordillera Watershed Web GIS Map',
     category: 'GEOSPATIAL // GIS',
     icon: <Globe className="w-4 h-4 text-white" />,
-    tags: ['Leaflet.js', 'GeoJSON', 'JavaScript', 'DENR Analysis'],
-    description:
-      'An interactive web mapping application for environmental analysis, visualizing watershed boundaries and topographical zones across Northern Luzon.',
-    link: 'https://github.com/narcisoJavier/geoCradle',
   },
-  {
-    id: 'campus-nav',
+  'campus-nav': {
     index: '03',
-    title: 'Campus Navigator CS312',
     subtitle: 'Go Shortest-Path Route Service',
     category: 'MICROSERVICES // GRAPH',
     icon: <Terminal className="w-4 h-4 text-white" />,
-    tags: ['Go', 'Dijkstra Algorithm', 'Docker Compose', 'Node.js'],
-    description:
-      'A containerized Go microservice that calculates fast, optimal routes between campus buildings using Dijkstra\'s shortest-path graph algorithm.',
-    link: 'https://github.com/narcisoJavier/WebDev_Campus-Navigator_CS312',
   },
-  {
-    id: 'multitask',
+  'multitask-contextswitch': {
     index: '04',
-    title: 'MultiTask ContextSwitch',
     subtitle: 'Desktop Task Monitor & Switcher',
     category: 'DESKTOP // OS AUTOMATION',
     icon: <Sparkles className="w-4 h-4 text-white" />,
-    tags: ['Python', 'PyQt6', 'Process Monitor', 'OS Automation'],
-    description:
-      'A desktop productivity utility built with Python and PyQt6 that monitors background task execution and shifts window focus when jobs complete.',
-    link: 'https://github.com/narcisoJavier/MultiTask_ContextSwitch',
   },
-];
+};
+
+const SHOWCASE_PROJECTS: ShowcaseProject[] = Object.entries(SHOWCASE_PRESENTATION).map(([id, presentation]) => {
+  const project = resumeData.projects.find((entry) => entry.id === id);
+  const evidence = getProjectEvidence(id);
+
+  if (!project) {
+    throw new Error(`Missing showcase project data for ${id}`);
+  }
+
+  return {
+    ...presentation,
+    id: project.id,
+    title: project.title,
+    tags: evidence?.technologyTags || [],
+    description: project.description,
+    link: project.link,
+  };
+});
 
 export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -140,7 +136,10 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
           {SHOWCASE_PROJECTS.map((item, idx) => (
             <button
               key={item.id}
+              type="button"
               onClick={() => setCurrentIndex(idx)}
+              aria-label={`Show featured project ${item.title}`}
+              aria-pressed={currentIndex === idx}
               className={`h-5 px-2 text-[10px] font-mono transition-all cursor-pointer flex items-center justify-center ${
                 currentIndex === idx
                   ? 'bg-white text-black font-bold'

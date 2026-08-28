@@ -95,7 +95,7 @@ export const SkillsSection = memo(function SkillsSection({ allProjects }: Skills
 
   const activeDescription =
     (resumeData.skillDescriptions as Record<string, string>)[activeSkill] ||
-    'Core technical capability verified through active repository implementations, engine scripting, and systems architecture deliverables.';
+    'Declared capability; linked project evidence and GitHub activity are shown where available.';
 
   const categoryIcons: Record<string, React.ReactNode> = {
     'Programming Languages': <Code2 className="w-3.5 h-3.5 text-white" />,
@@ -275,7 +275,7 @@ export const SkillsSection = memo(function SkillsSection({ allProjects }: Skills
             {/* Telemetry Status */}
             <div className="pt-3 border-t border-white/10 text-[10px] text-zinc-500 font-mono flex justify-between">
               <span>SYNC: SWR CACHED</span>
-              <span className="text-zinc-300 font-bold">● VERIFIED STACK</span>
+                  <span className="text-zinc-300 font-bold">● DECLARED STACK // GITHUB WHEN AVAILABLE</span>
             </div>
           </motion.div>
         </div>

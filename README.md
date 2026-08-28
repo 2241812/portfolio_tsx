@@ -9,7 +9,7 @@ A modern interactive engineering portfolio built with **Next.js 16**, **React 19
 
 ## 🏆 WebMCP Integration (Hackathon Work // Aug 25 – Sept 3, 2026)
 
-This portfolio implements both the **Imperative JavaScript API** and **Declarative HTML Forms API** of the [W3C WebMCP specification](https://webmachinelearning.github.io/webmcp/), allowing AI agents (such as Chrome 149+ with the `#enable-webmcp-testing` flag, or ChatGPT's in-app browser) to inspect verified skills, projects, and telemetry, and dispatch inquiries directly.
+This portfolio implements both the **Imperative JavaScript API** and **Declarative HTML Forms API** of the [W3C WebMCP specification](https://webmachinelearning.github.io/webmcp/), allowing compatible AI agents to inspect declared profile data, reviewed project evidence, and live telemetry when available. The inquiry action sends through the configured Resend email service.
 
 ### 1. Dual API Implementation
 
@@ -21,14 +21,14 @@ Registered via `src/lib/webmcp.ts` with explicit input schemas and `readOnlyHint
 | `get_portfolio_overview` | Read-only | Developer summary, top languages, project count, and tool directory |
 | `get_profile` | Read-only | Full profile, contact info (email, LinkedIn, GitHub, phone), education, and credentials |
 | `get_skills` | Read-only | Categorized skills matrix with project-context descriptions (optional `category` filter) |
-| `get_projects` | Read-only | All 6 portfolio projects with titles, roles, descriptions, and repository links |
+| `get_projects` | Read-only | All 6 portfolio projects with titles, roles, descriptions, links, and reviewed evidence snapshots |
 | `get_project_details` | Read-only | Look up a specific project by name with case-insensitive search (`project_name`) |
-| `get_education` | Read-only | Academic background (Saint Louis University, BS CS, Class of 2027) and certifications |
-| `get_github_stats` | Read-only | Live GitHub contributions, pinned repositories, and recent public activity |
+| `get_education` | Read-only | Declared academic background (Saint Louis University, BS CS, Class of 2027) and listed certifications |
+| `get_github_stats` | Read-only | GitHub contributions, pinned repositories, and recent public activity when the external APIs respond |
 | `search_portfolio` | Read-only | Keyword search across skills, descriptions, projects, and credentials (`query`) |
-| `send_inquiry` | Action | Send a structured inquiry or job opportunity (persisted in `localStorage['webmcp-inquiries']`) |
+| `send_inquiry` | Action | Send a structured inquiry or job opportunity through the configured Resend email delivery service |
 | `download_resume` | Read-only | Direct link to download the developer's resume in PDF format |
-| `get_telemetry` | Read-only | Live architecture telemetry, stack synchronization state, and system specifications |
+| `get_telemetry` | Read-only | Portfolio runtime specifications, project counts, and available telemetry values |
 
 #### B. Declarative HTML Forms API
 In `ContactSection.tsx`, the direct dispatch form is annotated with official W3C declarative attributes:
@@ -49,12 +49,12 @@ When an AI agent invokes tools, the portfolio's **Live UI Event Bus** (`src/lib/
 
 ### 3. In-Page Agent Simulator Drawer (Judge Fallback)
 
-Judges on browsers without Chrome 149+ flags or ChatGPT in-app browsers can test the full WebMCP experience directly via the **built-in Agent Simulator Drawer** in the bottom-left corner:
+Judges on browsers without Chrome 149+ flags or ChatGPT in-app browsers can test the WebMCP experience directly via the **built-in Agent Simulator Drawer** in the bottom-right corner:
 - **1-Click Presets**:
-  - 🎯 *Inspect Skills*: Searches Docker and Go skills, highlights badges, and updates inspector.
-  - 💼 *Project Lookup*: Inspects Campus Navigator and focuses the project deck.
-  - 📊 *Live Telemetry*: Fetches runtime architecture and GitHub telemetry.
-  - 📨 *Send Inquiry*: Dispatches a sample recruiter interview proposal.
+  - *Inspect Skills*: Searches Docker and Go skills, highlights badges, and updates inspector.
+  - *Project Lookup*: Inspects Campus Navigator and focuses the project deck.
+  - *Live Telemetry*: Fetches runtime architecture and available GitHub telemetry.
+  - *Send Inquiry*: Opens the dispatch form; submission requires configured email variables.
 - **Direct Tool Runner**: Select any of the 11 tools, customize JSON input arguments, and inspect the raw response payload.
 
 ---
@@ -101,6 +101,12 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Email inquiry configuration
+
+The contact form and WebMCP `send_inquiry` tool use the server-side Resend route at `/api/inquiry`. Copy `.env.example` to `.env.local`, replace `re_xxxxxxxxx` with your real Resend API key, and keep the secret out of Git. Set `INQUIRY_TO_EMAIL=renzoj156@gmail.com`. For production, set `INQUIRY_FROM_EMAIL` to a sender on a domain verified in Resend; `onboarding@resend.dev` is suitable for initial testing.
+
+Vercel deployments need the same variables in **Project Settings → Environment Variables** for the environments you deploy.
 
 ### Verification & Production Build
 

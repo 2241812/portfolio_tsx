@@ -7,24 +7,30 @@ import {
   Mail,
   Phone,
   Check,
+  X,
   Copy,
   ExternalLink,
   Award,
   Send,
   Bot,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
 import { LinkedinIcon } from '@/components/ui/StudioIcons';
 import { dispatchWebMCPToolCall } from '@/lib/webmcpEvents';
+import { submitInquiry } from '@/lib/inquiryClient';
 
 export const ContactSection = memo(function ContactSection() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [inquiryStatus, setInquiryStatus] = useState<string | null>(null);
+  const [inquiryError, setInquiryError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState({
     sender_name: '',
     sender_email: '',
     subject: '',
     message: '',
+    website: '',
   });
 
   const copyToClipboard = useCallback((text: string, label: string) => {
@@ -36,36 +42,40 @@ export const ContactSection = memo(function ContactSection() {
     setTimeout(() => setCopiedField(null), 2500);
   }, []);
 
-  const handleInquirySubmit = (e: React.FormEvent) => {
+  const handleInquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     if (!formState.sender_name || !formState.sender_email || !formState.subject || !formState.message) {
+      setInquiryError(true);
       setInquiryStatus('Please fill in all fields.');
       return;
     }
 
+    setIsSubmitting(true);
+    setInquiryError(false);
+    setInquiryStatus(null);
+
     try {
-      if (typeof localStorage !== 'undefined') {
-        const existing = JSON.parse(localStorage.getItem('webmcp-inquiries') || '[]');
-        existing.push({
-          ...formState,
-          timestamp: new Date().toISOString(),
-          source: 'declarative_html_form',
-        });
-        localStorage.setItem('webmcp-inquiries', JSON.stringify(existing));
-      }
-    } catch {}
+      const result = await submitInquiry(formState);
+      dispatchWebMCPToolCall({
+        tool: 'send_inquiry',
+        input: formState as unknown as Record<string, unknown>,
+        result,
+        summary: `Inquiry sent by ${formState.sender_name}: "${formState.subject}"`,
+      });
 
-    dispatchWebMCPToolCall({
-      tool: 'send_inquiry',
-      input: formState as unknown as Record<string, unknown>,
-      result: { success: true, message: 'Inquiry saved successfully.' },
-      summary: `Inquiry sent by ${formState.sender_name}: "${formState.subject}"`,
-    });
-
-    fireConfetti();
-    setInquiryStatus('Inquiry received! Narciso will review your message.');
-    setFormState({ sender_name: '', sender_email: '', subject: '', message: '' });
-    setTimeout(() => setInquiryStatus(null), 5000);
+      fireConfetti();
+      setInquiryError(false);
+      setInquiryStatus('Inquiry sent successfully.');
+      setFormState({ sender_name: '', sender_email: '', subject: '', message: '', website: '' });
+      setTimeout(() => setInquiryStatus(null), 5000);
+    } catch (error) {
+      setInquiryError(true);
+      setInquiryStatus(error instanceof Error ? error.message : 'The inquiry could not be sent.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -113,7 +123,7 @@ export const ContactSection = memo(function ContactSection() {
               </span>
               <span className="inline-flex items-center gap-1.5 text-zinc-300 font-bold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                ONLINE
+                EMAIL ROUTE
               </span>
             </div>
 
@@ -251,12 +261,22 @@ export const ContactSection = memo(function ContactSection() {
                 toolautosubmit="true"
                 className="space-y-3 text-xs font-mono"
               >
+                <input
+                  name="website"
+                  value={formState.website}
+                  onChange={(e) => setFormState((p) => ({ ...p, website: e.target.value }))}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="absolute -left-[9999px] h-px w-px opacity-0"
+                />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                    <label htmlFor="inquiry-sender-name" className="block text-[10px] uppercase text-zinc-400 mb-1">
                       Your Name / Org
                     </label>
                     <input
+                      id="inquiry-sender-name"
                       name="sender_name"
                       value={formState.sender_name}
                       onChange={(e) => setFormState((p) => ({ ...p, sender_name: e.target.value }))}
@@ -269,10 +289,11 @@ export const ContactSection = memo(function ContactSection() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                    <label htmlFor="inquiry-sender-email" className="block text-[10px] uppercase text-zinc-400 mb-1">
                       Your Email
                     </label>
                     <input
+                      id="inquiry-sender-email"
                       name="sender_email"
                       type="email"
                       value={formState.sender_email}
@@ -287,10 +308,11 @@ export const ContactSection = memo(function ContactSection() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                  <label htmlFor="inquiry-subject" className="block text-[10px] uppercase text-zinc-400 mb-1">
                     Subject Line
                   </label>
                   <input
+                    id="inquiry-subject"
                     name="subject"
                     value={formState.subject}
                     onChange={(e) => setFormState((p) => ({ ...p, subject: e.target.value }))}
@@ -303,10 +325,11 @@ export const ContactSection = memo(function ContactSection() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                  <label htmlFor="inquiry-message" className="block text-[10px] uppercase text-zinc-400 mb-1">
                     Message
                   </label>
                   <textarea
+                    id="inquiry-message"
                     name="message"
                     value={formState.message}
                     onChange={(e) => setFormState((p) => ({ ...p, message: e.target.value }))}
@@ -322,15 +345,16 @@ export const ContactSection = memo(function ContactSection() {
                 <div className="flex items-center justify-between pt-1">
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-white text-black font-bold uppercase tracking-wider text-xs hover:bg-zinc-200 transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                    disabled={isSubmitting}
+                    className="px-4 py-2 bg-white text-black font-bold uppercase tracking-wider text-xs hover:bg-zinc-200 disabled:opacity-60 transition-all flex items-center gap-2 cursor-pointer shadow-md"
                   >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Send Message</span>
+                    {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                    <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
                   </button>
 
                   {inquiryStatus && (
-                    <span className="text-emerald-400 text-xs font-mono flex items-center gap-1.5 animate-pulse">
-                      <Sparkles className="w-3.5 h-3.5" />
+                    <span role="status" aria-live="polite" className={`${inquiryError ? 'text-rose-300' : 'text-emerald-400'} text-xs font-mono flex items-center gap-1.5 animate-pulse`}>
+                      {inquiryError ? <X className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
                       <span>{inquiryStatus}</span>
                     </span>
                   )}
@@ -357,7 +381,7 @@ export const ContactSection = memo(function ContactSection() {
               <div className="relative z-10 space-y-2.5 text-xs font-mono">
                 <div className="flex justify-between py-1 border-b border-white/5">
                   <span className="text-zinc-400">Response Time</span>
-                  <span className="text-white font-bold">&lt; 24 Hours</span>
+                  <span className="text-white font-bold">Best effort</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-white/5">
                   <span className="text-zinc-400">Timezone</span>
@@ -381,7 +405,7 @@ export const ContactSection = memo(function ContactSection() {
               <div className="kokonut-spotlight-layer" />
 
               <div className="relative z-10 text-xs font-bold text-white uppercase tracking-wider font-mono border-b border-white/10 pb-2">
-                VERIFIED CREDENTIALS
+                LISTED CREDENTIALS
               </div>
 
               <div className="relative z-10 space-y-3 pt-1">

@@ -1,14 +1,16 @@
 "use client";
 import React, { useEffect, useRef, useState, memo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { animate, stagger } from 'animejs';
 import { useInView } from '@/hooks/useInView';
 import { Activity, GitCommit, Terminal, ExternalLink, Cpu, Radio, Layers } from 'lucide-react';
-import { useGitHubActivity } from '@/hooks/useGitHubData';
+import { useGitHubActivity, useGitHubContributions, useGitHubUser } from '@/hooks/useGitHubData';
 
 export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
   const { ref: containerRef, isInView } = useInView({ rootMargin: '100px', once: true });
   const [isHovered, setIsHovered] = useState(false);
+  const [isPinnedOpen, setIsPinnedOpen] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const commitCountRef = useRef<HTMLSpanElement>(null);
   const repoCountRef = useRef<HTMLSpanElement>(null);
@@ -29,6 +31,8 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
     }, 200);
   };
 
+  const isExpanded = isHovered || isPinnedOpen;
+
   useEffect(() => {
     return () => {
       if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
@@ -37,27 +41,43 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
 
   // Real-time GitHub Activity fallback
   const { events } = useGitHubActivity('narcisoJavier', isInView);
+  const { user } = useGitHubUser('narcisoJavier', isInView);
+  const { contributions } = useGitHubContributions('narcisoJavier', isInView);
 
-  const latestCommit = events?.[0]?.payload?.commits?.[0]?.message || 'feat: spotlight emphasis & enlarged vector animations';
-  const latestSha = events?.[0]?.payload?.commits?.[0]?.sha?.substring(0, 7) || '64dbc35';
-  const latestRepo = events?.[0]?.repo?.name?.split('/')[1] || 'larp-portfolio-vc';
+  const latestCommit = events?.[0]?.payload?.commits?.[0]?.message || 'No recent public commit available';
+  const latestSha = events?.[0]?.payload?.commits?.[0]?.sha?.substring(0, 7) || '—';
+  const latestRepo = events?.[0]?.repo?.name?.split('/')[1] || 'GitHub activity';
+  const lastYearContributions = contributions?.total?.lastYear;
+  const publicRepositoryCount = user?.public_repos;
 
   useEffect(() => {
     if (!isInView) return;
 
-    // 1. Number count-up animations using Anime.js
+    // 1. Animate only values returned by GitHub; do not invent a fallback count.
+    const hasCommitCount = typeof lastYearContributions === 'number';
+    const hasRepositoryCount = typeof publicRepositoryCount === 'number';
+    if (prefersReducedMotion) {
+      if (commitCountRef.current && hasCommitCount) {
+        commitCountRef.current.textContent = `${lastYearContributions}`;
+      }
+      if (repoCountRef.current && hasRepositoryCount) {
+        repoCountRef.current.textContent = `${publicRepositoryCount}`;
+      }
+      return;
+    }
+
     const countObj = { commits: 0, repos: 0 };
 
     animate(countObj, {
-      commits: 240,
-      repos: 25,
+      commits: hasCommitCount ? lastYearContributions : 0,
+      repos: hasRepositoryCount ? publicRepositoryCount : 0,
       duration: 1600,
       ease: 'outExpo',
       onUpdate: () => {
-        if (commitCountRef.current) {
-          commitCountRef.current.textContent = `${Math.round(countObj.commits)}+`;
+        if (commitCountRef.current && hasCommitCount) {
+          commitCountRef.current.textContent = `${Math.round(countObj.commits)}`;
         }
-        if (repoCountRef.current) {
+        if (repoCountRef.current && hasRepositoryCount) {
           repoCountRef.current.textContent = `${Math.round(countObj.repos)}`;
         }
       },
@@ -81,7 +101,13 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
         alternate: true,
       });
     }
-  }, [isInView]);
+  }, [isInView, lastYearContributions, prefersReducedMotion, publicRepositoryCount]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
 
   return (
     <div
@@ -94,10 +120,10 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
       <motion.div
         layout
         transition={{
-          layout: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
+          layout: { duration: prefersReducedMotion ? 0 : 0.34, ease: [0.22, 1, 0.36, 1] },
         }}
         className={`blk-card p-3 sm:p-4 relative cursor-pointer group transition-colors duration-300 ${
-          isHovered
+          isExpanded
             ? 'w-full sm:w-[380px] bg-[#07070b]/98 border-white/30 shadow-2xl shadow-black/90'
             : 'w-full sm:w-[330px] bg-[#0c0c11]/80 hover:border-white/20'
         }`}
@@ -110,7 +136,19 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
         <div className="kokonut-spotlight-layer" />
 
         {/* Top Header: Always visible metrics + kinetic waveform */}
-        <motion.div layout="position" className="flex items-center justify-between gap-4 relative z-10">
+        <motion.button
+          type="button"
+          layout="position"
+          aria-label="Toggle telemetry details"
+          aria-expanded={isExpanded}
+          aria-controls="telemetry-intel-details"
+          onClick={() => setIsPinnedOpen((prev) => !prev)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') setIsPinnedOpen(false);
+          }}
+          className="w-full appearance-none border-0 bg-transparent p-0 text-left text-inherit focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400 focus-visible:outline-offset-2"
+        >
+          <div className="flex items-center justify-between gap-4 relative z-10">
           {/* Left: Key Metrics */}
           <div className="flex items-center gap-4 sm:gap-6 font-mono divide-x divide-white/10">
             {/* Metric 1: Commits */}
@@ -121,9 +159,9 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
               </div>
               <div className="flex items-baseline gap-1">
                 <span ref={commitCountRef} className="text-lg sm:text-xl font-extrabold text-white">
-                  240+
+                  {typeof lastYearContributions === 'number' ? `${lastYearContributions}` : '—'}
                 </span>
-                <span className="text-[9px] text-zinc-500">/ 2026</span>
+                <span className="text-[9px] text-zinc-500">/ LAST YEAR</span>
               </div>
             </div>
 
@@ -135,7 +173,7 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
               </div>
               <div className="flex items-baseline gap-1">
                 <span ref={repoCountRef} className="text-lg sm:text-xl font-extrabold text-white">
-                  25
+                  {typeof publicRepositoryCount === 'number' ? publicRepositoryCount : '—'}
                 </span>
                 <span className="text-[9px] text-zinc-500">PUBLIC</span>
               </div>
@@ -145,7 +183,7 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
           {/* Right: Waveform & Live Pulse */}
           <div className="flex flex-col items-end gap-1 shrink-0">
             <div className="flex items-center gap-1.5 text-[8px] font-mono text-zinc-400 tracking-wider">
-              <Radio className={`w-2.5 h-2.5 ${isHovered ? 'text-emerald-400 animate-pulse' : 'text-zinc-500'}`} />
+              <Radio className={`w-2.5 h-2.5 ${isExpanded ? 'text-emerald-400 animate-pulse' : 'text-zinc-500'}`} />
               <span>TELEMETRY</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             </div>
@@ -162,19 +200,21 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
               </g>
             </svg>
           </div>
-        </motion.div>
+          </div>
+        </motion.button>
 
         {/* Morphed Internal Content: Expands organically inside the enlarging card */}
         <AnimatePresence>
-          {isHovered && (
+          {isExpanded && (
             <motion.div
+              id="telemetry-intel-details"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{
-                duration: 0.28,
+                duration: prefersReducedMotion ? 0 : 0.28,
                 ease: [0.22, 1, 0.36, 1],
-                opacity: { duration: 0.2 },
+                opacity: { duration: prefersReducedMotion ? 0 : 0.2 },
               }}
               className="overflow-hidden space-y-3 pt-3.5 mt-3 border-t border-white/10 relative z-10"
             >
@@ -182,16 +222,16 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
               <div className="flex items-center justify-between text-[10px] font-mono">
                 <span className="text-emerald-400 font-bold flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  TELEMETRY INTEL // ACTIVE
+                  TELEMETRY INTEL // LIVE WHEN AVAILABLE
                 </span>
-                <span className="text-zinc-400 text-[9px]">BAGUIO CITY [16.40°N]</span>
+                <span className="text-zinc-400 text-[9px]">BAGUIO CITY</span>
               </div>
 
-              {/* Latest Verified Commit Stream */}
+              {/* Latest Public Commit Stream */}
               <div className="space-y-1 font-mono">
                 <div className="text-[9px] text-zinc-400 uppercase tracking-wider flex items-center gap-1">
                   <GitCommit className="w-2.5 h-2.5 text-white" />
-                  <span>LATEST VERIFIED COMMIT</span>
+                  <span>LATEST PUBLIC COMMIT</span>
                 </div>
                 <div className="p-2 bg-[#050508] border border-white/10 text-xs space-y-1">
                   <div className="flex items-center gap-2">

@@ -121,7 +121,7 @@ export const AboutSection = memo(function AboutSection() {
                 <span className="text-white font-bold uppercase tracking-wider">
                   ACADEMIC BACKGROUND
                 </span>
-                <span className="text-zinc-500">VERIFIED</span>
+                <span className="text-zinc-500">DECLARED</span>
               </div>
 
               <div className="relative z-10 space-y-2.5 text-xs font-mono">
@@ -148,7 +148,7 @@ export const AboutSection = memo(function AboutSection() {
               </div>
             </div>
 
-            {/* Verified Credentials */}
+            {/* Listed Credentials */}
             <div className="space-y-2.5">
               {credentials.map((cred) => (
                 <div

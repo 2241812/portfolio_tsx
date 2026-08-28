@@ -30,15 +30,15 @@ export const CyberSerpentPet = memo(function CyberSerpentPet() {
       setIsAwake(true);
       const thoughts: Record<string, string> = {
         get_portfolio_overview: '> Auditing full systems profile & specializations...',
-        get_profile: '> Loading verified credentials & engineering statement...',
+        get_profile: '> Loading declared credentials & engineering statement...',
         get_skills: '> Scanning Go, Dart, Python, and Docker competencies...',
         get_projects: '> Cross-referencing project archive & architecture proofs...',
         get_project_details: `> Deep-diving into project specifications...`,
-        get_education: '> Verifying Saint Louis University BS CS credentials...',
-        get_github_stats: '> Querying 240+ verified commits and GitHub activity...',
+        get_education: '> Reading declared Saint Louis University BS CS information...',
+        get_github_stats: '> Querying public GitHub activity...',
         search_portfolio: `> WebMCP query: "${activeToolCall.summary || 'searching'}"...`,
-        send_inquiry: '> Dispatching structured inquiry via Declarative Form!',
-        download_resume: '> Serving verified PDF resume artifact...',
+        send_inquiry: '> Sending inquiry through the configured email service...',
+        download_resume: '> Serving the available PDF resume artifact...',
         get_telemetry: '> Kinetic telemetry stream synced [Baguio City 16.40°N]...',
       };
 
@@ -136,7 +136,17 @@ export const CyberSerpentPet = memo(function CyberSerpentPet() {
         }}
         className="pointer-events-auto relative group cursor-pointer"
         onClick={handleClickPet}
-        title="WebMCP Cyber Serpent // Click to open Agent Screen & Dispatch Hub"
+        role="button"
+        tabIndex={0}
+        aria-label="Open WebMCP agent console and inquiry hub"
+        onKeyDown={(event) => {
+          if (event.target !== event.currentTarget) return;
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleClickPet();
+          }
+        }}
+        title="WebMCP Cyber Serpent // Open Agent Screen & Dispatch Hub"
       >
         {/* Card Frame */}
         <div

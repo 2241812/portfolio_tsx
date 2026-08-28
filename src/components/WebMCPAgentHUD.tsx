@@ -22,6 +22,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { useWebMCPListener, dispatchWebMCPToolCall, type WebMCPToolCallEvent } from '@/lib/webmcpEvents';
+import { submitInquiry } from '@/lib/inquiryClient';
 import { resumeData, credentials } from '@/data/resumeData';
 import {
   runRecruiterAuditWorkflow,
@@ -56,7 +57,7 @@ export default function WebMCPAgentHUD() {
   const [showToast, setShowToast] = useState(false);
   const [latestEvent, setLatestEvent] = useState<WebMCPToolCallEvent | null>(null);
 
-  // Autonomous Recruiter Audit Workflow State
+  // Evidence audit workflow state
   const [isAuditRunning, setIsAuditRunning] = useState(false);
   const [auditSteps, setAuditSteps] = useState<AuditStep[]>(INITIAL_AUDIT_STEPS);
   const [dossier, setDossier] = useState<CandidateDossier | null>(null);
@@ -68,8 +69,11 @@ export default function WebMCPAgentHUD() {
     sender_email: '',
     subject: '',
     message: '',
+    website: '',
   });
   const [inquiryStatus, setInquiryStatus] = useState<string | null>(null);
+  const [inquiryError, setInquiryError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (activeToolCall) {
@@ -87,7 +91,7 @@ export default function WebMCPAgentHUD() {
     return () => window.removeEventListener('webmcp:open-simulator', handleOpenSimulator);
   }, []);
 
-  const handleRunAutonomousAudit = async () => {
+  const handleRunEvidenceAudit = async () => {
     setIsAuditRunning(true);
     setAuditSteps(INITIAL_AUDIT_STEPS.map((s) => ({ ...s, status: 'pending' })));
 
@@ -153,7 +157,7 @@ export default function WebMCPAgentHUD() {
             result = { education: resumeData.education, credentials };
             break;
           case 'get_github_stats':
-            result = { github_url: 'https://github.com/narcisoJavier', contributions_last_year: '240+', status: 'live' };
+            result = { github_url: 'https://github.com/narcisoJavier', contributions_last_year: null, status: 'live API unavailable in local fallback' };
             break;
           case 'search_portfolio': {
             const q = ((inputArgs.query as string) || '').toLowerCase();
@@ -163,13 +167,18 @@ export default function WebMCPAgentHUD() {
             break;
           }
           case 'send_inquiry':
-            result = { success: true, message: `Inquiry received from ${inputArgs.sender_name || 'Agent'}.` };
+            result = await submitInquiry({
+              sender_name: String(inputArgs.sender_name || ''),
+              sender_email: String(inputArgs.sender_email || ''),
+              subject: String(inputArgs.subject || ''),
+              message: String(inputArgs.message || ''),
+            });
             break;
           case 'download_resume':
             result = { download_url: '/api/resume', format: 'PDF' };
             break;
           case 'get_telemetry':
-            result = { runtime: 'Next.js 16 + React 19 + Turbopack', stack_status: 'SYNCED & VERIFIED' };
+            result = { runtime: 'Next.js 16 + React 19 + Turbopack', stack_status: 'Portfolio configuration loaded' };
             break;
           default:
             result = { message: 'Tool executed' };
@@ -208,6 +217,7 @@ export default function WebMCPAgentHUD() {
           sender_email: 'recruiter@innovatetech.io',
           subject: 'Systems & Backend Engineering Opportunity',
           message: 'Hello Narciso, our engineering leadership reviewed your Go/Dart projects and would love to schedule a technical interview!',
+          website: '',
         });
         break;
     }
@@ -222,35 +232,39 @@ export default function WebMCPAgentHUD() {
     }
   };
 
-  const handleInquirySubmit = (e: React.FormEvent) => {
+  const handleInquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     if (!formState.sender_name || !formState.sender_email || !formState.subject || !formState.message) {
+      setInquiryError(true);
       setInquiryStatus('Please fill in all fields.');
       return;
     }
 
+    setIsSubmitting(true);
+    setInquiryError(false);
+    setInquiryStatus(null);
+
     try {
-      if (typeof localStorage !== 'undefined') {
-        const existing = JSON.parse(localStorage.getItem('webmcp-inquiries') || '[]');
-        existing.push({
-          ...formState,
-          timestamp: new Date().toISOString(),
-          source: 'hud_declarative_form',
-        });
-        localStorage.setItem('webmcp-inquiries', JSON.stringify(existing));
-      }
-    } catch {}
+      const result = await submitInquiry(formState);
+      dispatchWebMCPToolCall({
+        tool: 'send_inquiry',
+        input: formState as unknown as Record<string, unknown>,
+        result,
+        summary: `Inquiry sent by ${formState.sender_name}: "${formState.subject}"`,
+      });
 
-    dispatchWebMCPToolCall({
-      tool: 'send_inquiry',
-      input: formState as unknown as Record<string, unknown>,
-      result: { success: true, message: 'Inquiry saved successfully.' },
-      summary: `Inquiry sent by ${formState.sender_name}: "${formState.subject}"`,
-    });
-
-    setInquiryStatus('Inquiry dispatched! Narciso will review your message.');
-    setFormState({ sender_name: '', sender_email: '', subject: '', message: '' });
-    setTimeout(() => setInquiryStatus(null), 5000);
+      setInquiryError(false);
+      setInquiryStatus('Inquiry sent successfully.');
+      setFormState({ sender_name: '', sender_email: '', subject: '', message: '', website: '' });
+      setTimeout(() => setInquiryStatus(null), 5000);
+    } catch (error) {
+      setInquiryError(true);
+      setInquiryStatus(error instanceof Error ? error.message : 'The inquiry could not be sent.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const autofillTemplate = (type: 'recruiter' | 'collab') => {
@@ -260,6 +274,7 @@ export default function WebMCPAgentHUD() {
         sender_email: 'talent@cloudinfra.dev',
         subject: 'Distributed Systems & Go Developer Role',
         message: 'Hi Narciso, we are building high-throughput infrastructure and want to discuss opportunities.',
+        website: '',
       });
     } else {
       setFormState({
@@ -267,6 +282,7 @@ export default function WebMCPAgentHUD() {
         sender_email: 'lead@oss-systems.org',
         subject: 'Technical Collaboration & Architecture Review',
         message: 'Hello Narciso, we loved your Tether project and would like to collaborate on container networking tooling.',
+        website: '',
       });
     }
   };
@@ -337,6 +353,8 @@ export default function WebMCPAgentHUD() {
 
               <button
                 onClick={() => setIsOpen(false)}
+                type="button"
+                aria-label="Close Agent Hub"
                 className="p-1.5 text-zinc-400 hover:text-white border border-transparent hover:border-white/20 transition-all cursor-pointer"
                 title="Close Agent Hub"
               >
@@ -345,8 +363,12 @@ export default function WebMCPAgentHUD() {
             </div>
 
             {/* Navigation Tab Bar with Vector Icons (Zero Emojis) */}
-            <div className="grid grid-cols-3 gap-1 bg-[#101017] p-1 border border-white/10 text-[10px] font-mono">
+            <div role="tablist" aria-label="Agent hub views" className="grid grid-cols-3 gap-1 bg-[#101017] p-1 border border-white/10 text-[10px] font-mono">
               <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'recruiter'}
+                aria-controls="agent-recruiter-panel"
                 onClick={() => setActiveTab('recruiter')}
                 className={`py-1.5 px-2 flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === 'recruiter'
@@ -358,6 +380,10 @@ export default function WebMCPAgentHUD() {
                 <span>Recruiter Screen</span>
               </button>
               <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'dispatch'}
+                aria-controls="agent-dispatch-panel"
                 onClick={() => setActiveTab('dispatch')}
                 className={`py-1.5 px-2 flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === 'dispatch'
@@ -369,6 +395,10 @@ export default function WebMCPAgentHUD() {
                 <span>Dispatch Form</span>
               </button>
               <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'playground'}
+                aria-controls="agent-playground-panel"
                 onClick={() => setActiveTab('playground')}
                 className={`py-1.5 px-2 flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === 'playground'
@@ -383,21 +413,21 @@ export default function WebMCPAgentHUD() {
 
             {/* TAB 1: Recruiter Screen & Presets */}
             {activeTab === 'recruiter' && (
-              <div className="space-y-4">
-                {/* Autonomous Recruiter Audit Workflow Card */}
+              <div id="agent-recruiter-panel" role="tabpanel" aria-label="Recruiter audit" className="space-y-4">
+                {/* Evidence Audit Workflow Card */}
                 <div className="p-3.5 bg-gradient-to-b from-[#14141f] to-[#0c0c12] border border-emerald-500/30 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Autonomous Candidate Screen</span>
+                      <span>Recruiter Audit Demo</span>
                     </span>
                     <span className="text-[9px] px-1.5 py-0.5 bg-emerald-400/20 text-emerald-300 font-mono">
-                      MULTI-TOOL AGENT
+                      EVIDENCE SNAPSHOT
                     </span>
                   </div>
 
                   <p className="text-[11px] text-zinc-300 font-sans leading-relaxed">
-                    Run a 4-step autonomous recruiter audit across verified credentials, systems stack, project deliverables, and live GitHub activity to generate an AI Candidate Fit Dossier.
+                    Run a four-step demonstration that reads declared profile data, reviewed project evidence, and live GitHub activity when available. It produces an evidence summary—not a hiring decision.
                   </p>
 
                   {/* Audit Steps Progress List */}
@@ -420,7 +450,7 @@ export default function WebMCPAgentHUD() {
                           {step.status === 'completed' && (
                             <span className="flex items-center gap-1 text-emerald-400 font-bold">
                               <CheckCircle2 className="w-3 h-3" />
-                              <span>Verified</span>
+                              <span>Checked</span>
                             </span>
                           )}
                           {step.status === 'pending' && (
@@ -433,19 +463,19 @@ export default function WebMCPAgentHUD() {
 
                   <div className="flex items-center gap-2 pt-1">
                     <button
-                      onClick={handleRunAutonomousAudit}
+                      onClick={handleRunEvidenceAudit}
                       disabled={isAuditRunning}
                       className="flex-1 py-2 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black font-mono font-bold uppercase tracking-wider text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
                     >
                       {isAuditRunning ? (
                         <>
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span>Running Multi-Step Audit...</span>
+                          <span>Running Evidence Audit...</span>
                         </>
                       ) : (
                         <>
                           <FileCheck2 className="w-3.5 h-3.5" />
-                          <span>Run Full Recruiter Screen</span>
+                          <span>Run Evidence Audit</span>
                         </>
                       )}
                     </button>
@@ -520,7 +550,7 @@ export default function WebMCPAgentHUD() {
 
             {/* TAB 2: W3C Declarative Dispatch Form */}
             {activeTab === 'dispatch' && (
-              <div className="space-y-3.5">
+              <div id="agent-dispatch-panel" role="tabpanel" aria-label="Dispatch form" className="space-y-3.5">
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
                   <span className="text-[11px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5 font-mono">
                     <Send className="w-3.5 h-3.5 text-emerald-400" />
@@ -559,12 +589,22 @@ export default function WebMCPAgentHUD() {
                   toolautosubmit="true"
                   className="space-y-2.5 text-xs font-mono"
                 >
+                  <input
+                    name="website"
+                    value={formState.website}
+                    onChange={(e) => setFormState((p) => ({ ...p, website: e.target.value }))}
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="absolute -left-[9999px] h-px w-px opacity-0"
+                  />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
-                      <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                      <label htmlFor="hud-sender-name" className="block text-[10px] uppercase text-zinc-400 mb-1">
                         Sender / Organization
                       </label>
                       <input
+                        id="hud-sender-name"
                         name="sender_name"
                         value={formState.sender_name}
                         onChange={(e) => setFormState((p) => ({ ...p, sender_name: e.target.value }))}
@@ -577,10 +617,11 @@ export default function WebMCPAgentHUD() {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                      <label htmlFor="hud-sender-email" className="block text-[10px] uppercase text-zinc-400 mb-1">
                         Contact Email
                       </label>
                       <input
+                        id="hud-sender-email"
                         name="sender_email"
                         type="email"
                         value={formState.sender_email}
@@ -595,10 +636,11 @@ export default function WebMCPAgentHUD() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                    <label htmlFor="hud-subject" className="block text-[10px] uppercase text-zinc-400 mb-1">
                       Subject Line
                     </label>
                     <input
+                      id="hud-subject"
                       name="subject"
                       value={formState.subject}
                       onChange={(e) => setFormState((p) => ({ ...p, subject: e.target.value }))}
@@ -611,10 +653,11 @@ export default function WebMCPAgentHUD() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                    <label htmlFor="hud-message" className="block text-[10px] uppercase text-zinc-400 mb-1">
                       Message Body
                     </label>
                     <textarea
+                      id="hud-message"
                       name="message"
                       value={formState.message}
                       onChange={(e) => setFormState((p) => ({ ...p, message: e.target.value }))}
@@ -630,15 +673,16 @@ export default function WebMCPAgentHUD() {
                   <div className="flex items-center justify-between pt-1">
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-emerald-400 hover:bg-emerald-300 text-black font-bold uppercase tracking-wider text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                      disabled={isSubmitting}
+                      className="px-4 py-2 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-60 text-black font-bold uppercase tracking-wider text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md"
                     >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Dispatch Inquiry via WebMCP</span>
+                      {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                      <span>{isSubmitting ? 'Sending...' : 'Dispatch Inquiry via WebMCP'}</span>
                     </button>
 
                     {inquiryStatus && (
-                      <span className="text-emerald-400 text-xs font-mono flex items-center gap-1.5 animate-pulse">
-                        <Check className="w-3.5 h-3.5" />
+                      <span role="status" aria-live="polite" className={`${inquiryError ? 'text-rose-300' : 'text-emerald-400'} text-xs font-mono flex items-center gap-1.5 animate-pulse`}>
+                        {inquiryError ? <X className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
                         <span>{inquiryStatus}</span>
                       </span>
                     )}
@@ -649,7 +693,7 @@ export default function WebMCPAgentHUD() {
 
             {/* TAB 3: Custom Tool Execution Playground */}
             {activeTab === 'playground' && (
-              <div className="space-y-3">
+              <div id="agent-playground-panel" role="tabpanel" aria-label="Tool runner" className="space-y-3">
                 <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Terminal className="w-3 h-3 text-white" />
@@ -731,7 +775,7 @@ export default function WebMCPAgentHUD() {
         )}
       </AnimatePresence>
 
-      {/* AI Candidate Fit Dossier Modal */}
+      {/* Evidence Snapshot Modal */}
       <CandidateDossierModal
         dossier={dossier}
         isOpen={isDossierOpen}

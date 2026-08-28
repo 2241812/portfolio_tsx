@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Cpu,
   Layers,
+  Activity,
 } from 'lucide-react';
 import type { CandidateDossier } from '@/lib/webmcpWorkflow';
 import { fireConfetti } from '@/components/sections/shared';
@@ -28,6 +29,8 @@ export const CandidateDossierModal = memo(function CandidateDossierModal({
   onClose,
 }: CandidateDossierModalProps) {
   const [copied, setCopied] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   // Close on Escape key
   useEffect(() => {
@@ -40,50 +43,67 @@ export const CandidateDossierModal = memo(function CandidateDossierModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    previouslyFocusedRef.current = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+    closeButtonRef.current?.focus();
+
+    return () => {
+      previouslyFocusedRef.current?.focus();
+      previouslyFocusedRef.current = null;
+    };
+  }, [isOpen]);
+
   const copyMarkdownDossier = useCallback(() => {
     if (!dossier) return;
 
-    const md = `# AI Candidate Fit Dossier — ${dossier.candidateName}
+    const md = `# Evidence Snapshot — ${dossier.candidateName}
 **Generated**: ${dossier.generatedAt}
 **Role Target**: Software Engineer / Systems & Infrastructure
-**Overall Assessment Score**: ${dossier.overallScore}/100
+**Evidence Sources Reviewed**: ${dossier.evidenceSummary.sourceCount}
+**Repository-Confirmed Claims**: ${dossier.evidenceSummary.verifiedClaimCount}
+**Limitations Noted**: ${dossier.evidenceSummary.limitationCount}
 
 ---
 
-## Role Compatibility Breakdown
+## Role Evidence Breakdown
 ${dossier.roleMatches
   .map(
     (r) =>
-      `### ${r.role} (${r.score}% Match — ${r.matchLevel})\n` +
+      `### ${r.role} (${r.evidenceLevel})\n` +
       r.highlights.map((h) => `- ${h}`).join('\n')
   )
   .join('\n\n')}
 
 ---
 
-## Verified Core Stack
-${dossier.verifiedCapabilities
+## Declared Core Stack
+${dossier.declaredCapabilities
   .map((c) => `- **${c.category}**: ${c.skills.join(', ')}`)
   .join('\n')}
 
 ---
 
-## Verified Project Deliverables
+## Source-Backed Project Deliverables
 ${dossier.featuredDeliverables
   .map(
     (p) =>
-      `### ${p.title} (${p.role})\n- **Tech**: ${p.tech.join(', ')}\n- **Proof**: ${p.verificationProof}`
+      `### ${p.title} (${p.role})\n- **Tech**: ${p.tech.join(', ')}\n- **Evidence**: ${p.verificationProof}\n- **Source**: ${p.evidenceSource}` +
+      (p.limitations?.length ? `\n- **Limitations**: ${p.limitations.join('; ')}` : '')
   )
   .join('\n\n')}
 
 ---
 
 ## Telemetry & Credentials
-- **GitHub Contributions**: ${dossier.telemetrySummary.githubCommitsLastYear}
+- **GitHub Contributions (last year)**: ${dossier.telemetrySummary.githubContributionsLastYear}
 - **Academic Track**: ${dossier.university}
 - **Stack Status**: ${dossier.telemetrySummary.stackHealth}
 
-*Report autonomously compiled via W3C WebMCP Standard on ${typeof window !== 'undefined' ? window.location.origin : 'https://narcisojavier.vercel.app'}*
+*Evidence snapshot compiled from declared portfolio data and reviewed project sources via WebMCP on ${typeof window !== 'undefined' ? window.location.origin : 'https://narcisojavier.vercel.app'}*
 `;
 
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -142,22 +162,23 @@ ${dossier.featuredDeliverables
                     id="dossier-title"
                     className="text-base sm:text-lg font-extrabold uppercase tracking-tight text-white font-display"
                   >
-                    AI Candidate Fit Dossier
+                    Evidence Snapshot
                   </h2>
                   <span className="px-2 py-0.5 bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 text-[10px] font-bold">
-                    VERIFIED // WebMCP
+                    SOURCE-BASED // WebMCP
                   </span>
                 </div>
                 <div className="text-[11px] text-zinc-400 font-sans">
-                  Autonomous Human-Agent Evaluation Report • Generated {dossier.generatedAt}
+                  Declared profile + reviewed project evidence • Generated {dossier.generatedAt}
                 </div>
               </div>
             </div>
 
             <button
+              ref={closeButtonRef}
               onClick={onClose}
               aria-label="Close Dossier Modal"
-              className="p-1.5 text-zinc-400 hover:text-white border border-transparent hover:border-white/20 transition-all cursor-pointer"
+              className="p-1.5 text-zinc-400 hover:text-white border border-transparent hover:border-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400 transition-all cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -165,7 +186,7 @@ ${dossier.featuredDeliverables
 
           {/* Modal Body (Scrollable) */}
           <div className="relative z-10 p-5 sm:p-6 overflow-y-auto space-y-6 no-scrollbar text-zinc-300 font-sans">
-            {/* Candidate Summary Score Banner */}
+            {/* Evidence Coverage Banner */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 p-4 bg-[#121217] border border-white/10">
               <div className="sm:col-span-8 space-y-1">
                 <div className="text-xs font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2">
@@ -183,14 +204,14 @@ ${dossier.featuredDeliverables
 
               <div className="sm:col-span-4 flex sm:flex-col items-center justify-between sm:justify-center p-3 bg-black/40 border border-white/10 text-center">
                 <div className="text-[10px] font-mono text-zinc-400 uppercase">
-                  Candidate Fit Score
+                  Evidence Coverage
                 </div>
                 <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-display">
-                  {dossier.overallScore}
-                  <span className="text-xs text-zinc-400 font-normal"> / 100</span>
+                  {dossier.evidenceSummary.verifiedClaimCount}
+                  <span className="text-xs text-zinc-400 font-normal"> claims</span>
                 </div>
                 <div className="text-[10px] font-mono text-emerald-300 font-bold uppercase tracking-wider">
-                  [TOP 5% MATCH]
+                  [{dossier.evidenceSummary.sourceCount} SOURCES REVIEWED]
                 </div>
               </div>
             </div>
@@ -199,7 +220,7 @@ ${dossier.featuredDeliverables
             <div className="space-y-3">
               <div className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2 border-b border-white/10 pb-2">
                 <Award className="w-4 h-4 text-emerald-400" />
-                <span>Role Compatibility Breakdown</span>
+                <span>Role Evidence Breakdown</span>
               </div>
 
               <div className="grid grid-cols-1 gap-3">
@@ -213,21 +234,10 @@ ${dossier.featuredDeliverables
                         {role.role}
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-emerald-400 font-mono">
-                          {role.score}%
-                        </span>
                         <span className="px-2 py-0.5 bg-white/10 text-zinc-200 text-[10px] font-mono uppercase">
-                          {role.matchLevel}
+                          {role.evidenceLevel}
                         </span>
                       </div>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="w-full h-1.5 bg-black/60 overflow-hidden">
-                      <div
-                        className="h-full bg-emerald-400 transition-all duration-500"
-                        style={{ width: `${role.score}%` }}
-                      />
                     </div>
 
                     <ul className="space-y-1 text-xs text-zinc-400 font-sans">
@@ -243,11 +253,11 @@ ${dossier.featuredDeliverables
               </div>
             </div>
 
-            {/* Verified Project Deliverables */}
+            {/* Source-Backed Project Deliverables */}
             <div className="space-y-3">
               <div className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2 border-b border-white/10 pb-2">
                 <Cpu className="w-4 h-4 text-white" />
-                <span>Verified Project Deliverables</span>
+                <span>Source-Backed Project Deliverables</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -279,21 +289,34 @@ ${dossier.featuredDeliverables
                       <div className="text-[10px] text-zinc-400 leading-tight font-mono">
                         ✓ {proj.verificationProof}
                       </div>
+                      {proj.limitations?.map((limitation) => (
+                        <div key={limitation} className="text-[10px] text-amber-300/80 leading-tight font-mono">
+                          ! {limitation}
+                        </div>
+                      ))}
+                      <a
+                        href={proj.evidenceSource}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] text-emerald-300 hover:text-emerald-200 underline underline-offset-2 font-mono"
+                      >
+                        Open evidence source
+                      </a>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Verified Skills Matrix */}
+            {/* Declared Skills Matrix */}
             <div className="space-y-3">
               <div className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2 border-b border-white/10 pb-2">
                 <Layers className="w-4 h-4 text-white" />
-                <span>Verified Technical Capabilities</span>
+                <span>Declared Technical Capabilities</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {dossier.verifiedCapabilities.map((cap) => (
+                {dossier.declaredCapabilities.map((cap) => (
                   <div key={cap.category} className="p-3 bg-[#121217] border border-white/10 space-y-2">
                     <div className="text-[11px] font-bold text-zinc-300 font-mono uppercase">
                       {cap.category}
@@ -310,6 +333,28 @@ ${dossier.featuredDeliverables
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Telemetry Summary */}
+            <div className="space-y-3">
+              <div className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2 border-b border-white/10 pb-2">
+                <Activity className="w-4 h-4 text-emerald-400" />
+                <span>Telemetry Summary</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 bg-[#121217] border border-white/10">
+                  <div className="text-[10px] text-zinc-500 uppercase font-mono">GitHub contributions</div>
+                  <div className="mt-1 text-sm text-white font-mono">{dossier.telemetrySummary.githubContributionsLastYear}</div>
+                </div>
+                <div className="p-3 bg-[#121217] border border-white/10">
+                  <div className="text-[10px] text-zinc-500 uppercase font-mono">Public repositories</div>
+                  <div className="mt-1 text-sm text-white font-mono">{dossier.telemetrySummary.publicRepositoryCount}</div>
+                </div>
+                <div className="p-3 bg-[#121217] border border-white/10">
+                  <div className="text-[10px] text-zinc-500 uppercase font-mono">Snapshot status</div>
+                  <div className="mt-1 text-sm text-white font-mono">{dossier.telemetrySummary.stackHealth}</div>
+                </div>
               </div>
             </div>
           </div>
