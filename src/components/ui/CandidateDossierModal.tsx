@@ -50,7 +50,7 @@ export const CandidateDossierModal = memo(function CandidateDossierModal({
 
 ---
 
-## 🎯 Role Compatibility Breakdown
+## Role Compatibility Breakdown
 ${dossier.roleMatches
   .map(
     (r) =>
@@ -61,14 +61,14 @@ ${dossier.roleMatches
 
 ---
 
-## 🛠️ Verified Core Stack
+## Verified Core Stack
 ${dossier.verifiedCapabilities
   .map((c) => `- **${c.category}**: ${c.skills.join(', ')}`)
   .join('\n')}
 
 ---
 
-## 🚀 Verified Project Deliverables
+## Verified Project Deliverables
 ${dossier.featuredDeliverables
   .map(
     (p) =>
@@ -78,7 +78,7 @@ ${dossier.featuredDeliverables
 
 ---
 
-## 📊 Telemetry & Credentials
+## Telemetry & Credentials
 - **GitHub Contributions**: ${dossier.telemetrySummary.githubCommitsLastYear}
 - **Academic Track**: ${dossier.university}
 - **Stack Status**: ${dossier.telemetrySummary.stackHealth}
@@ -189,8 +189,8 @@ ${dossier.featuredDeliverables
                   {dossier.overallScore}
                   <span className="text-xs text-zinc-400 font-normal"> / 100</span>
                 </div>
-                <div className="text-[10px] font-mono text-emerald-300">
-                  ★ TOP 5% MATCH
+                <div className="text-[10px] font-mono text-emerald-300 font-bold uppercase tracking-wider">
+                  [TOP 5% MATCH]
                 </div>
               </div>
             </div>

@@ -3,12 +3,12 @@ import React, { useEffect, useRef, useState, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { animate, stagger } from 'animejs';
 import { useInView } from '@/hooks/useInView';
-import { Activity, GitCommit, Terminal, ExternalLink, Cpu, ChevronDown } from 'lucide-react';
+import { Activity, GitCommit, Terminal, ExternalLink, Cpu, Radio, Layers } from 'lucide-react';
 import { useGitHubActivity } from '@/hooks/useGitHubData';
 
 export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
   const { ref: containerRef, isInView } = useInView({ rootMargin: '100px', once: true });
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const commitCountRef = useRef<HTMLSpanElement>(null);
   const repoCountRef = useRef<HTMLSpanElement>(null);
@@ -18,20 +18,15 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
   const handleMouseEnter = () => {
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     hoverTimeoutRef.current = setTimeout(() => {
-      setIsExpanded(true);
-    }, 180);
+      setIsHovered(true);
+    }, 140);
   };
 
   const handleMouseLeave = () => {
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     hoverTimeoutRef.current = setTimeout(() => {
-      setIsExpanded(false);
-    }, 220);
-  };
-
-  const toggleExpand = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setIsExpanded((prev) => !prev);
+      setIsHovered(false);
+    }, 200);
   };
 
   useEffect(() => {
@@ -93,22 +88,21 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
       ref={containerRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={toggleExpand}
       className="relative select-none"
     >
-      {/* Morphing Card: Rectangle to Square Container */}
+      {/* Morphing & Enlarging Telemetry Card (Rectangle ➔ Enlarged Square Box) */}
       <motion.div
         layout
         transition={{
-          layout: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
+          layout: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
         }}
         className={`blk-card p-3 sm:p-4 relative cursor-pointer group transition-colors duration-300 ${
-          isExpanded
-            ? 'w-full sm:w-[380px] bg-black/95 border-white/30 shadow-2xl shadow-black/80'
-            : 'w-full sm:w-[340px] hover:border-white/25'
+          isHovered
+            ? 'w-full sm:w-[380px] bg-[#07070b]/98 border-white/30 shadow-2xl shadow-black/90'
+            : 'w-full sm:w-[330px] bg-[#0c0c11]/80 hover:border-white/20'
         }`}
       >
-        {/* blkUI Corner Crosshairs */}
+        {/* Corner Crosshairs that smoothly move with the card boundaries */}
         <span className="blk-crosshair-tl">+</span>
         <span className="blk-crosshair-tr">+</span>
         <span className="blk-crosshair-bl">+</span>
@@ -135,7 +129,10 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
 
             {/* Metric 2: Repos */}
             <div className="pl-4 sm:pl-6 space-y-0.5">
-              <div className="text-[9px] text-zinc-400 uppercase tracking-widest">REPOSITORIES</div>
+              <div className="text-[9px] text-zinc-400 uppercase tracking-widest flex items-center gap-1">
+                <Layers className="w-2.5 h-2.5 text-cyan-400" />
+                <span>REPOSITORIES</span>
+              </div>
               <div className="flex items-baseline gap-1">
                 <span ref={repoCountRef} className="text-lg sm:text-xl font-extrabold text-white">
                   25
@@ -145,18 +142,12 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
             </div>
           </div>
 
-          {/* Right: Waveform & Expansion Indicator */}
+          {/* Right: Waveform & Live Pulse */}
           <div className="flex flex-col items-end gap-1 shrink-0">
             <div className="flex items-center gap-1.5 text-[8px] font-mono text-zinc-400 tracking-wider">
+              <Radio className={`w-2.5 h-2.5 ${isHovered ? 'text-emerald-400 animate-pulse' : 'text-zinc-500'}`} />
               <span>TELEMETRY</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <motion.div
-                animate={{ rotate: isExpanded ? 180 : 0 }}
-                transition={{ duration: 0.24, ease: 'easeInOut' }}
-                className="text-zinc-500 group-hover:text-white transition-colors"
-              >
-                <ChevronDown className="w-3 h-3" />
-              </motion.div>
             </div>
             <svg width="48" height="20" viewBox="0 0 48 20" fill="none" className="overflow-visible">
               <g ref={waveBarsRef}>
@@ -173,20 +164,19 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
           </div>
         </motion.div>
 
-        {/* Morphed Internal Content: Revealed in-place without detached popup */}
+        {/* Morphed Internal Content: Expands organically inside the enlarging card */}
         <AnimatePresence>
-          {isExpanded && (
+          {isHovered && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{
-                duration: 0.3,
+                duration: 0.28,
                 ease: [0.22, 1, 0.36, 1],
-                opacity: { duration: 0.22 },
+                opacity: { duration: 0.2 },
               }}
               className="overflow-hidden space-y-3 pt-3.5 mt-3 border-t border-white/10 relative z-10"
-              onClick={(e) => e.stopPropagation()}
             >
               {/* Origin Status Bar */}
               <div className="flex items-center justify-between text-[10px] font-mono">
@@ -203,7 +193,7 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
                   <GitCommit className="w-2.5 h-2.5 text-white" />
                   <span>LATEST VERIFIED COMMIT</span>
                 </div>
-                <div className="p-2 bg-[#09090d] border border-white/10 text-xs space-y-1">
+                <div className="p-2 bg-[#050508] border border-white/10 text-xs space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-white font-bold text-[11px]">* {latestSha}</span>
                     <span className="text-zinc-400 text-[10px]">[{latestRepo}]</span>
@@ -219,22 +209,22 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
                   <span>ARCHITECTURE ECOSYSTEM</span>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                  <div className="p-1.5 bg-[#09090d] border border-white/10 flex items-center gap-1.5">
+                  <div className="p-1.5 bg-[#050508] border border-white/10 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-[#00ADD8]" />
                     <span className="text-white font-bold">Go</span>
                     <span className="text-zinc-500 text-[8.5px]">Routing</span>
                   </div>
-                  <div className="p-1.5 bg-[#09090d] border border-white/10 flex items-center gap-1.5">
+                  <div className="p-1.5 bg-[#050508] border border-white/10 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-[#00B4AB]" />
                     <span className="text-white font-bold">Dart</span>
                     <span className="text-zinc-500 text-[8.5px]">Mobile SSH</span>
                   </div>
-                  <div className="p-1.5 bg-[#09090d] border border-white/10 flex items-center gap-1.5">
+                  <div className="p-1.5 bg-[#050508] border border-white/10 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-[#3572A5]" />
                     <span className="text-white font-bold">Python</span>
                     <span className="text-zinc-500 text-[8.5px]">PyQt6 &amp; CNN</span>
                   </div>
-                  <div className="p-1.5 bg-[#09090d] border border-white/10 flex items-center gap-1.5">
+                  <div className="p-1.5 bg-[#050508] border border-white/10 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-[#384d54]" />
                     <span className="text-white font-bold">Docker</span>
                     <span className="text-zinc-500 text-[8.5px]">DevContainers</span>

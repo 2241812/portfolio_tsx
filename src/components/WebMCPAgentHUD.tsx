@@ -7,8 +7,6 @@ import {
   Terminal,
   Play,
   X,
-  ChevronUp,
-  ChevronDown,
   Sparkles,
   Eye,
   FileCheck2,
@@ -16,6 +14,12 @@ import {
   Loader2,
   Send,
   Check,
+  Search,
+  FolderGit2,
+  Activity,
+  Mail,
+  SlidersHorizontal,
+  ChevronDown,
 } from 'lucide-react';
 import { useWebMCPListener, dispatchWebMCPToolCall, type WebMCPToolCallEvent } from '@/lib/webmcpEvents';
 import { resumeData, credentials } from '@/data/resumeData';
@@ -76,8 +80,9 @@ export default function WebMCPAgentHUD() {
     }
   }, [activeToolCall]);
 
+  // Unified global trigger: Pet click or page button opens the bottom-right console
   useEffect(() => {
-    const handleOpenSimulator = () => setIsOpen(true);
+    const handleOpenSimulator = () => setIsOpen((prev) => !prev);
     window.addEventListener('webmcp:open-simulator', handleOpenSimulator);
     return () => window.removeEventListener('webmcp:open-simulator', handleOpenSimulator);
   }, []);
@@ -275,7 +280,7 @@ export default function WebMCPAgentHUD() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
-            className="fixed bottom-16 left-4 sm:left-6 z-50 max-w-sm w-full bg-[#0e0e13] border border-white/20 p-3.5 shadow-2xl font-mono text-xs text-white"
+            className="fixed bottom-28 right-4 sm:right-6 md:right-8 z-50 max-w-sm w-full bg-[#0a0a0f] border border-white/20 p-3.5 shadow-2xl font-mono text-xs text-white"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2 text-emerald-400 font-bold">
@@ -297,303 +302,275 @@ export default function WebMCPAgentHUD() {
         )}
       </AnimatePresence>
 
-      {/* Floating Bottom Status Pill / Drawer Trigger */}
-      <div className="fixed bottom-4 left-4 sm:left-6 z-50 flex flex-col items-start">
-        {!isOpen && (
-          <button
-            onClick={() => setIsOpen(true)}
-            className="group flex items-center gap-2.5 px-3.5 py-2 bg-[#09090c] hover:bg-[#121218] text-white border border-white/20 hover:border-white/40 shadow-xl text-xs font-mono transition-all cursor-pointer select-none"
-            title="Open WebMCP Agent Simulator & Candidate Screen"
+      {/* Unified Bottom-Right Agent Simulator & Hub (Docked with Cyber Serpent) */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.96 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed bottom-24 right-4 sm:right-6 md:right-8 z-50 w-[92vw] sm:w-[500px] md:w-[560px] max-h-[82vh] bg-[#07070b]/98 backdrop-blur-2xl border border-white/25 p-4 sm:p-5 shadow-2xl shadow-black flex flex-col space-y-4 overflow-y-auto no-scrollbar font-mono text-xs text-white"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <Bot className="w-3.5 h-3.5 text-zinc-300 group-hover:text-white" />
-            <span className="font-bold uppercase tracking-wider text-[11px]">
-              WebMCP AGENT // SIMULATOR
-            </span>
-            <ChevronUp className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-transform" />
-          </button>
-        )}
+            {/* Corner Crosshairs */}
+            <span className="blk-crosshair-tl">+</span>
+            <span className="blk-crosshair-tr">+</span>
+            <span className="blk-crosshair-bl">+</span>
+            <span className="blk-crosshair-br">+</span>
 
-        {/* Expanded Agent Simulator Drawer */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 30, scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="w-[92vw] sm:w-[500px] md:w-[600px] max-h-[85vh] bg-[#09090c]/98 backdrop-blur-xl border border-white/20 p-4 sm:p-5 shadow-2xl flex flex-col space-y-4 overflow-y-auto no-scrollbar font-mono text-xs text-white"
-            >
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="p-1 bg-white/10 border border-white/20 text-white">
-                    <Bot className="w-4 h-4" />
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 bg-emerald-500/10 border border-emerald-400/30 text-emerald-400">
+                  <Bot className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="font-bold uppercase tracking-wider text-xs flex items-center gap-1.5">
+                    <span>WebMCP AGENT SIMULATOR &amp; HUB</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   </div>
-                  <div>
-                    <div className="font-bold uppercase tracking-wider text-xs">
-                      WebMCP Agent Simulator &amp; Hub
-                    </div>
-                    <div className="text-[10px] text-zinc-400 font-sans">
-                      W3C Browser Model Context Testing &amp; Dispatch Console
-                    </div>
+                  <div className="text-[10px] text-zinc-400 font-sans">
+                    W3C Browser Model Context Testing &amp; Dispatch Console
                   </div>
                 </div>
-
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-1 text-zinc-400 hover:text-white border border-transparent hover:border-white/20 transition-all cursor-pointer"
-                >
-                  <ChevronDown className="w-4 h-4" />
-                </button>
               </div>
 
-              {/* Navigation Tab Bar */}
-              <div className="grid grid-cols-3 gap-1 bg-[#121218] p-1 border border-white/10 text-[10px] font-mono">
-                <button
-                  onClick={() => setActiveTab('recruiter')}
-                  className={`py-1.5 px-2 text-center transition-all cursor-pointer ${
-                    activeTab === 'recruiter'
-                      ? 'bg-white text-black font-bold shadow-sm'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  🌟 Recruiter Screen
-                </button>
-                <button
-                  onClick={() => setActiveTab('dispatch')}
-                  className={`py-1.5 px-2 text-center transition-all cursor-pointer ${
-                    activeTab === 'dispatch'
-                      ? 'bg-white text-black font-bold shadow-sm'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  📨 Dispatch Form
-                </button>
-                <button
-                  onClick={() => setActiveTab('playground')}
-                  className={`py-1.5 px-2 text-center transition-all cursor-pointer ${
-                    activeTab === 'playground'
-                      ? 'bg-white text-black font-bold shadow-sm'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  ⚙️ Raw Tool Runner
-                </button>
-              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 text-zinc-400 hover:text-white border border-transparent hover:border-white/20 transition-all cursor-pointer"
+                title="Close Agent Hub"
+              >
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
 
-              {/* TAB 1: Recruiter Screen & Presets */}
-              {activeTab === 'recruiter' && (
-                <div className="space-y-4">
-                  {/* Autonomous Recruiter Audit Workflow Card */}
-                  <div className="p-3.5 bg-gradient-to-b from-[#161622] to-[#0f0f15] border border-emerald-500/30 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>Autonomous Candidate Screen</span>
-                      </span>
-                      <span className="text-[9px] px-1.5 py-0.5 bg-emerald-400/20 text-emerald-300 font-mono">
-                        MULTI-TOOL AGENT
-                      </span>
-                    </div>
+            {/* Navigation Tab Bar with Vector Icons (Zero Emojis) */}
+            <div className="grid grid-cols-3 gap-1 bg-[#101017] p-1 border border-white/10 text-[10px] font-mono">
+              <button
+                onClick={() => setActiveTab('recruiter')}
+                className={`py-1.5 px-2 flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  activeTab === 'recruiter'
+                    ? 'bg-white text-black font-bold shadow-sm'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Sparkles className="w-3 h-3 text-emerald-400" />
+                <span>Recruiter Screen</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('dispatch')}
+                className={`py-1.5 px-2 flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  activeTab === 'dispatch'
+                    ? 'bg-white text-black font-bold shadow-sm'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Send className="w-3 h-3 text-cyan-400" />
+                <span>Dispatch Form</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('playground')}
+                className={`py-1.5 px-2 flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  activeTab === 'playground'
+                    ? 'bg-white text-black font-bold shadow-sm'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Terminal className="w-3 h-3 text-zinc-400" />
+                <span>Tool Runner</span>
+              </button>
+            </div>
 
-                    <p className="text-[11px] text-zinc-300 font-sans leading-relaxed">
-                      Run a 4-step autonomous recruiter audit across verified credentials, systems stack, project deliverables, and live GitHub activity to generate an AI Candidate Fit Dossier.
-                    </p>
+            {/* TAB 1: Recruiter Screen & Presets */}
+            {activeTab === 'recruiter' && (
+              <div className="space-y-4">
+                {/* Autonomous Recruiter Audit Workflow Card */}
+                <div className="p-3.5 bg-gradient-to-b from-[#14141f] to-[#0c0c12] border border-emerald-500/30 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Autonomous Candidate Screen</span>
+                    </span>
+                    <span className="text-[9px] px-1.5 py-0.5 bg-emerald-400/20 text-emerald-300 font-mono">
+                      MULTI-TOOL AGENT
+                    </span>
+                  </div>
 
-                    {/* Audit Steps Progress List */}
-                    {isAuditRunning && (
-                      <div className="space-y-1.5 p-2.5 bg-black/60 border border-white/10">
-                        {auditSteps.map((step) => (
-                          <div
-                            key={step.id}
-                            className="flex items-center justify-between text-[10px] font-mono"
-                          >
-                            <span className="text-zinc-300 truncate max-w-[320px]">
-                              {step.id}. {step.title}
-                            </span>
-                            {step.status === 'running' && (
-                              <span className="flex items-center gap-1 text-emerald-400 font-bold">
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                                <span>Auditing...</span>
-                              </span>
-                            )}
-                            {step.status === 'completed' && (
-                              <span className="flex items-center gap-1 text-emerald-400 font-bold">
-                                <CheckCircle2 className="w-3 h-3" />
-                                <span>Verified</span>
-                              </span>
-                            )}
-                            {step.status === 'pending' && (
-                              <span className="text-zinc-600">Pending</span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                  <p className="text-[11px] text-zinc-300 font-sans leading-relaxed">
+                    Run a 4-step autonomous recruiter audit across verified credentials, systems stack, project deliverables, and live GitHub activity to generate an AI Candidate Fit Dossier.
+                  </p>
 
-                    <div className="flex items-center gap-2 pt-1">
-                      <button
-                        onClick={handleRunAutonomousAudit}
-                        disabled={isAuditRunning}
-                        className="flex-1 py-2 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black font-mono font-bold uppercase tracking-wider text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-                      >
-                        {isAuditRunning ? (
-                          <>
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            <span>Running Multi-Step Audit...</span>
-                          </>
-                        ) : (
-                          <>
-                            <FileCheck2 className="w-3.5 h-3.5" />
-                            <span>Run Full Recruiter Screen</span>
-                          </>
-                        )}
-                      </button>
-
-                      {dossier && (
-                        <button
-                          onClick={() => setIsDossierOpen(true)}
-                          className="px-3 py-2 bg-[#1f1f2a] hover:bg-zinc-700 text-white border border-white/20 text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                  {/* Audit Steps Progress List */}
+                  {isAuditRunning && (
+                    <div className="space-y-1.5 p-2.5 bg-black/60 border border-white/10">
+                      {auditSteps.map((step) => (
+                        <div
+                          key={step.id}
+                          className="flex items-center justify-between text-[10px] font-mono"
                         >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>View Dossier</span>
-                        </button>
+                          <span className="text-zinc-300 truncate max-w-[320px]">
+                            {step.id}. {step.title}
+                          </span>
+                          {step.status === 'running' && (
+                            <span className="flex items-center gap-1 text-emerald-400 font-bold">
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                              <span>Auditing...</span>
+                            </span>
+                          )}
+                          {step.status === 'completed' && (
+                            <span className="flex items-center gap-1 text-emerald-400 font-bold">
+                              <CheckCircle2 className="w-3 h-3" />
+                              <span>Verified</span>
+                            </span>
+                          )}
+                          {step.status === 'pending' && (
+                            <span className="text-zinc-600">Pending</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={handleRunAutonomousAudit}
+                      disabled={isAuditRunning}
+                      className="flex-1 py-2 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black font-mono font-bold uppercase tracking-wider text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                    >
+                      {isAuditRunning ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Running Multi-Step Audit...</span>
+                        </>
+                      ) : (
+                        <>
+                          <FileCheck2 className="w-3.5 h-3.5" />
+                          <span>Run Full Recruiter Screen</span>
+                        </>
                       )}
-                    </div>
-                  </div>
+                    </button>
 
-                  {/* 1-Click Judge & Recruiter Presets */}
-                  <div className="space-y-2">
-                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <Sparkles className="w-3 h-3 text-white" />
-                      <span>1-Click Tool Presets (Judge Fallback)</span>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
+                    {dossier && (
                       <button
-                        onClick={() => handleRunPreset('skills')}
-                        className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer"
+                        onClick={() => setIsDossierOpen(true)}
+                        className="px-3 py-2 bg-[#1f1f2a] hover:bg-zinc-700 text-white border border-white/20 text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                       >
-                        <div className="font-bold text-[11px] uppercase">🎯 Inspect Skills</div>
-                        <div className="text-[10px] opacity-70 font-sans mt-0.5">Search &apos;Docker&apos; stack</div>
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>View Dossier</span>
                       </button>
-
-                      <button
-                        onClick={() => handleRunPreset('projects')}
-                        className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer"
-                      >
-                        <div className="font-bold text-[11px] uppercase">💼 Project Lookup</div>
-                        <div className="text-[10px] opacity-70 font-sans mt-0.5">Campus Navigator details</div>
-                      </button>
-
-                      <button
-                        onClick={() => handleRunPreset('telemetry')}
-                        className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer"
-                      >
-                        <div className="font-bold text-[11px] uppercase">📊 Live Telemetry</div>
-                        <div className="text-[10px] opacity-70 font-sans mt-0.5">Runtime &amp; stack specs</div>
-                      </button>
-
-                      <button
-                        onClick={() => handleRunPreset('inquiry')}
-                        className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer"
-                      >
-                        <div className="font-bold text-[11px] uppercase">📨 Send Inquiry</div>
-                        <div className="text-[10px] opacity-70 font-sans mt-0.5">Open Dispatch Form</div>
-                      </button>
-                    </div>
+                    )}
                   </div>
                 </div>
-              )}
 
-              {/* TAB 2: W3C Declarative Dispatch Form */}
-              {activeTab === 'dispatch' && (
-                <div className="space-y-3.5">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                    <span className="text-[11px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5 font-mono">
-                      <Send className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>W3C Declarative Dispatch Console</span>
-                    </span>
-                    <span className="text-[9px] px-1.5 py-0.5 bg-white/10 text-zinc-300 font-mono">
-                      toolname=&quot;send_inquiry&quot;
-                    </span>
+                {/* 1-Click Judge & Recruiter Presets with Vector Icons */}
+                <div className="space-y-2">
+                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <SlidersHorizontal className="w-3 h-3 text-white" />
+                    <span>1-Click Tool Presets (Judge Fallback)</span>
                   </div>
 
-                  {/* Autofill quick templates */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-zinc-400">Quick Templates:</span>
+                  <div className="grid grid-cols-2 gap-2">
                     <button
-                      type="button"
-                      onClick={() => autofillTemplate('recruiter')}
-                      className="px-2 py-1 bg-white/5 hover:bg-white/15 border border-white/10 text-[9px] text-white transition-all cursor-pointer"
+                      onClick={() => handleRunPreset('skills')}
+                      className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer group"
                     >
-                      + Role Opportunity
+                      <div className="font-bold text-[11px] uppercase flex items-center gap-1.5">
+                        <Search className="w-3 h-3 text-emerald-400 group-hover:text-black transition-colors" />
+                        <span>Inspect Skills</span>
+                      </div>
+                      <div className="text-[10px] opacity-70 font-sans mt-0.5">Search &apos;Docker&apos; stack</div>
                     </button>
+
                     <button
-                      type="button"
-                      onClick={() => autofillTemplate('collab')}
-                      className="px-2 py-1 bg-white/5 hover:bg-white/15 border border-white/10 text-[9px] text-white transition-all cursor-pointer"
+                      onClick={() => handleRunPreset('projects')}
+                      className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer group"
                     >
-                      + Tech Collab
+                      <div className="font-bold text-[11px] uppercase flex items-center gap-1.5">
+                        <FolderGit2 className="w-3 h-3 text-cyan-400 group-hover:text-black transition-colors" />
+                        <span>Project Lookup</span>
+                      </div>
+                      <div className="text-[10px] opacity-70 font-sans mt-0.5">Campus Navigator details</div>
+                    </button>
+
+                    <button
+                      onClick={() => handleRunPreset('telemetry')}
+                      className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer group"
+                    >
+                      <div className="font-bold text-[11px] uppercase flex items-center gap-1.5">
+                        <Activity className="w-3 h-3 text-amber-400 group-hover:text-black transition-colors" />
+                        <span>Live Telemetry</span>
+                      </div>
+                      <div className="text-[10px] opacity-70 font-sans mt-0.5">Runtime &amp; stack specs</div>
+                    </button>
+
+                    <button
+                      onClick={() => handleRunPreset('inquiry')}
+                      className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer group"
+                    >
+                      <div className="font-bold text-[11px] uppercase flex items-center gap-1.5">
+                        <Mail className="w-3 h-3 text-purple-400 group-hover:text-black transition-colors" />
+                        <span>Send Inquiry</span>
+                      </div>
+                      <div className="text-[10px] opacity-70 font-sans mt-0.5">Open Dispatch Form</div>
                     </button>
                   </div>
+                </div>
+              </div>
+            )}
 
-                  <form
-                    id="hud-inquiry-form"
-                    onSubmit={handleInquirySubmit}
-                    // @ts-expect-error W3C WebMCP Declarative Form Attributes
-                    toolname="send_inquiry"
-                    tooldescription="Send a professional inquiry, role opportunity, or message to Narciso III Javier"
-                    toolautosubmit="true"
-                    className="space-y-2.5 text-xs font-mono"
+            {/* TAB 2: W3C Declarative Dispatch Form */}
+            {activeTab === 'dispatch' && (
+              <div className="space-y-3.5">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span className="text-[11px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5 font-mono">
+                    <Send className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>W3C Declarative Dispatch Console</span>
+                  </span>
+                  <span className="text-[9px] px-1.5 py-0.5 bg-white/10 text-zinc-300 font-mono">
+                    toolname=&quot;send_inquiry&quot;
+                  </span>
+                </div>
+
+                {/* Autofill quick templates */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-zinc-400">Quick Templates:</span>
+                  <button
+                    type="button"
+                    onClick={() => autofillTemplate('recruiter')}
+                    className="px-2 py-1 bg-white/5 hover:bg-white/15 border border-white/10 text-[9px] text-white transition-all cursor-pointer"
                   >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                      <div>
-                        <label className="block text-[10px] uppercase text-zinc-400 mb-1">
-                          Sender / Organization
-                        </label>
-                        <input
-                          name="sender_name"
-                          value={formState.sender_name}
-                          onChange={(e) => setFormState((p) => ({ ...p, sender_name: e.target.value }))}
-                          placeholder="e.g. Sarah Connor / Tech Inc"
-                          // @ts-expect-error W3C WebMCP Parameter Attribute
-                          toolparamdescription="Your full name or recruiting organization"
-                          required
-                          className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors"
-                        />
-                      </div>
+                    + Role Opportunity
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => autofillTemplate('collab')}
+                    className="px-2 py-1 bg-white/5 hover:bg-white/15 border border-white/10 text-[9px] text-white transition-all cursor-pointer"
+                  >
+                    + Tech Collab
+                  </button>
+                </div>
 
-                      <div>
-                        <label className="block text-[10px] uppercase text-zinc-400 mb-1">
-                          Contact Email
-                        </label>
-                        <input
-                          name="sender_email"
-                          type="email"
-                          value={formState.sender_email}
-                          onChange={(e) => setFormState((p) => ({ ...p, sender_email: e.target.value }))}
-                          placeholder="sarah@tech.co"
-                          // @ts-expect-error W3C WebMCP Parameter Attribute
-                          toolparamdescription="Your contact email address for correspondence"
-                          required
-                          className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors"
-                        />
-                      </div>
-                    </div>
-
+                <form
+                  id="hud-inquiry-form"
+                  onSubmit={handleInquirySubmit}
+                  // @ts-expect-error W3C WebMCP Declarative Form Attributes
+                  toolname="send_inquiry"
+                  tooldescription="Send a professional inquiry, role opportunity, or message to Narciso III Javier"
+                  toolautosubmit="true"
+                  className="space-y-2.5 text-xs font-mono"
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
                       <label className="block text-[10px] uppercase text-zinc-400 mb-1">
-                        Subject Line
+                        Sender / Organization
                       </label>
                       <input
-                        name="subject"
-                        value={formState.subject}
-                        onChange={(e) => setFormState((p) => ({ ...p, subject: e.target.value }))}
-                        placeholder="e.g. Backend Go Developer Role"
+                        name="sender_name"
+                        value={formState.sender_name}
+                        onChange={(e) => setFormState((p) => ({ ...p, sender_name: e.target.value }))}
+                        placeholder="e.g. Sarah Connor / Tech Inc"
                         // @ts-expect-error W3C WebMCP Parameter Attribute
-                        toolparamdescription="Subject line describing the inquiry, role, or proposal"
+                        toolparamdescription="Your full name or recruiting organization"
                         required
                         className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors"
                       />
@@ -601,125 +578,158 @@ export default function WebMCPAgentHUD() {
 
                     <div>
                       <label className="block text-[10px] uppercase text-zinc-400 mb-1">
-                        Message Body
+                        Contact Email
                       </label>
-                      <textarea
-                        name="message"
-                        value={formState.message}
-                        onChange={(e) => setFormState((p) => ({ ...p, message: e.target.value }))}
-                        placeholder="Message details or interview proposal..."
-                        rows={3}
+                      <input
+                        name="sender_email"
+                        type="email"
+                        value={formState.sender_email}
+                        onChange={(e) => setFormState((p) => ({ ...p, sender_email: e.target.value }))}
+                        placeholder="sarah@tech.co"
                         // @ts-expect-error W3C WebMCP Parameter Attribute
-                        toolparamdescription="Detailed message body"
+                        toolparamdescription="Your contact email address for correspondence"
                         required
-                        className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors resize-none"
+                        className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors"
                       />
                     </div>
-
-                    <div className="flex items-center justify-between pt-1">
-                      <button
-                        type="submit"
-                        className="px-4 py-2 bg-emerald-400 hover:bg-emerald-300 text-black font-bold uppercase tracking-wider text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md"
-                      >
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Dispatch Inquiry via WebMCP</span>
-                      </button>
-
-                      {inquiryStatus && (
-                        <span className="text-emerald-400 text-xs font-mono flex items-center gap-1.5 animate-pulse">
-                          <Check className="w-3.5 h-3.5" />
-                          <span>{inquiryStatus}</span>
-                        </span>
-                      )}
-                    </div>
-                  </form>
-                </div>
-              )}
-
-              {/* TAB 3: Custom Tool Execution Playground */}
-              {activeTab === 'playground' && (
-                <div className="space-y-3">
-                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center justify-between">
-                    <span className="flex items-center gap-1.5">
-                      <Terminal className="w-3 h-3 text-white" />
-                      <span>Direct Tool Execution</span>
-                    </span>
-                    <span className="text-[10px] text-zinc-500">11 Tools Available</span>
                   </div>
 
-                  <div className="space-y-2">
-                    <select
-                      value={selectedTool}
-                      onChange={(e) => setSelectedTool(e.target.value)}
-                      className="w-full bg-[#121218] border border-white/20 text-white p-2 font-mono text-xs focus:outline-none focus:border-white"
-                    >
-                      {AVAILABLE_TOOLS.map((tool) => (
-                        <option key={tool} value={tool} className="bg-[#121218] text-white">
-                          {tool}
-                        </option>
-                      ))}
-                    </select>
-
-                    <textarea
-                      value={customArgs}
-                      onChange={(e) => setCustomArgs(e.target.value)}
-                      placeholder='Input arguments in JSON (e.g. {"query": "Go"})'
-                      rows={3}
-                      className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white resize-none"
+                  <div>
+                    <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                      Subject Line
+                    </label>
+                    <input
+                      name="subject"
+                      value={formState.subject}
+                      onChange={(e) => setFormState((p) => ({ ...p, subject: e.target.value }))}
+                      placeholder="e.g. Backend Go Developer Role"
+                      // @ts-expect-error W3C WebMCP Parameter Attribute
+                      toolparamdescription="Subject line describing the inquiry, role, or proposal"
+                      required
+                      className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors"
                     />
+                  </div>
 
+                  <div>
+                    <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                      Message Body
+                    </label>
+                    <textarea
+                      name="message"
+                      value={formState.message}
+                      onChange={(e) => setFormState((p) => ({ ...p, message: e.target.value }))}
+                      placeholder="Message details or interview proposal..."
+                      rows={3}
+                      // @ts-expect-error W3C WebMCP Parameter Attribute
+                      toolparamdescription="Detailed message body"
+                      required
+                      className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors resize-none"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1">
                     <button
-                      onClick={handleCustomExecute}
-                      disabled={isRunning}
-                      className="w-full py-2 bg-white text-black font-bold uppercase tracking-wider text-xs hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      type="submit"
+                      className="px-4 py-2 bg-emerald-400 hover:bg-emerald-300 text-black font-bold uppercase tracking-wider text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md"
                     >
-                      <Play className="w-3.5 h-3.5 fill-black" />
-                      <span>{isRunning ? 'Executing Tool...' : 'Execute Tool via WebMCP'}</span>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Dispatch Inquiry via WebMCP</span>
                     </button>
+
+                    {inquiryStatus && (
+                      <span className="text-emerald-400 text-xs font-mono flex items-center gap-1.5 animate-pulse">
+                        <Check className="w-3.5 h-3.5" />
+                        <span>{inquiryStatus}</span>
+                      </span>
+                    )}
                   </div>
+                </form>
+              </div>
+            )}
+
+            {/* TAB 3: Custom Tool Execution Playground */}
+            {activeTab === 'playground' && (
+              <div className="space-y-3">
+                <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Terminal className="w-3 h-3 text-white" />
+                    <span>Direct Tool Execution</span>
+                  </span>
+                  <span className="text-[10px] text-zinc-500">11 Tools Available</span>
                 </div>
-              )}
 
-              {/* Live JSON Response Viewer */}
-              {lastResult !== null && (
-                <div className="space-y-1.5 pt-2 border-t border-white/10">
-                  <div className="flex items-center justify-between text-[10px] font-mono text-zinc-400">
-                    <span className="uppercase font-bold text-white flex items-center gap-1.5">
-                      <Eye className="w-3 h-3" />
-                      <span>Live Response Payload</span>
-                    </span>
-                    <span className="text-emerald-400 font-bold">200 OK</span>
-                  </div>
-
-                  <pre className="p-3 bg-black/80 border border-white/10 max-h-36 overflow-y-auto text-[11px] text-zinc-300 font-mono leading-relaxed select-text">
-                    {JSON.stringify(lastResult, null, 2)}
-                  </pre>
-                </div>
-              )}
-
-              {/* Activity History Logs */}
-              {history.length > 0 && (
-                <div className="space-y-1.5 pt-2 border-t border-white/10">
-                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-                    Recent Session Invocations ({history.length})
-                  </div>
-                  <div className="space-y-1 max-h-24 overflow-y-auto">
-                    {history.slice(0, 4).map((h, i) => (
-                      <div
-                        key={`${h.timestamp}-${i}`}
-                        className="flex items-center justify-between p-1.5 bg-white/5 border border-white/5 text-[10px]"
-                      >
-                        <span className="font-bold text-white">{h.tool}</span>
-                        <span className="text-zinc-400 font-sans truncate max-w-[200px]">{h.summary}</span>
-                      </div>
+                <div className="space-y-2">
+                  <select
+                    value={selectedTool}
+                    onChange={(e) => setSelectedTool(e.target.value)}
+                    className="w-full bg-[#121218] border border-white/20 text-white p-2 font-mono text-xs focus:outline-none focus:border-white"
+                  >
+                    {AVAILABLE_TOOLS.map((tool) => (
+                      <option key={tool} value={tool} className="bg-[#121218] text-white">
+                        {tool}
+                      </option>
                     ))}
-                  </div>
+                  </select>
+
+                  <textarea
+                    value={customArgs}
+                    onChange={(e) => setCustomArgs(e.target.value)}
+                    placeholder='Input arguments in JSON (e.g. {"query": "Go"})'
+                    rows={3}
+                    className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white resize-none"
+                  />
+
+                  <button
+                    onClick={handleCustomExecute}
+                    disabled={isRunning}
+                    className="w-full py-2 bg-white text-black font-bold uppercase tracking-wider text-xs hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-black" />
+                    <span>{isRunning ? 'Executing Tool...' : 'Execute Tool via WebMCP'}</span>
+                  </button>
                 </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+              </div>
+            )}
+
+            {/* Live JSON Response Viewer */}
+            {lastResult !== null && (
+              <div className="space-y-1.5 pt-2 border-t border-white/10">
+                <div className="flex items-center justify-between text-[10px] font-mono text-zinc-400">
+                  <span className="uppercase font-bold text-white flex items-center gap-1.5">
+                    <Eye className="w-3 h-3" />
+                    <span>Live Response Payload</span>
+                  </span>
+                  <span className="text-emerald-400 font-bold">200 OK</span>
+                </div>
+
+                <pre className="p-3 bg-black/80 border border-white/10 max-h-36 overflow-y-auto text-[11px] text-zinc-300 font-mono leading-relaxed select-text">
+                  {JSON.stringify(lastResult, null, 2)}
+                </pre>
+              </div>
+            )}
+
+            {/* Activity History Logs */}
+            {history.length > 0 && (
+              <div className="space-y-1.5 pt-2 border-t border-white/10">
+                <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                  Recent Session Invocations ({history.length})
+                </div>
+                <div className="space-y-1 max-h-24 overflow-y-auto">
+                  {history.slice(0, 4).map((h, i) => (
+                    <div
+                      key={`${h.timestamp}-${i}`}
+                      className="flex items-center justify-between p-1.5 bg-white/5 border border-white/5 text-[10px]"
+                    >
+                      <span className="font-bold text-white">{h.tool}</span>
+                      <span className="text-zinc-400 font-sans truncate max-w-[200px]">{h.summary}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* AI Candidate Fit Dossier Modal */}
       <CandidateDossierModal
