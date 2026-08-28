@@ -1,4 +1,6 @@
-# WebMCP Hackathon — Complete Handoff Document
+# WebMCP Hackathon — Historical Handoff & Current Status
+
+> This document preserves the original implementation handoff. For the current source of truth, use `README.md`, `DEVPOST_SUBMISSION.md`, `src/data/resumeData.ts`, and `src/data/projectEvidence.ts`. Historical snippets below may describe earlier implementation stages.
 
 ## 🎯 Mission
 
@@ -42,7 +44,7 @@ Agents (ChatGPT in-app browser, Chrome 149+ with flag) discover and call these t
 
 **Source Location:** `D:\larp-portfolio-vc`  
 **Stack:** Next.js 16.2.1 + React 19 + TypeScript 5.9.3 + Tailwind v4 + React Three Fiber + Vercel  
-**Live URL:** https://narcisoiii.dev
+**Live URL:** https://narcisojavier.vercel.app
 
 ### Key Files Map
 
@@ -62,7 +64,7 @@ src/
 │   │   ├── AboutSection.tsx          ← Bio, specialization pillars
 │   │   ├── ProjectsSection.tsx       ← ⭐ DETAILED project data (ALL_STUDIO_PROJECTS array)
 │   │   ├── SkillsSection.tsx         ← Interactive skills inspector
-│   │   ├── ContactSection.tsx        ← Clipboard-copy contact (no backend form)
+│   │   ├── ContactSection.tsx        ← Declarative WebMCP form + server-side inquiry delivery
 │   │   └── shared.ts                 ← SKILL_KEYWORD_MAP linking skills → project keywords
 │   ├── ui/                           ← Shared UI components
 │   ├── 3d/                           ← Three.js keyboard model, particles
@@ -159,7 +161,7 @@ projects: [
 Each project has: `id, rank, title, tagline, category, badge, tech[], description, highlights[], link, telemetry: { status, language, langColor }`
 
 ### 4. Contact System (`src/components/sections/ContactSection.tsx`)
-- **No backend form** — uses clipboard copy + confetti animation
+- Uses a declarative WebMCP form and the server-side `/api/inquiry` Resend route; contact channels also support clipboard copy + confetti animation
 - Contact channels: email, phone, LinkedIn (from `resumeData.personalInfo`)
 - Chat widget: `POST /api/chat` with `{ userMessage, messages }` body
 
@@ -244,7 +246,7 @@ export async function registerWebMCPTools() {
         "search_portfolio — Search skills, projects, credentials by keyword",
         "send_inquiry — Send a professional message to the developer",
         "download_resume — Get resume PDF download link",
-        "get_typing_stats — Typing game performance history",
+        "get_telemetry — Runtime, architecture, and available telemetry",
       ],
       portfolio_url: window.location.origin,
     }),
@@ -433,34 +435,8 @@ export async function registerWebMCPTools() {
   });
 
   // ============ TOOL 9: send_inquiry ============
-  await mc.registerTool({
-    name: "send_inquiry",
-    description: "Send a professional inquiry or message to the developer. Use for job offers, collaboration requests, or questions. The message is stored and the developer will be notified.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        sender_name: { type: "string", description: "Your name" },
-        sender_email: { type: "string", description: "Your email address" },
-        subject: { type: "string", description: "Subject of the inquiry" },
-        message: { type: "string", description: "The message body" },
-      },
-      required: ["sender_name", "sender_email", "subject", "message"],
-    },
-    annotations: { readOnlyHint: false },
-    execute: async (input: { sender_name: string; sender_email: string; subject: string; message: string }) => {
-      console.log('[WebMCP] Inquiry received:', input);
-      try {
-        const existing = JSON.parse(localStorage.getItem('webmcp-inquiries') || '[]');
-        existing.push({ ...input, timestamp: new Date().toISOString(), read: false });
-        localStorage.setItem('webmcp-inquiries', JSON.stringify(existing));
-      } catch {}
-      return {
-        success: true,
-        message: `Inquiry from ${input.sender_name} received. The developer will review it.`,
-        developer_email: resumeData.personalInfo.email,
-      };
-    },
-  });
+  // Current implementation delegates to src/app/api/inquiry/route.ts, which
+  // validates the payload and sends through Resend when server variables exist.
 
   // ============ TOOL 10: download_resume ============
   await mc.registerTool({
@@ -474,26 +450,9 @@ export async function registerWebMCPTools() {
     }),
   });
 
-  // ============ TOOL 11: get_typing_stats ============
-  await mc.registerTool({
-    name: "get_typing_stats",
-    description: "Get performance stats from the portfolio's built-in typing speed game and contribution calendar breaker game. Shows best scores, WPM, combos, achievements, and game history.",
-    inputSchema: { type: "object", properties: {} },
-    annotations: { readOnlyHint: true },
-    execute: async () => {
-      try {
-        const typing = localStorage.getItem('typing_game_stats');
-        const calendar = localStorage.getItem('contribution-game-stats');
-        return {
-          typing_game: typing ? JSON.parse(typing) : { message: "No typing game history yet" },
-          contribution_game: calendar ? JSON.parse(calendar) : { message: "No contribution game history yet" },
-          play_url: `${window.location.origin}/break`,
-        };
-      } catch {
-        return { message: "Could not retrieve game stats" };
-      }
-    },
-  });
+  // ============ TOOL 11: get_telemetry ============
+  // Current implementation returns runtime, architecture, project-count, and
+  // available telemetry values from src/lib/webmcp.ts.
 
   console.log('[WebMCP] ✅ All 11 tools registered successfully');
 }
@@ -562,7 +521,7 @@ Apply this diff:
 
 1. **`/api/github-stats` is an IMAGE PROXY, not a JSON stats API.** For WebMCP's `get_github_stats` tool, call the external GitHub APIs directly (contributions API, pinned repos API, activity API) — don't use the internal route.
 
-2. **Contact form has no backend.** The portfolio uses clipboard-copy for contact info. The `send_inquiry` WebMCP tool stores messages in `localStorage['webmcp-inquiries']`. If you want real email delivery, add a backend endpoint later.
+2. **Inquiry delivery is server-side.** The portfolio uses `/api/inquiry` with Resend. Configure `RESEND_API_KEY`, `INQUIRY_TO_EMAIL`, and `INQUIRY_FROM_EMAIL` in the server environment; the real key belongs in `.env.local` or Vercel, never in client code or Git.
 
 3. **Feature detect both locations:** `document.modelContext` (new spec) and `navigator.modelContext` (backward compat). The code above handles this.
 
@@ -611,7 +570,9 @@ console.log(response);
 
 ---
 
-## 📋 Submission Checklist
+## 📋 Historical Submission Checklist (superseded)
+
+See the current submission-side checks in `DEVPOST_SUBMISSION.md`; the unchecked items below are retained only as a record of the original handoff.
 
 - [ ] Create files: `src/lib/webmcp.ts`, `src/components/WebMCPProvider.tsx`
 - [ ] Modify: `src/app/layout.tsx` (add WebMCPProvider)
@@ -634,10 +595,10 @@ console.log(response);
 ## 🎤 Devpost Description Template
 
 > **Why WebMCP is the right fit:**  
-> Portfolios are the most-visited pages by recruiters and hiring managers — increasingly through AI agents. Today, agents scrape DOM text and guess at structure. With WebMCP, this portfolio provides authoritative, structured data directly: verified skills linked to real projects, live GitHub activity, and a machine-readable professional profile. No scraping, no guessing, no hallucination.
+> Portfolios are pages recruiters and hiring managers may inspect through AI agents. Today, agents can scrape DOM text and guess at structure. With WebMCP, this portfolio provides structured declared data directly, links skills to reviewed project evidence, and exposes live GitHub activity when available. This reduces unsupported inference and makes the interaction inspectable.
 >
 > **What people and agents can do together:**  
-> A recruiter's AI agent can visit this portfolio and instantly query: "Does this developer know Docker?" → `search_portfolio({query: "Docker"})` → gets a precise answer with context. It can pull the full skills matrix, compare projects, check live GitHub activity, and even send a job inquiry — all programmatically, in seconds, with 100% accuracy.
+> A recruiter's AI agent can visit this portfolio and query: "Does this developer know Docker?" → `search_portfolio({query: "Docker"})` → receives declared skills and reviewed project context. It can pull the skills matrix, inspect projects, check live GitHub activity when available, and dispatch a job inquiry through the configured email route.
 >
 > **Implementation:**  
 > 11 tools registered via `document.modelContext.registerTool()` in a React provider. Tools are read-only by default (`readOnlyHint: true`) except `send_inquiry`. Data flows from a centralized TypeScript data layer with localStorage override support. Feature detection ensures graceful degradation.

@@ -26,7 +26,7 @@ Registered via `src/lib/webmcp.ts` with explicit input schemas and `readOnlyHint
 | `get_education` | Read-only | Declared academic background (Saint Louis University, BS CS, Class of 2027) and listed certifications |
 | `get_github_stats` | Read-only | GitHub contributions, pinned repositories, and recent public activity when the external APIs respond |
 | `search_portfolio` | Read-only | Keyword search across skills, descriptions, projects, and credentials (`query`) |
-| `send_inquiry` | Action | Send a structured inquiry or job opportunity through the configured Resend email delivery service |
+| `send_inquiry` | Action | Send a structured inquiry through the configured Resend email delivery service |
 | `download_resume` | Read-only | Direct link to download the developer's resume in PDF format |
 | `get_telemetry` | Read-only | Portfolio runtime specifications, project counts, and available telemetry values |
 
@@ -43,7 +43,7 @@ When an AI agent invokes tools, the portfolio's **Live UI Event Bus** (`src/lib/
 - **Skills Matrix Inspector**: When an agent calls `get_skills` or `search_portfolio`, matching skill badges glow with a pulsing indicator, and the 2-pane inspector switches to that capability.
 - **Physics Project Deck**: When an agent queries projects, the matching project card in the physics deck expands and scrolls into focus.
 - **Anime.js Telemetry Card**: Pulses kinetic equalizer waves upon telemetry queries.
-- **Live Agent HUD**: Displays real-time toast alerts showing active tool executions.
+- **Live Agent HUD**: Keeps recent tool invocations visible in the session history while the Cyber Serpent reacts to active agent work.
 
 ---
 

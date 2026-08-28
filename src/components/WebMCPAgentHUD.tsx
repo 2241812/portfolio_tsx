@@ -21,7 +21,7 @@ import {
   SlidersHorizontal,
   ChevronDown,
 } from 'lucide-react';
-import { useWebMCPListener, dispatchWebMCPToolCall, type WebMCPToolCallEvent } from '@/lib/webmcpEvents';
+import { useWebMCPListener, dispatchWebMCPToolCall } from '@/lib/webmcpEvents';
 import { submitInquiry } from '@/lib/inquiryClient';
 import { resumeData, credentials } from '@/data/resumeData';
 import {
@@ -47,15 +47,13 @@ const AVAILABLE_TOOLS = [
 ] as const;
 
 export default function WebMCPAgentHUD() {
-  const { activeToolCall, history } = useWebMCPListener();
+  const { history } = useWebMCPListener();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'recruiter' | 'dispatch' | 'playground'>('recruiter');
   const [selectedTool, setSelectedTool] = useState<string>('search_portfolio');
   const [customArgs, setCustomArgs] = useState<string>('{\n  "query": "Docker"\n}');
   const [lastResult, setLastResult] = useState<unknown>(null);
   const [isRunning, setIsRunning] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [latestEvent, setLatestEvent] = useState<WebMCPToolCallEvent | null>(null);
 
   // Evidence audit workflow state
   const [isAuditRunning, setIsAuditRunning] = useState(false);
@@ -74,15 +72,6 @@ export default function WebMCPAgentHUD() {
   const [inquiryStatus, setInquiryStatus] = useState<string | null>(null);
   const [inquiryError, setInquiryError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (activeToolCall) {
-      setLatestEvent(activeToolCall);
-      setShowToast(true);
-      const timer = setTimeout(() => setShowToast(false), 4500);
-      return () => clearTimeout(timer);
-    }
-  }, [activeToolCall]);
 
   // Unified global trigger: Pet click or page button opens the bottom-right console
   useEffect(() => {
@@ -289,35 +278,6 @@ export default function WebMCPAgentHUD() {
 
   return (
     <>
-      {/* Real-time Agent Activity Toast Notification */}
-      <AnimatePresence>
-        {showToast && latestEvent && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 15, scale: 0.95 }}
-            className="fixed bottom-28 right-4 sm:right-6 md:right-8 z-50 max-w-sm w-full bg-[#0a0a0f] border border-white/20 p-3.5 shadow-2xl font-mono text-xs text-white"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <Bot className="w-4 h-4" />
-                <span>WebMCP AGENT EVENT</span>
-              </div>
-              <button
-                onClick={() => setShowToast(false)}
-                className="text-zinc-500 hover:text-white cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div className="mt-2 text-zinc-300 font-sans text-xs">
-              <span className="font-mono text-white font-bold">{latestEvent.tool}()</span> — {latestEvent.summary}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Unified Bottom-Right Agent Simulator & Hub (Docked with Cyber Serpent) */}
       <AnimatePresence>
         {isOpen && (

@@ -8,36 +8,14 @@ import { useGitHubActivity, useGitHubContributions, useGitHubUser } from '@/hook
 
 export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
   const { ref: containerRef, isInView } = useInView({ rootMargin: '100px', once: true });
-  const [isHovered, setIsHovered] = useState(false);
   const [isPinnedOpen, setIsPinnedOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const commitCountRef = useRef<HTMLSpanElement>(null);
   const repoCountRef = useRef<HTMLSpanElement>(null);
   const waveBarsRef = useRef<SVGGElement>(null);
 
-  // Subtle intent-based hover debounce
-  const handleMouseEnter = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsHovered(true);
-    }, 140);
-  };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsHovered(false);
-    }, 200);
-  };
-
-  const isExpanded = isHovered || isPinnedOpen;
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    };
-  }, []);
+  // Details are deliberate: hovering the card never changes its size.
+  const isExpanded = isPinnedOpen;
 
   // Real-time GitHub Activity fallback
   const { events } = useGitHubActivity('narcisoJavier', isInView);
@@ -103,28 +81,23 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
     }
   }, [isInView, lastYearContributions, prefersReducedMotion, publicRepositoryCount]);
 
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    };
-  }, []);
-
   return (
     <div
       ref={containerRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       className="relative select-none"
     >
-      {/* Morphing & Enlarging Telemetry Card (Rectangle ➔ Enlarged Square Box) */}
+      {/* Compact telemetry card; details open only after an intentional click. */}
       <motion.div
         layout
         transition={{
-          layout: { duration: prefersReducedMotion ? 0 : 0.34, ease: [0.22, 1, 0.36, 1] },
+          layout: {
+            duration: prefersReducedMotion ? 0 : 0.44,
+            ease: [0.22, 1, 0.36, 1],
+          },
         }}
         className={`blk-card p-3 sm:p-4 relative cursor-pointer group transition-colors duration-300 ${
           isExpanded
-            ? 'w-full sm:w-[380px] bg-[#07070b]/98 border-white/30 shadow-2xl shadow-black/90'
+            ? 'w-full sm:w-[330px] bg-[#07070b]/98 border-white/30 shadow-2xl shadow-black/90'
             : 'w-full sm:w-[330px] bg-[#0c0c11]/80 hover:border-white/20'
         }`}
       >
@@ -138,7 +111,6 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
         {/* Top Header: Always visible metrics + kinetic waveform */}
         <motion.button
           type="button"
-          layout="position"
           aria-label="Toggle telemetry details"
           aria-expanded={isExpanded}
           aria-controls="telemetry-intel-details"
@@ -203,19 +175,20 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
           </div>
         </motion.button>
 
-        {/* Morphed Internal Content: Expands organically inside the enlarging card */}
+        {/* Details grow out of the compact card instead of appearing as a separate panel. */}
         <AnimatePresence>
           {isExpanded && (
             <motion.div
               id="telemetry-intel-details"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={{ opacity: 0, height: 0, scaleY: 0.96, y: -6 }}
+              animate={{ opacity: 1, height: 'auto', scaleY: 1, y: 0 }}
+              exit={{ opacity: 0, height: 0, scaleY: 0.98, y: -3 }}
               transition={{
                 duration: prefersReducedMotion ? 0 : 0.28,
                 ease: [0.22, 1, 0.36, 1],
                 opacity: { duration: prefersReducedMotion ? 0 : 0.2 },
               }}
+              style={{ transformOrigin: 'top center' }}
               className="overflow-hidden space-y-3 pt-3.5 mt-3 border-t border-white/10 relative z-10"
             >
               {/* Origin Status Bar */}

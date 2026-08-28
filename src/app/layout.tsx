@@ -26,11 +26,11 @@ export const metadata: Metadata = {
   keywords: ["Narciso Javier", "Portfolio", "Computer Science", "Software Developer", "Full Stack", "Docker", "AI", "Python", "Go", "Next.js"],
   authors: [{ name: "Narciso III Javier" }],
   creator: "Narciso III Javier",
-  metadataBase: new URL("https://narcisoiii.dev"),
+  metadataBase: new URL("https://narcisojavier.vercel.app"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://narcisoiii.dev",
+    url: "https://narcisojavier.vercel.app",
     siteName: "Narciso III Javier Portfolio",
     title: "Narciso III Javier | Portfolio",
     description: "Computer Science student specializing in scalable system architecture, containerization, and AI workflow automation.",
@@ -90,4 +90,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+}

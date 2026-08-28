@@ -39,7 +39,7 @@ With **W3C WebMCP (`document.modelContext`)**, this portfolio becomes an **inter
 
 ## 🛠️ 4. How WebMCP Was Implemented
 
-This project implements the full **W3C WebMCP Specification** across both **Imperative JavaScript** and **Declarative HTML Forms** APIs:
+This project implements the challenge's **WebMCP surface** across both **Imperative JavaScript** and **Declarative HTML Forms** APIs:
 
 ### A. 11 Registered WebMCP Tools (`src/lib/webmcp.ts`)
 Exposes typed, schema-validated, and annotated tools into `document.modelContext` (with backward compatibility fallback to `navigator.modelContext`):
@@ -48,9 +48,9 @@ Exposes typed, schema-validated, and annotated tools into `document.modelContext
 - `get_skills` — Technical skills matrix with project-context descriptions and category filtering.
 - `get_projects` & `get_project_details` — Case-insensitive project lookup with technical highlights.
 - `get_education` — Academic credentials (Saint Louis University, BS CS '27) and certifications.
-- `get_github_stats` & `get_telemetry` — GitHub contribution counts and architecture telemetry when the external sources respond.
-- `search_portfolio` — Fuzzy keyword search across skills, descriptions, and projects.
-- `send_inquiry` — Mutating action tool allowing agents to dispatch structured job opportunities through the configured email service (`readOnlyHint: false`).
+- `get_github_stats` — GitHub contribution counts and public activity when the external APIs respond; `get_telemetry` — portfolio runtime and architecture specifications.
+- `search_portfolio` — Keyword search across skills, descriptions, credentials, and projects.
+- `send_inquiry` — Mutating action tool allowing agents to dispatch structured inquiries through the configured email service (`readOnlyHint: false`).
 - `download_resume` — Direct access to the PDF resume.
 
 ### B. W3C Declarative HTML Forms API (`ContactSection.tsx`)
@@ -69,7 +69,7 @@ Exposes typed, schema-validated, and annotated tools into `document.modelContext
 
 ### C. Live UI Event Bus (`src/lib/webmcpEvents.ts`)
 CustomEvents dispatch tool activity across the UI:
-- `webmcp:tool-call` — Emits real-time toast alerts to the spectator HUD.
+- `webmcp:tool-call` — Records recent tool invocations for the spectator HUD and companion reactions.
 - `webmcp:skill-highlight` — Highlights skill badges and updates the 2-pane inspector.
 - `webmcp:project-highlight` — Expands and focuses the matching project card in the physics deck.
 - `webmcp:telemetry-pulse` — Triggers kinetic equalizer waves in the Anime.js telemetry card.
@@ -87,7 +87,17 @@ Per Hackathon Rules (Section 4), this project extends an existing 3D portfolio c
   4. Repository-grounded evidence audit workflow in [`src/lib/webmcpWorkflow.ts`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/lib/webmcpWorkflow.ts).
   5. Evidence Snapshot modal in [`CandidateDossierModal.tsx`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/components/ui/CandidateDossierModal.tsx).
   6. Floating In-Page Agent Simulator Drawer & HUD in [`WebMCPAgentHUD.tsx`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/components/WebMCPAgentHUD.tsx).
-  7. All verifiable via timestamped git commit history on `main` branch.
+  7. Human-reviewed source evidence model in [`src/data/projectEvidence.ts`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/data/projectEvidence.ts), including limitations where the sources are incomplete.
+  8. Server-side Resend inquiry delivery in [`src/app/api/inquiry/route.ts`](https://github.com/narcisoJavier/larp-portfolio-vc/blob/main/src/app/api/inquiry/route.ts), with the API key kept out of client code and Git.
+  9. All of the above are verifiable via timestamped git commit history on the `main` branch.
+
+### Timestamped history anchors
+
+- `ef4daaa` — 2026-08-28 21:24 (+08:00): initial WebMCP tools, recruiter workflow, and studio integration.
+- `09c047c` — 2026-08-28 21:25 (+08:00): submission documentation aligned to the challenge prompts and rules.
+- `4e1c32f` — 2026-08-28 21:40 (+08:00): simulator drawer, dispatch hub, and first Cyber Serpent interaction.
+- `fbf40db` — 2026-08-28 21:48 (+08:00): telemetry morph, unified pet dock, and vector iconography.
+- `45562cc` — 2026-08-28 23:22 (+08:00): repository-grounded evidence layer and server-side Resend inquiry delivery.
 
 ---
 
@@ -122,3 +132,14 @@ await document.modelContext.executeTool(searchTool, { query: 'Docker' });
 - **1:00 – 1:40 (Evidence Audit Demo)**: Open the WebMCP HUD in the bottom corner. Click "Run Evidence Audit", showing the 4 steps resolving with live UI reactions, culminating in the Evidence Snapshot modal.
 - **1:40 – 2:10 (Declarative HTML Forms & Inquiry Action)**: Show the contact form with `toolname="send_inquiry"`, submit an inquiry, and show the email-delivery confirmation.
 - **2:10 – 2:30 (Conclusion & Spec Compliance)**: Recap the dual API surface, source-backed wording, and accessibility improvements.
+
+## ✅ Submission-side checks still required
+
+The repository can document and verify the implementation, but these final Devpost items must still be completed by the submitter:
+
+- Publish the final demo as a **public YouTube video under three minutes**, with spoken audio, and paste that URL into the submission.
+- Test the public Vercel URL in a supported WebMCP environment and confirm the page behaves as shown in the video.
+- Add the Resend variables to Vercel Project Settings if the video demonstrates live inquiry delivery; `.env.local` is not deployed.
+- Confirm the GitHub repository is public and the MIT license is visible in the repository's License/About metadata.
+- Confirm all demo audio, visuals, and third-party marks are owned, permitted, or replaced with original/appropriately licensed material.
+- Complete the Devpost submission before **September 3, 2026 at 1:00 PM PDT**.
