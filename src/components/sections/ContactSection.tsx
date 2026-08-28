@@ -11,18 +11,62 @@ import {
   ExternalLink,
   Award,
   Send,
+  Bot,
+  Sparkles,
 } from 'lucide-react';
 import { LinkedinIcon } from '@/components/ui/StudioIcons';
+import { dispatchWebMCPToolCall } from '@/lib/webmcpEvents';
 
 export const ContactSection = memo(function ContactSection() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [inquiryStatus, setInquiryStatus] = useState<string | null>(null);
+  const [formState, setFormState] = useState({
+    sender_name: '',
+    sender_email: '',
+    subject: '',
+    message: '',
+  });
 
   const copyToClipboard = useCallback((text: string, label: string) => {
-    navigator.clipboard.writeText(text);
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    }
     setCopiedField(label);
     fireConfetti();
     setTimeout(() => setCopiedField(null), 2500);
   }, []);
+
+  const handleInquirySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formState.sender_name || !formState.sender_email || !formState.subject || !formState.message) {
+      setInquiryStatus('Please fill in all fields.');
+      return;
+    }
+
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const existing = JSON.parse(localStorage.getItem('webmcp-inquiries') || '[]');
+        existing.push({
+          ...formState,
+          timestamp: new Date().toISOString(),
+          source: 'declarative_html_form',
+        });
+        localStorage.setItem('webmcp-inquiries', JSON.stringify(existing));
+      }
+    } catch {}
+
+    dispatchWebMCPToolCall({
+      tool: 'send_inquiry',
+      input: formState as unknown as Record<string, unknown>,
+      result: { success: true, message: 'Inquiry saved successfully.' },
+      summary: `Inquiry sent by ${formState.sender_name}: "${formState.subject}"`,
+    });
+
+    fireConfetti();
+    setInquiryStatus('Inquiry received! Narciso will review your message.');
+    setFormState({ sender_name: '', sender_email: '', subject: '', message: '' });
+    setTimeout(() => setInquiryStatus(null), 5000);
+  };
 
   return (
     <section id="contact" className="scroll-mt-20 w-full py-12 border-b border-white/10">
@@ -42,7 +86,7 @@ export const ContactSection = memo(function ContactSection() {
             <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase tracking-widest">
               <span>03 // DISPATCH</span>
               <span className="text-zinc-600">/</span>
-              <span>GET IN TOUCH</span>
+              <span>GET IN TOUCH &amp; INQUIRE</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white uppercase font-display tracking-tight">
               Contact &amp; Connect
@@ -50,13 +94,13 @@ export const ContactSection = memo(function ContactSection() {
           </div>
 
           <span className="text-xs font-mono text-zinc-400">
-            [OPEN FOR SOFTWARE &amp; GAME DEV OPPORTUNITIES // 2026]
+            [OPEN FOR SOFTWARE &amp; SYSTEMS OPPORTUNITIES // 2026]
           </span>
         </motion.div>
 
         {/* 2-Column Split */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* Left Column: Direct Channels (7 cols) */}
+          {/* Left Column: Direct Channels & Declarative Form (7 cols) */}
           <motion.div variants={cardVariants} className="lg:col-span-7 kokonut-card-glow p-6 sm:p-8 space-y-6">
             <div className="studio-corner-tl" />
             <div className="studio-corner-br" />
@@ -65,7 +109,7 @@ export const ContactSection = memo(function ContactSection() {
             <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-3 text-xs font-mono">
               <span className="text-white font-bold uppercase tracking-wider flex items-center gap-2">
                 <Send className="w-3.5 h-3.5" />
-                <span>DIRECT INQUIRIES</span>
+                <span>DIRECT INQUIRIES &amp; DISPATCH</span>
               </span>
               <span className="inline-flex items-center gap-1.5 text-zinc-300 font-bold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -74,14 +118,14 @@ export const ContactSection = memo(function ContactSection() {
             </div>
 
             <p className="relative z-10 text-sm text-zinc-300 font-sans leading-relaxed">
-              Seeking software engineering and game development roles, systems projects, or technical
-              collaboration. Feel free to reach out directly via email, phone, or LinkedIn.
+              Seeking software engineering, backend systems, and technical collaboration roles. Reach out
+              directly or dispatch a message through the form below.
             </p>
 
             {/* Direct Copyable Rows */}
-            <div className="relative z-10 space-y-3 pt-2">
+            <div className="relative z-10 space-y-3 pt-1">
               {/* Email */}
-              <div className="flex items-center justify-between p-4 bg-[#121217] border border-white/10 hover:border-white/25 transition-all">
+              <div className="flex items-center justify-between p-3.5 bg-[#121217] border border-white/10 hover:border-white/25 transition-all">
                 <div className="flex items-center gap-3.5 min-w-0">
                   <div className="p-2 bg-white/5 border border-white/10 text-white">
                     <Mail className="w-4 h-4" />
@@ -110,7 +154,7 @@ export const ContactSection = memo(function ContactSection() {
               </div>
 
               {/* Phone */}
-              <div className="flex items-center justify-between p-4 bg-[#121217] border border-white/10 hover:border-white/25 transition-all">
+              <div className="flex items-center justify-between p-3.5 bg-[#121217] border border-white/10 hover:border-white/25 transition-all">
                 <div className="flex items-center gap-3.5 min-w-0">
                   <div className="p-2 bg-white/5 border border-white/10 text-white">
                     <Phone className="w-4 h-4" />
@@ -139,7 +183,7 @@ export const ContactSection = memo(function ContactSection() {
               </div>
 
               {/* LinkedIn */}
-              <div className="flex items-center justify-between p-4 bg-[#121217] border border-white/10 hover:border-white/25 transition-all">
+              <div className="flex items-center justify-between p-3.5 bg-[#121217] border border-white/10 hover:border-white/25 transition-all">
                 <div className="flex items-center gap-3.5 min-w-0">
                   <div className="p-2 bg-white/5 border border-white/10 text-white">
                     <LinkedinIcon className="w-4 h-4" />
@@ -164,6 +208,114 @@ export const ContactSection = memo(function ContactSection() {
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
+            </div>
+
+            {/* Declarative WebMCP Form (W3C Standard) */}
+            <div className="relative z-10 pt-2 border-t border-white/10">
+              <div className="flex items-center justify-between pb-3 text-xs font-mono">
+                <span className="text-white font-bold uppercase tracking-wider flex items-center gap-2">
+                  <Bot className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>DISPATCH FORM // WebMCP ENABLED</span>
+                </span>
+                <span className="text-[10px] text-zinc-400 font-mono">
+                  [AGENT DECLARATIVE API]
+                </span>
+              </div>
+
+              <form
+                id="inquiry-form"
+                onSubmit={handleInquirySubmit}
+                // @ts-expect-error W3C WebMCP Declarative Form Attributes
+                toolname="send_inquiry"
+                tooldescription="Send a professional inquiry, role opportunity, or message to Narciso III Javier"
+                toolautosubmit="true"
+                className="space-y-3 text-xs font-mono"
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                      Your Name / Org
+                    </label>
+                    <input
+                      name="sender_name"
+                      value={formState.sender_name}
+                      onChange={(e) => setFormState((p) => ({ ...p, sender_name: e.target.value }))}
+                      placeholder="e.g. Alex Morgan / Tech Co"
+                      // @ts-expect-error W3C WebMCP Parameter Attribute
+                      toolparamdescription="Your full name or recruiting organization"
+                      required
+                      className="w-full bg-[#121218] border border-white/15 text-white p-2.5 font-mono text-xs focus:outline-none focus:border-white transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                      Your Email
+                    </label>
+                    <input
+                      name="sender_email"
+                      type="email"
+                      value={formState.sender_email}
+                      onChange={(e) => setFormState((p) => ({ ...p, sender_email: e.target.value }))}
+                      placeholder="alex@tech.co"
+                      // @ts-expect-error W3C WebMCP Parameter Attribute
+                      toolparamdescription="Your contact email address for correspondence"
+                      required
+                      className="w-full bg-[#121218] border border-white/15 text-white p-2.5 font-mono text-xs focus:outline-none focus:border-white transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                    Subject Line
+                  </label>
+                  <input
+                    name="subject"
+                    value={formState.subject}
+                    onChange={(e) => setFormState((p) => ({ ...p, subject: e.target.value }))}
+                    placeholder="e.g. Systems & Go Developer Role"
+                    // @ts-expect-error W3C WebMCP Parameter Attribute
+                    toolparamdescription="Subject line describing the inquiry, role, or proposal"
+                    required
+                    className="w-full bg-[#121218] border border-white/15 text-white p-2.5 font-mono text-xs focus:outline-none focus:border-white transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase text-zinc-400 mb-1">
+                    Message
+                  </label>
+                  <textarea
+                    name="message"
+                    value={formState.message}
+                    onChange={(e) => setFormState((p) => ({ ...p, message: e.target.value }))}
+                    placeholder="Details about your project, team, or opportunity..."
+                    rows={3}
+                    // @ts-expect-error W3C WebMCP Parameter Attribute
+                    toolparamdescription="Detailed message body"
+                    required
+                    className="w-full bg-[#121218] border border-white/15 text-white p-2.5 font-mono text-xs focus:outline-none focus:border-white transition-colors resize-none"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-white text-black font-bold uppercase tracking-wider text-xs hover:bg-zinc-200 transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Send Message</span>
+                  </button>
+
+                  {inquiryStatus && (
+                    <span className="text-emerald-400 text-xs font-mono flex items-center gap-1.5 animate-pulse">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>{inquiryStatus}</span>
+                    </span>
+                  )}
+                </div>
+              </form>
             </div>
           </motion.div>
 

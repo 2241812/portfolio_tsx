@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useState, useEffect, useRef, memo, useCallback } from 'react';
+import { useLenis } from 'lenis/react';
 import { animate } from 'animejs';
 import { ArrowUpRight, ChevronRight, Sparkles, Terminal, Shield, Globe } from 'lucide-react';
 import { GithubIcon } from '@/components/ui/StudioIcons';
@@ -72,6 +73,7 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
   const lineProgressRef = useRef<HTMLDivElement>(null);
+  const lenis = useLenis();
 
   const active = SHOWCASE_PROJECTS[currentIndex];
 
@@ -104,10 +106,16 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
     }
   }, [currentIndex]);
 
-  const scrollToProjects = () => {
+  const scrollToProjects = useCallback(() => {
     const el = document.getElementById('projects');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
+    if (el) {
+      if (lenis) {
+        lenis.scrollTo(el, { offset: -60, duration: 1.2 });
+      } else {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [lenis]);
 
   return (
     <div className="kokonut-card-glow p-6 sm:p-7 flex flex-col justify-between select-none shadow-2xl min-h-[480px]">

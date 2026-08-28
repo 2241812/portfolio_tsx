@@ -27,34 +27,6 @@ export const GITHUB_CONFIG = {
   MAX_REPOS_PER_PAGE: 30,
 };
 
-// ==================== Game Configuration ====================
-export const GAME_CONFIG = {
-  // Typing Game
-  TYPING_GAME_EASY_DURATION: 15, // seconds
-  TYPING_GAME_MEDIUM_DURATION: 30,
-  TYPING_GAME_HARD_DURATION: 60,
-  TYPING_GAME_MAX_DURATION: 120,
-  
-  TYPING_GAME_WORD_COUNT_SMALL: 25,
-  TYPING_GAME_WORD_COUNT_MEDIUM: 50,
-  TYPING_GAME_WORD_COUNT_LARGE: 100,
-  TYPING_GAME_WORD_COUNT_EXTRA_LARGE: 200,
-
-  // Contribution Calendar Game
-  CALENDAR_BASE_SPEED: 0.3,
-  CALENDAR_MAX_SPEED: 4,
-  CALENDAR_VISIBLE_WIDTH: 500,
-  CALENDAR_CELL_SIZE: 16,
-  CALENDAR_CELL_GAP: 4,
-  CALENDAR_LEVEL_COLORS: {
-    0: '#161b22', // No contributions
-    1: '#0e4429', // 1-3
-    2: '#006d32', // 4-6
-    3: '#26a641', // 7-9
-    4: '#39d353', // 10+
-  },
-};
-
 // ==================== Animation Configuration ====================
 export const ANIMATION_CONFIG = {
   SPRING_STIFFNESS: 400,
@@ -98,25 +70,16 @@ export const COLOR_CONFIG = {
   ACCENT_RED: '#f43f5e',
 };
 
-// ==================== Keyboard Shortcuts ====================
-export const KEYBOARD_SHORTCUTS = {
-  // Typing Game
-  RESTART_KEY_1: 'Tab',
-  RESTART_KEY_2: 'Enter',
-  QUIT_KEY: 'Escape',
-  FOCUS_INPUT: 'Shift',
-};
-
 // ==================== Local Storage Keys ====================
 export const STORAGE_KEYS = {
-  // Game stats
-  GAME_STATS: 'game_stats',
-  TYPING_STATS: 'typing_game_stats',
-  CALENDAR_STATS: 'calendar_game_stats',
-  
   // User preferences
   THEME: 'theme_preference',
-  SOUND_ENABLED: 'sound_enabled',
+  
+  // WebMCP Inquiries
+  WEBMCP_INQUIRIES: 'webmcp-inquiries',
+  
+  // Content Overrides
+  CONTENT_OVERRIDES: 'resume-content-overrides',
   
   // Cache
   GITHUB_CONTRIBUTIONS_CACHE: 'github_contributions_cache',
@@ -205,8 +168,7 @@ export const DEV_CONFIG = {
 
 // ==================== Feature Flags ====================
 export const FEATURES = {
-  TYPING_GAME_ENABLED: true,
-  CALENDAR_GAME_ENABLED: true,
+  WEBMCP_ENABLED: true,
   CHATBOT_ENABLED: true,
   GITHUB_INTEGRATION_ENABLED: true,
 };
@@ -214,10 +176,8 @@ export const FEATURES = {
 const appConfig = {
   API_CONFIG,
   GITHUB_CONFIG,
-  GAME_CONFIG,
   ANIMATION_CONFIG,
   COLOR_CONFIG,
-  KEYBOARD_SHORTCUTS,
   STORAGE_KEYS,
   VALIDATION_RULES,
   NOTIFICATION_CONFIG,

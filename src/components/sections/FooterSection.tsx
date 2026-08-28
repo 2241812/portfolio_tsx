@@ -1,12 +1,19 @@
 "use client";
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
+import { useLenis } from 'lenis/react';
 import { resumeData } from '@/data/resumeData';
 import { ArrowUp } from 'lucide-react';
 
 export const FooterSection = memo(function FooterSection() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const lenis = useLenis();
+
+  const scrollToTop = useCallback(() => {
+    if (lenis) {
+      lenis.scrollTo(0, { duration: 1.2 });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [lenis]);
 
   return (
     <footer className="w-full bg-[#08080a] border-t border-white/10 py-10 px-4 font-mono text-xs text-zinc-400">
@@ -15,7 +22,7 @@ export const FooterSection = memo(function FooterSection() {
           <div className="flex items-center justify-center md:justify-start gap-2">
             <span className="w-2 h-2 bg-white" />
             <span className="text-white font-bold uppercase tracking-wider">
-              {resumeData.personalInfo.name} &apos;//&apos; STUDIO
+              {resumeData.personalInfo.name}
             </span>
           </div>
           <p className="text-[11px] text-zinc-400 font-sans">

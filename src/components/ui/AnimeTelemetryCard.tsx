@@ -9,9 +9,31 @@ import { useGitHubActivity } from '@/hooks/useGitHubData';
 export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
   const { ref: containerRef, isInView } = useInView({ rootMargin: '100px', once: true });
   const [isHovered, setIsHovered] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const commitCountRef = useRef<HTMLSpanElement>(null);
   const repoCountRef = useRef<HTMLSpanElement>(null);
   const waveBarsRef = useRef<SVGGElement>(null);
+
+  // Intent-based subtle hover delay
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(true);
+    }, 180);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 140);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
 
   // Real-time GitHub Activity fallback
   const { events } = useGitHubActivity('narcisoJavier', isInView);
@@ -64,8 +86,8 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
   return (
     <div
       ref={containerRef}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className="relative select-none"
     >
       {/* Primary Card */}
@@ -130,10 +152,10 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.98 }}
+            initial={{ opacity: 0, y: 4, scale: 0.99 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 6, scale: 0.98 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
+            exit={{ opacity: 0, y: 3, scale: 0.99 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             className="absolute top-full right-0 mt-2 z-50 w-[300px] sm:w-[380px] blk-card p-4 sm:p-5 space-y-3.5 bg-black/95 backdrop-blur-md border border-white/20 shadow-2xl shadow-black select-text"
           >
             {/* Popover Corner Crosshairs */}

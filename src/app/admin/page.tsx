@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { resumeData } from '@/data/resumeData';
 import { saveContentOverrides, resetContentOverrides, type ContentOverrides } from '@/hooks/useContent';
@@ -9,16 +9,15 @@ type EditableSection = 'personalInfo' | 'skills' | 'education';
 export default function AdminPage() {
   const [activeSection, setActiveSection] = useState<EditableSection>('personalInfo');
   const [message, setMessage] = useState('');
-  const [formData, setFormData] = useState<ContentOverrides>({});
-
-  useEffect(() => {
+  const [formData, setFormData] = useState<ContentOverrides>(() => {
+    if (typeof window === 'undefined') return {};
     try {
       const raw = localStorage.getItem('resume-content-overrides');
-      if (raw) {
-        setFormData(JSON.parse(raw));
-      }
-    } catch {}
-  }, []);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  });
 
   const updatePersonalInfo = (field: keyof typeof resumeData.personalInfo, value: string) => {
     setFormData((prev) => ({

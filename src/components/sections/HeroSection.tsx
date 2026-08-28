@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useRef, memo } from 'react';
+import React, { useEffect, useRef, memo, useCallback } from 'react';
+import { useLenis } from 'lenis/react';
 import { animate, stagger } from 'animejs';
 import HeroShowcaseReel from '@/components/sections/HeroShowcaseReel';
 import HeroThreeBackground from '@/components/3d/HeroThreeBackground';
@@ -10,6 +11,7 @@ export const HeroSection = memo(function HeroSection() {
   const line2Ref = useRef<HTMLSpanElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const badgeStripRef = useRef<HTMLDivElement>(null);
+  const lenis = useLenis();
 
   useEffect(() => {
     // Anime.js kinetic text entrance for name lines
@@ -45,12 +47,16 @@ export const HeroSection = memo(function HeroSection() {
     }
   }, []);
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = useCallback((id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      if (lenis) {
+        lenis.scrollTo(el, { offset: -60, duration: 1.2 });
+      } else {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
     }
-  };
+  }, [lenis]);
 
   return (
     <section id="hero" className="relative w-full pt-6 pb-12 sm:pt-10 sm:pb-16 overflow-hidden">

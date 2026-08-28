@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, memo, useCallback } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Globe, Terminal, Cpu, Layers } from 'lucide-react';
 import { ProjectPhysicsDeck, type DeckProjectItem } from '@/components/ui/ProjectPhysicsDeck';
@@ -162,6 +162,30 @@ export const ProjectsSection = memo(function ProjectsSection({
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedProjectId((prev) => (prev === id ? null : id));
+  }, []);
+
+  // Sync expanded project when an agent or simulator queries projects
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleProjectHighlight = (e: Event) => {
+      const customEvent = e as CustomEvent<{ query?: string }>;
+      const q = customEvent.detail?.query?.toLowerCase();
+      if (!q) return;
+      const match = ALL_STUDIO_PROJECTS.find(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.id.toLowerCase().includes(q) ||
+          p.tech.some((t) => t.toLowerCase().includes(q))
+      );
+      if (match) {
+        setExpandedProjectId(match.id);
+        const el = document.getElementById('projects');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('webmcp:project-highlight', handleProjectHighlight);
+    return () => window.removeEventListener('webmcp:project-highlight', handleProjectHighlight);
   }, []);
 
   return (

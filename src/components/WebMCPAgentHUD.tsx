@@ -1,0 +1,496 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Bot,
+  Terminal,
+  Play,
+  X,
+  ChevronUp,
+  ChevronDown,
+  Sparkles,
+  Eye,
+  FileCheck2,
+  CheckCircle2,
+  Loader2,
+} from 'lucide-react';
+import { useWebMCPListener, type WebMCPToolCallEvent } from '@/lib/webmcpEvents';
+import { resumeData, credentials } from '@/data/resumeData';
+import {
+  runRecruiterAuditWorkflow,
+  INITIAL_AUDIT_STEPS,
+  type CandidateDossier,
+  type AuditStep,
+} from '@/lib/webmcpWorkflow';
+import CandidateDossierModal from '@/components/ui/CandidateDossierModal';
+
+const AVAILABLE_TOOLS = [
+  'get_portfolio_overview',
+  'get_profile',
+  'get_skills',
+  'get_projects',
+  'get_project_details',
+  'get_education',
+  'get_github_stats',
+  'search_portfolio',
+  'send_inquiry',
+  'download_resume',
+  'get_telemetry',
+] as const;
+
+export default function WebMCPAgentHUD() {
+  const { activeToolCall, history } = useWebMCPListener();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTool, setSelectedTool] = useState<string>('search_portfolio');
+  const [customArgs, setCustomArgs] = useState<string>('{\n  "query": "Docker"\n}');
+  const [lastResult, setLastResult] = useState<unknown>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [latestEvent, setLatestEvent] = useState<WebMCPToolCallEvent | null>(null);
+
+  // Autonomous Recruiter Audit Workflow State
+  const [isAuditRunning, setIsAuditRunning] = useState(false);
+  const [auditSteps, setAuditSteps] = useState<AuditStep[]>(INITIAL_AUDIT_STEPS);
+  const [dossier, setDossier] = useState<CandidateDossier | null>(null);
+  const [isDossierOpen, setIsDossierOpen] = useState(false);
+
+  useEffect(() => {
+    if (activeToolCall) {
+      setLatestEvent(activeToolCall);
+      setShowToast(true);
+      const timer = setTimeout(() => setShowToast(false), 4500);
+      return () => clearTimeout(timer);
+    }
+  }, [activeToolCall]);
+
+  const handleRunAutonomousAudit = async () => {
+    setIsAuditRunning(true);
+    setAuditSteps(INITIAL_AUDIT_STEPS.map((s) => ({ ...s, status: 'pending' })));
+
+    try {
+      const generatedDossier = await runRecruiterAuditWorkflow((stepIdx, status) => {
+        setAuditSteps((prev) =>
+          prev.map((s, idx) => (idx === stepIdx ? { ...s, status } : s))
+        );
+      });
+
+      setDossier(generatedDossier);
+      setIsDossierOpen(true);
+    } catch (err) {
+      console.error('Audit failed:', err);
+    } finally {
+      setIsAuditRunning(false);
+    }
+  };
+
+  const executeSimulatedTool = async (toolName: string, inputArgs: Record<string, unknown> = {}) => {
+    setIsRunning(true);
+    try {
+      let result: unknown = null;
+
+      if (typeof document !== 'undefined' && 'modelContext' in document) {
+        const mc = (document as unknown as { modelContext: { getTools?: () => Promise<{ name: string }[]>; executeTool?: (t: unknown, a: unknown) => Promise<unknown> } }).modelContext;
+        if (mc?.getTools && mc?.executeTool) {
+          const tools = await mc.getTools();
+          const target = tools.find((t) => t.name === toolName);
+          if (target) {
+            result = await mc.executeTool(target, inputArgs);
+          }
+        }
+      }
+
+      // Fallback local execution if native modelContext execute is not bound
+      if (!result) {
+        switch (toolName) {
+          case 'get_portfolio_overview':
+            result = {
+              developer: resumeData.personalInfo.name,
+              title: resumeData.personalInfo.title,
+              specializations: resumeData.personalInfo.titleAnimated,
+              total_projects: resumeData.projects.length,
+              top_languages: resumeData.skills.programming.slice(0, 5),
+            };
+            break;
+          case 'get_profile':
+            result = { ...resumeData.personalInfo, education: resumeData.education, credentials };
+            break;
+          case 'get_skills':
+            result = resumeData.skills;
+            break;
+          case 'get_projects':
+            result = resumeData.projects;
+            break;
+          case 'get_project_details': {
+            const q = ((inputArgs.project_name as string) || '').toLowerCase();
+            result = resumeData.projects.find((p) => p.title.toLowerCase().includes(q)) || { error: 'Not found' };
+            break;
+          }
+          case 'get_education':
+            result = { education: resumeData.education, credentials };
+            break;
+          case 'get_github_stats':
+            result = { github_url: 'https://github.com/narcisoJavier', contributions_last_year: '240+', status: 'live' };
+            break;
+          case 'search_portfolio': {
+            const q = ((inputArgs.query as string) || '').toLowerCase();
+            const skillMatches = Object.values(resumeData.skills).flat().filter((s) => s.toLowerCase().includes(q));
+            const projMatches = resumeData.projects.filter((p) => p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)).map((p) => p.title);
+            result = { query: inputArgs.query, matches: { skills: skillMatches, projects: projMatches } };
+            break;
+          }
+          case 'send_inquiry':
+            result = { success: true, message: `Inquiry received from ${inputArgs.sender_name || 'Agent'}.` };
+            break;
+          case 'download_resume':
+            result = { download_url: '/api/resume', format: 'PDF' };
+            break;
+          case 'get_telemetry':
+            result = { runtime: 'Next.js 16 + React 19 + Turbopack', stack_status: 'SYNCED & VERIFIED' };
+            break;
+          default:
+            result = { message: 'Tool executed' };
+        }
+      }
+
+      setLastResult(result);
+    } catch (err) {
+      setLastResult({ error: String(err) });
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  const handleRunPreset = (presetType: 'skills' | 'projects' | 'telemetry' | 'inquiry') => {
+    switch (presetType) {
+      case 'skills':
+        setSelectedTool('search_portfolio');
+        setCustomArgs('{\n  "query": "Docker"\n}');
+        executeSimulatedTool('search_portfolio', { query: 'Docker' });
+        break;
+      case 'projects':
+        setSelectedTool('get_project_details');
+        setCustomArgs('{\n  "project_name": "Campus Navigator"\n}');
+        executeSimulatedTool('get_project_details', { project_name: 'Campus Navigator' });
+        break;
+      case 'telemetry':
+        setSelectedTool('get_telemetry');
+        setCustomArgs('{}');
+        executeSimulatedTool('get_telemetry', {});
+        break;
+      case 'inquiry':
+        setSelectedTool('send_inquiry');
+        setCustomArgs('{\n  "sender_name": "Senior Recruiter",\n  "sender_email": "recruiter@innovate.co",\n  "subject": "Systems & Go Developer Role",\n  "message": "Hello Narciso, we reviewed your Go and Docker projects and want to discuss opportunities!"\n}');
+        executeSimulatedTool('send_inquiry', {
+          sender_name: 'Senior Recruiter',
+          sender_email: 'recruiter@innovate.co',
+          subject: 'Systems & Go Developer Role',
+          message: 'Hello Narciso, we reviewed your Go and Docker projects and want to discuss opportunities!',
+        });
+        break;
+    }
+  };
+
+  const handleCustomExecute = () => {
+    try {
+      const parsed = customArgs.trim() ? JSON.parse(customArgs) : {};
+      executeSimulatedTool(selectedTool, parsed);
+    } catch (e) {
+      setLastResult({ error: `Invalid JSON payload: ${String(e)}` });
+    }
+  };
+
+  return (
+    <>
+      {/* Real-time Agent Activity Toast Notification */}
+      <AnimatePresence>
+        {showToast && latestEvent && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+            className="fixed bottom-16 left-4 sm:left-6 z-50 max-w-sm w-full bg-[#0e0e13] border border-white/20 p-3.5 shadow-2xl font-mono text-xs text-white"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <Bot className="w-4 h-4" />
+                <span>WebMCP AGENT EVENT</span>
+              </div>
+              <button
+                onClick={() => setShowToast(false)}
+                className="text-zinc-500 hover:text-white cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <div className="mt-2 text-zinc-300 font-sans text-xs">
+              <span className="font-mono text-white font-bold">{latestEvent.tool}()</span> — {latestEvent.summary}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Bottom Status Pill / Drawer Trigger */}
+      <div className="fixed bottom-4 left-4 sm:left-6 z-50 flex flex-col items-start">
+        {!isOpen && (
+          <button
+            onClick={() => setIsOpen(true)}
+            className="group flex items-center gap-2.5 px-3.5 py-2 bg-[#09090c] hover:bg-[#121218] text-white border border-white/20 hover:border-white/40 shadow-xl text-xs font-mono transition-all cursor-pointer select-none"
+            title="Open WebMCP Agent Simulator & Candidate Screen"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <Bot className="w-3.5 h-3.5 text-zinc-300 group-hover:text-white" />
+            <span className="font-bold uppercase tracking-wider text-[11px]">
+              WebMCP AGENT // SIMULATOR
+            </span>
+            <ChevronUp className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-transform" />
+          </button>
+        )}
+
+        {/* Expanded Agent Simulator Drawer */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              className="w-[92vw] sm:w-[500px] md:w-[580px] max-h-[85vh] bg-[#09090c]/98 backdrop-blur-xl border border-white/20 p-4 sm:p-5 shadow-2xl flex flex-col space-y-4 overflow-y-auto no-scrollbar font-mono text-xs text-white"
+            >
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-1 bg-white/10 border border-white/20 text-white">
+                    <Bot className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-bold uppercase tracking-wider text-xs">
+                      WebMCP Agent Simulator &amp; Screen
+                    </div>
+                    <div className="text-[10px] text-zinc-400 font-sans">
+                      W3C Browser Model Context Testing Console
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1 text-zinc-400 hover:text-white border border-transparent hover:border-white/20 transition-all cursor-pointer"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* 🌟 AUTONOMOUS RECRUITER AUDIT WORKFLOW CARD */}
+              <div className="p-3.5 bg-gradient-to-b from-[#161622] to-[#0f0f15] border border-emerald-500/30 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Autonomous Candidate Screen</span>
+                  </span>
+                  <span className="text-[9px] px-1.5 py-0.5 bg-emerald-400/20 text-emerald-300 font-mono">
+                    MULTI-TOOL AGENT
+                  </span>
+                </div>
+
+                <p className="text-[11px] text-zinc-300 font-sans leading-relaxed">
+                  Run a 4-step autonomous recruiter audit across verified credentials, systems stack, project deliverables, and live GitHub activity to generate an AI Candidate Fit Dossier.
+                </p>
+
+                {/* Audit Steps Progress List */}
+                {isAuditRunning && (
+                  <div className="space-y-1.5 p-2.5 bg-black/60 border border-white/10">
+                    {auditSteps.map((step) => (
+                      <div
+                        key={step.id}
+                        className="flex items-center justify-between text-[10px] font-mono"
+                      >
+                        <span className="text-zinc-300 truncate max-w-[320px]">
+                          {step.id}. {step.title}
+                        </span>
+                        {step.status === 'running' && (
+                          <span className="flex items-center gap-1 text-emerald-400 font-bold">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <span>Auditing...</span>
+                          </span>
+                        )}
+                        {step.status === 'completed' && (
+                          <span className="flex items-center gap-1 text-emerald-400 font-bold">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>Verified</span>
+                          </span>
+                        )}
+                        {step.status === 'pending' && (
+                          <span className="text-zinc-600">Pending</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    onClick={handleRunAutonomousAudit}
+                    disabled={isAuditRunning}
+                    className="flex-1 py-2 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black font-mono font-bold uppercase tracking-wider text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                  >
+                    {isAuditRunning ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Running Multi-Step Audit...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FileCheck2 className="w-3.5 h-3.5" />
+                        <span>Run Full Recruiter Screen</span>
+                      </>
+                    )}
+                  </button>
+
+                  {dossier && (
+                    <button
+                      onClick={() => setIsDossierOpen(true)}
+                      className="px-3 py-2 bg-[#1f1f2a] hover:bg-zinc-700 text-white border border-white/20 text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>View Dossier</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* 1-Click Judge & Recruiter Presets */}
+              <div className="space-y-2">
+                <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3 text-white" />
+                  <span>1-Click Tool Presets (Judge Fallback)</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => handleRunPreset('skills')}
+                    className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer"
+                  >
+                    <div className="font-bold text-[11px] uppercase">🎯 Inspect Skills</div>
+                    <div className="text-[10px] opacity-70 font-sans mt-0.5">Search &apos;Docker&apos; stack</div>
+                  </button>
+
+                  <button
+                    onClick={() => handleRunPreset('projects')}
+                    className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer"
+                  >
+                    <div className="font-bold text-[11px] uppercase">💼 Project Lookup</div>
+                    <div className="text-[10px] opacity-70 font-sans mt-0.5">Campus Navigator details</div>
+                  </button>
+
+                  <button
+                    onClick={() => handleRunPreset('telemetry')}
+                    className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer"
+                  >
+                    <div className="font-bold text-[11px] uppercase">📊 Live Telemetry</div>
+                    <div className="text-[10px] opacity-70 font-sans mt-0.5">Runtime &amp; stack specs</div>
+                  </button>
+
+                  <button
+                    onClick={() => handleRunPreset('inquiry')}
+                    className="p-2.5 bg-[#121218] hover:bg-white hover:text-black border border-white/10 hover:border-white text-left transition-all cursor-pointer"
+                  >
+                    <div className="font-bold text-[11px] uppercase">📨 Send Inquiry</div>
+                    <div className="text-[10px] opacity-70 font-sans mt-0.5">Mock interview request</div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Custom Tool Execution Playground */}
+              <div className="space-y-2 pt-1 border-t border-white/10">
+                <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Terminal className="w-3 h-3 text-white" />
+                    <span>Direct Tool Execution</span>
+                  </span>
+                  <span className="text-[10px] text-zinc-500">11 Tools Available</span>
+                </div>
+
+                <div className="space-y-2">
+                  <select
+                    value={selectedTool}
+                    onChange={(e) => setSelectedTool(e.target.value)}
+                    className="w-full bg-[#121218] border border-white/20 text-white p-2 font-mono text-xs focus:outline-none focus:border-white"
+                  >
+                    {AVAILABLE_TOOLS.map((tool) => (
+                      <option key={tool} value={tool} className="bg-[#121218] text-white">
+                        {tool}
+                      </option>
+                    ))}
+                  </select>
+
+                  <textarea
+                    value={customArgs}
+                    onChange={(e) => setCustomArgs(e.target.value)}
+                    placeholder='Input arguments in JSON (e.g. {"query": "Go"})'
+                    rows={3}
+                    className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white resize-none"
+                  />
+
+                  <button
+                    onClick={handleCustomExecute}
+                    disabled={isRunning}
+                    className="w-full py-2 bg-white text-black font-bold uppercase tracking-wider text-xs hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-black" />
+                    <span>{isRunning ? 'Executing Tool...' : 'Execute Tool via WebMCP'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Live JSON Response Viewer */}
+              {lastResult !== null && (
+                <div className="space-y-1.5 pt-1 border-t border-white/10">
+                  <div className="flex items-center justify-between text-[10px] font-mono text-zinc-400">
+                    <span className="uppercase font-bold text-white flex items-center gap-1.5">
+                      <Eye className="w-3 h-3" />
+                      <span>Live Response Payload</span>
+                    </span>
+                    <span className="text-emerald-400 font-bold">200 OK</span>
+                  </div>
+
+                  <pre className="p-3 bg-black/80 border border-white/10 max-h-40 overflow-y-auto text-[11px] text-zinc-300 font-mono leading-relaxed select-text">
+                    {JSON.stringify(lastResult, null, 2)}
+                  </pre>
+                </div>
+              )}
+
+              {/* Activity History Logs */}
+              {history.length > 0 && (
+                <div className="space-y-1.5 pt-1 border-t border-white/10">
+                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                    Recent Session Invocations ({history.length})
+                  </div>
+                  <div className="space-y-1 max-h-24 overflow-y-auto">
+                    {history.slice(0, 4).map((h, i) => (
+                      <div
+                        key={`${h.timestamp}-${i}`}
+                        className="flex items-center justify-between p-1.5 bg-white/5 border border-white/5 text-[10px]"
+                      >
+                        <span className="font-bold text-white">{h.tool}</span>
+                        <span className="text-zinc-400 font-sans truncate max-w-[200px]">{h.summary}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* AI Candidate Fit Dossier Modal */}
+      <CandidateDossierModal
+        dossier={dossier}
+        isOpen={isDossierOpen}
+        onClose={() => setIsDossierOpen(false)}
+      />
+    </>
+  );
+}

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import LenisProvider from "@/components/ui/LenisProvider";
+import WebMCPProvider from "@/components/WebMCPProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -84,8 +85,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
       <body className="min-h-full">
+        <WebMCPProvider />
         <LenisProvider>{children}</LenisProvider>
       </body>
     </html>
   );
-}
+}

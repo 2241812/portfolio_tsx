@@ -6,6 +6,7 @@ import { resumeData } from '@/data/resumeData';
 import { useInView } from '@/hooks/useInView';
 import { useGitHubAnalyzer } from '@/hooks/useGitHubAnalyzer';
 import { mergeSkillsWithGitHub } from '@/utils/skillsAnalyzer';
+import { useWebMCPListener } from '@/lib/webmcpEvents';
 import {
   Layers,
   Terminal,
@@ -14,6 +15,7 @@ import {
   Code2,
   CheckCircle2,
   Sliders,
+  Bot,
 } from 'lucide-react';
 import {
   containerVariants,
@@ -30,6 +32,7 @@ interface SkillsSectionProps {
 export const SkillsSection = memo(function SkillsSection({ allProjects }: SkillsSectionProps) {
   const { ref, isInView } = useInView({ rootMargin: '200px', once: true });
   const { analysis, isLoading: isLoadingGitHub } = useGitHubAnalyzer('narcisoJavier', isInView);
+  const { highlightedSkills } = useWebMCPListener();
 
   const enhancedSkills = useMemo(() => {
     return mergeSkillsWithGitHub(analysis?.skills ?? []);
@@ -37,6 +40,26 @@ export const SkillsSection = memo(function SkillsSection({ allProjects }: Skills
 
   const [activeSkill, setActiveSkill] = useState<string>('Go');
   const inspectorRef = useRef<HTMLDivElement>(null);
+
+  // Sync active skill when an agent or simulator queries a specific skill/stack
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleSkillHighlight = (e: Event) => {
+      const customEvent = e as CustomEvent<{ query?: string }>;
+      const q = customEvent.detail?.query?.toLowerCase();
+      if (!q) return;
+      const allSkillNames = Object.values(enhancedSkills).flat().map((s) => s.name);
+      const match = allSkillNames.find((name) => name.toLowerCase().includes(q) || q.includes(name.toLowerCase()));
+      if (match) {
+        setActiveSkill(match);
+        const el = document.getElementById('skills');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('webmcp:skill-highlight', handleSkillHighlight);
+    return () => window.removeEventListener('webmcp:skill-highlight', handleSkillHighlight);
+  }, [enhancedSkills]);
 
   useEffect(() => {
     if (inspectorRef.current) {
@@ -140,22 +163,30 @@ export const SkillsSection = memo(function SkillsSection({ allProjects }: Skills
                 <div className="flex flex-wrap gap-2" role="group" aria-label={category}>
                   {skills.map((skill) => {
                     const isSelected = activeSkill === skill.name;
+                    const isHighlighted = highlightedSkills.some(
+                      (h) => skill.name.toLowerCase().includes(h.toLowerCase()) || h.toLowerCase().includes(skill.name.toLowerCase())
+                    );
                     return (
                       <button
                         key={skill.name}
                         onClick={() => setActiveSkill(skill.name)}
                         className={`px-3 py-1.5 text-xs font-mono transition-all duration-150 cursor-pointer select-none flex items-center gap-2 ${
                           isSelected
-                            ? 'bg-white text-black font-bold shadow-md'
+                            ? 'bg-white text-black font-bold shadow-md ring-2 ring-white/50'
+                            : isHighlighted
+                            ? 'bg-emerald-950/60 text-emerald-200 border border-emerald-400/80 shadow-[0_0_12px_rgba(52,211,153,0.3)] animate-pulse'
                             : 'bg-[#121218] text-zinc-300 border border-white/10 hover:border-white/30 hover:text-white'
                         }`}
                       >
+                        {isHighlighted && <Bot className="w-3 h-3 text-emerald-400" />}
                         <span>{skill.name}</span>
                         {skill.verified && (skill.endorsements || 0) > 0 && (
                           <span
                             className={`text-[9px] px-1.5 py-0.2 rounded-none font-mono ${
                               isSelected
                                 ? 'bg-black text-white font-bold'
+                                : isHighlighted
+                                ? 'bg-emerald-900 text-emerald-300 font-bold'
                                 : 'bg-black/60 text-zinc-400'
                             }`}
                             title={`Referenced in ${skill.endorsements} repository(ies)`}

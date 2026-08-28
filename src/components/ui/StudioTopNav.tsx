@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
+import { useLenis } from 'lenis/react';
 import { resumeData } from '@/data/resumeData';
 import { GithubIcon, LinkedinIcon } from '@/components/ui/StudioIcons';
 import { ArrowUpRight } from 'lucide-react';
@@ -11,7 +12,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'hero', label: 'Hero', number: '00' },
+  { id: 'hero', label: 'Overview', number: '00' },
   { id: 'about', label: 'Profile', number: '01' },
   { id: 'projects', label: 'Works', number: '02' },
   { id: 'contact', label: 'Dispatch', number: '03' },
@@ -20,6 +21,7 @@ const NAV_ITEMS: NavItem[] = [
 export const StudioTopNav = memo(function StudioTopNav() {
   const [activeSection, setActiveSection] = useState<string>('hero');
   const [currentTime, setCurrentTime] = useState<string>('');
+  const lenis = useLenis();
 
   useEffect(() => {
     const updateClock = () => {
@@ -58,12 +60,24 @@ export const StudioTopNav = memo(function StudioTopNav() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollTo = (id: string) => {
+  const scrollTo = useCallback((id: string) => {
+    if (id === 'hero') {
+      if (lenis) {
+        lenis.scrollTo(0, { duration: 1.2 });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    }
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      if (lenis) {
+        lenis.scrollTo(el, { offset: -60, duration: 1.2 });
+      } else {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
     }
-  };
+  }, [lenis]);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#08080a]/95 backdrop-blur-md border-b border-white/10 px-4 sm:px-6 lg:px-12 py-3 transition-all">

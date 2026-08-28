@@ -81,7 +81,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
           <div className="w-full flex items-center justify-between text-[10px] font-mono text-zinc-400">
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              NARCISO JAVIER // STUDIO
+              NARCISO III JAVIER
             </span>
             <span>BAGUIO CITY [16.40°N]</span>
           </div>
