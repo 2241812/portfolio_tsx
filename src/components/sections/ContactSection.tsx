@@ -122,6 +122,26 @@ export const ContactSection = memo(function ContactSection() {
               directly or dispatch a message through the form below.
             </p>
 
+            {/* Quick WebMCP Console Launcher Banner */}
+            <div className="relative z-10 p-3 bg-gradient-to-r from-emerald-500/10 via-[#121218] to-transparent border border-emerald-500/30 flex items-center justify-between gap-3 text-xs font-mono">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold text-[11px]">
+                <Bot className="w-4 h-4 shrink-0" />
+                <span className="truncate">WebMCP AGENT SCREEN &amp; DISPATCH HUB</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('webmcp:open-simulator'));
+                  }
+                }}
+                className="shrink-0 px-3 py-1.5 bg-emerald-400 hover:bg-emerald-300 text-black font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+              >
+                <span>Launch Hub</span>
+                <Sparkles className="w-3 h-3" />
+              </button>
+            </div>
+
             {/* Direct Copyable Rows */}
             <div className="relative z-10 space-y-3 pt-1">
               {/* Email */}
