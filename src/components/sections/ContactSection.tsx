@@ -119,38 +119,17 @@ export const ContactSection = memo(function ContactSection() {
             <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-3 text-xs font-mono">
               <span className="text-white font-bold uppercase tracking-wider flex items-center gap-2">
                 <Send className="w-3.5 h-3.5" />
-                <span>DIRECT INQUIRIES &amp; DISPATCH</span>
+                <span>DIRECT INQUIRIES</span>
               </span>
               <span className="inline-flex items-center gap-1.5 text-zinc-300 font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 EMAIL ROUTE
               </span>
             </div>
 
             <p className="relative z-10 text-sm text-zinc-300 font-sans leading-relaxed">
               Seeking software engineering, backend systems, and technical collaboration roles. Reach out
-              directly or dispatch a message through the form below.
+              directly or use the form below for opportunities and technical collaboration.
             </p>
-
-            {/* Quick WebMCP Console Launcher Banner */}
-            <div className="relative z-10 p-3 bg-gradient-to-r from-emerald-500/10 via-[#121218] to-transparent border border-emerald-500/30 flex items-center justify-between gap-3 text-xs font-mono">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold text-[11px]">
-                <Bot className="w-4 h-4 shrink-0" />
-                <span className="truncate">WebMCP AGENT SCREEN &amp; DISPATCH HUB</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  if (typeof window !== 'undefined') {
-                    window.dispatchEvent(new CustomEvent('webmcp:open-simulator'));
-                  }
-                }}
-                className="shrink-0 px-3 py-1.5 bg-emerald-400 hover:bg-emerald-300 text-black font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 shadow-sm"
-              >
-                <span>Launch Hub</span>
-                <Sparkles className="w-3 h-3" />
-              </button>
-            </div>
 
             {/* Direct Copyable Rows */}
             <div className="relative z-10 space-y-3 pt-1">
@@ -245,7 +224,7 @@ export const ContactSection = memo(function ContactSection() {
               <div className="flex items-center justify-between pb-3 text-xs font-mono">
                 <span className="text-white font-bold uppercase tracking-wider flex items-center gap-2">
                   <Bot className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>DISPATCH FORM // WebMCP ENABLED</span>
+                  <span>CONTACT FORM // WebMCP ENABLED</span>
                 </span>
                 <span className="text-[10px] text-zinc-400 font-mono">
                   [AGENT DECLARATIVE API]
@@ -255,7 +234,6 @@ export const ContactSection = memo(function ContactSection() {
               <form
                 id="inquiry-form"
                 onSubmit={handleInquirySubmit}
-                // @ts-expect-error W3C WebMCP Declarative Form Attributes
                 toolname="send_inquiry"
                 tooldescription="Send a professional inquiry, role opportunity, or message to Narciso III Javier"
                 toolautosubmit="true"
@@ -281,7 +259,6 @@ export const ContactSection = memo(function ContactSection() {
                       value={formState.sender_name}
                       onChange={(e) => setFormState((p) => ({ ...p, sender_name: e.target.value }))}
                       placeholder="e.g. Alex Morgan / Tech Co"
-                      // @ts-expect-error W3C WebMCP Parameter Attribute
                       toolparamdescription="Your full name or recruiting organization"
                       required
                       className="w-full bg-[#121218] border border-white/15 text-white p-2.5 font-mono text-xs focus:outline-none focus:border-white transition-colors"
@@ -299,7 +276,6 @@ export const ContactSection = memo(function ContactSection() {
                       value={formState.sender_email}
                       onChange={(e) => setFormState((p) => ({ ...p, sender_email: e.target.value }))}
                       placeholder="alex@tech.co"
-                      // @ts-expect-error W3C WebMCP Parameter Attribute
                       toolparamdescription="Your contact email address for correspondence"
                       required
                       className="w-full bg-[#121218] border border-white/15 text-white p-2.5 font-mono text-xs focus:outline-none focus:border-white transition-colors"
@@ -317,7 +293,6 @@ export const ContactSection = memo(function ContactSection() {
                     value={formState.subject}
                     onChange={(e) => setFormState((p) => ({ ...p, subject: e.target.value }))}
                     placeholder="e.g. Systems & Go Developer Role"
-                    // @ts-expect-error W3C WebMCP Parameter Attribute
                     toolparamdescription="Subject line describing the inquiry, role, or proposal"
                     required
                     className="w-full bg-[#121218] border border-white/15 text-white p-2.5 font-mono text-xs focus:outline-none focus:border-white transition-colors"
@@ -335,7 +310,6 @@ export const ContactSection = memo(function ContactSection() {
                     onChange={(e) => setFormState((p) => ({ ...p, message: e.target.value }))}
                     placeholder="Details about your project, team, or opportunity..."
                     rows={3}
-                    // @ts-expect-error W3C WebMCP Parameter Attribute
                     toolparamdescription="Detailed message body"
                     required
                     className="w-full bg-[#121218] border border-white/15 text-white p-2.5 font-mono text-xs focus:outline-none focus:border-white transition-colors resize-none"
@@ -353,7 +327,7 @@ export const ContactSection = memo(function ContactSection() {
                   </button>
 
                   {inquiryStatus && (
-                    <span role="status" aria-live="polite" className={`${inquiryError ? 'text-rose-300' : 'text-emerald-400'} text-xs font-mono flex items-center gap-1.5 animate-pulse`}>
+                    <span role="status" aria-live="polite" className={`${inquiryError ? 'text-rose-300' : 'text-emerald-400'} text-xs font-mono flex items-center gap-1.5`}>
                       {inquiryError ? <X className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
                       <span>{inquiryStatus}</span>
                     </span>
@@ -373,7 +347,7 @@ export const ContactSection = memo(function ContactSection() {
 
               <div className="relative z-10 flex items-center justify-between text-xs font-mono border-b border-white/10 pb-3">
                 <span className="text-white font-bold uppercase tracking-wider">
-                  DISPATCH METRICS
+                  CONTACT DETAILS
                 </span>
                 <span className="text-zinc-500">{resumeData.personalInfo.location}</span>
               </div>

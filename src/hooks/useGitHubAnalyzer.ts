@@ -125,7 +125,7 @@ export function useGitHubAnalyzer(username: string, isInView: boolean = true) {
  * Analyze all repositories for skills
  */
 function analyzeRepositories(repos: GitHubRepo[]): SkillAnalysis {
-  const skillMap = new Map<string, { category: any; endorsements: number; repos: Set<string> }>();
+  const skillMap = new Map<string, { category: 'Language' | 'Framework' | 'Tool' | 'Infrastructure'; endorsements: number; repos: Set<string> }>();
 
   repos.forEach((repo) => {
     // Skip forks by default (optional: set by env var)
@@ -192,7 +192,6 @@ function analyzeRepositories(repos: GitHubRepo[]): SkillAnalysis {
  */
 function extractKeywordsFromDescription(description: string): string[] {
   const keywords = new Set<string>();
-  const descLower = description.toLowerCase();
 
   const patterns = [
     // Frontend frameworks

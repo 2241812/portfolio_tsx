@@ -67,6 +67,7 @@ const SHOWCASE_PROJECTS: ShowcaseProject[] = Object.entries(SHOWCASE_PRESENTATIO
 
 export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const lineProgressRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
@@ -75,11 +76,12 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
 
   // Auto slide progress
   useEffect(() => {
+    if (isPaused) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % SHOWCASE_PROJECTS.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isPaused]);
 
   // Anime.js transition on slide change
   useEffect(() => {
@@ -94,13 +96,15 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
 
     if (lineProgressRef.current) {
       lineProgressRef.current.style.width = '0%';
-      animate(lineProgressRef.current, {
-        width: ['0%', '100%'],
-        ease: 'linear',
-        duration: 6000,
-      });
+      if (!isPaused) {
+        animate(lineProgressRef.current, {
+          width: ['0%', '100%'],
+          ease: 'linear',
+          duration: 6000,
+        });
+      }
     }
-  }, [currentIndex]);
+  }, [currentIndex, isPaused]);
 
   const scrollToProjects = useCallback(() => {
     const el = document.getElementById('projects');
@@ -114,7 +118,16 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
   }, [lenis]);
 
   return (
-    <div className="kokonut-card-glow p-6 sm:p-7 flex flex-col justify-between select-none shadow-2xl min-h-[480px]">
+    <div
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Featured Projects Showcase"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={() => setIsPaused(false)}
+      className="kokonut-card-glow p-6 sm:p-7 flex flex-col justify-between select-none shadow-2xl min-h-[480px]"
+    >
       <div className="studio-corner-tl" />
       <div className="studio-corner-br" />
       <div className="kokonut-spotlight-layer" />
@@ -129,6 +142,14 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
           <span className="text-zinc-400 text-[10px] tracking-wider uppercase hidden sm:inline">
             {active.category}
           </span>
+          <button
+            type="button"
+            onClick={() => setIsPaused((prev) => !prev)}
+            aria-label={isPaused ? 'Resume auto-rotating showcase' : 'Pause auto-rotating showcase'}
+            className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 border border-white/20 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+          >
+            {isPaused ? '▶ PLAY' : '❚❚ PAUSE'}
+          </button>
         </div>
 
         {/* Slide Indicator Selector */}
@@ -160,7 +181,7 @@ export const HeroShowcaseReel = memo(function HeroShowcaseReel() {
         {/* Project Header */}
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <div className="p-1 bg-white/5 border border-white/10 text-white shrink-0">
+            <div className="flex-none border border-white/10 bg-white/5 p-1 text-white">
               {active.icon}
             </div>
             <h3 className="text-xl sm:text-2xl font-extrabold text-white uppercase font-display tracking-tight truncate">

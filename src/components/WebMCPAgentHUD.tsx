@@ -6,14 +6,12 @@ import {
   Bot,
   Terminal,
   Play,
-  X,
   Sparkles,
   Eye,
   FileCheck2,
   CheckCircle2,
   Loader2,
   Send,
-  Check,
   Search,
   FolderGit2,
   Activity,
@@ -21,7 +19,7 @@ import {
   SlidersHorizontal,
   ChevronDown,
 } from 'lucide-react';
-import { useWebMCPListener, dispatchWebMCPToolCall } from '@/lib/webmcpEvents';
+import { useWebMCPListener } from '@/lib/webmcpEvents';
 import { submitInquiry } from '@/lib/inquiryClient';
 import { resumeData, credentials } from '@/data/resumeData';
 import {
@@ -61,19 +59,7 @@ export default function WebMCPAgentHUD() {
   const [dossier, setDossier] = useState<CandidateDossier | null>(null);
   const [isDossierOpen, setIsDossierOpen] = useState(false);
 
-  // Embedded Dispatch Form State
-  const [formState, setFormState] = useState({
-    sender_name: '',
-    sender_email: '',
-    subject: '',
-    message: '',
-    website: '',
-  });
-  const [inquiryStatus, setInquiryStatus] = useState<string | null>(null);
-  const [inquiryError, setInquiryError] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Unified global trigger: Pet click or page button opens the bottom-right console
+  // Unified global trigger: the WebMCP button or page launcher opens the hub.
   useEffect(() => {
     const handleOpenSimulator = () => setIsOpen((prev) => !prev);
     window.addEventListener('webmcp:open-simulator', handleOpenSimulator);
@@ -201,13 +187,6 @@ export default function WebMCPAgentHUD() {
         break;
       case 'inquiry':
         setActiveTab('dispatch');
-        setFormState({
-          sender_name: 'Lead Technical Recruiter',
-          sender_email: 'recruiter@innovatetech.io',
-          subject: 'Systems & Backend Engineering Opportunity',
-          message: 'Hello Narciso, our engineering leadership reviewed your Go/Dart projects and would love to schedule a technical interview!',
-          website: '',
-        });
         break;
     }
   };
@@ -221,67 +200,27 @@ export default function WebMCPAgentHUD() {
     }
   };
 
-  const handleInquirySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-
-    if (!formState.sender_name || !formState.sender_email || !formState.subject || !formState.message) {
-      setInquiryError(true);
-      setInquiryStatus('Please fill in all fields.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    setInquiryError(false);
-    setInquiryStatus(null);
-
-    try {
-      const result = await submitInquiry(formState);
-      dispatchWebMCPToolCall({
-        tool: 'send_inquiry',
-        input: formState as unknown as Record<string, unknown>,
-        result,
-        summary: `Inquiry sent by ${formState.sender_name}: "${formState.subject}"`,
-      });
-
-      setInquiryError(false);
-      setInquiryStatus('Inquiry sent successfully.');
-      setFormState({ sender_name: '', sender_email: '', subject: '', message: '', website: '' });
-      setTimeout(() => setInquiryStatus(null), 5000);
-    } catch (error) {
-      setInquiryError(true);
-      setInquiryStatus(error instanceof Error ? error.message : 'The inquiry could not be sent.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const autofillTemplate = (type: 'recruiter' | 'collab') => {
-    if (type === 'recruiter') {
-      setFormState({
-        sender_name: 'Senior Talent Partner',
-        sender_email: 'talent@cloudinfra.dev',
-        subject: 'Distributed Systems & Go Developer Role',
-        message: 'Hi Narciso, we are building high-throughput infrastructure and want to discuss opportunities.',
-        website: '',
-      });
-    } else {
-      setFormState({
-        sender_name: 'Open Source Maintainer',
-        sender_email: 'lead@oss-systems.org',
-        subject: 'Technical Collaboration & Architecture Review',
-        message: 'Hello Narciso, we loved your Tether project and would like to collaborate on container networking tooling.',
-        website: '',
-      });
-    }
-  };
+  // Dismiss on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
 
   return (
     <>
-      {/* Unified Bottom-Right Agent Simulator & Hub (Docked with Cyber Serpent) */}
+      {/* Bottom-right WebMCP agent hub */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="WebMCP Agent Hub"
+            id="webmcp-agent-drawer"
+            tabIndex={-1}
             initial={{ opacity: 0, y: 30, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -302,11 +241,10 @@ export default function WebMCPAgentHUD() {
                 </div>
                 <div>
                   <div className="font-bold uppercase tracking-wider text-xs flex items-center gap-1.5">
-                    <span>WebMCP AGENT SIMULATOR &amp; HUB</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>WebMCP AGENT HUB</span>
                   </div>
                   <div className="text-[10px] text-zinc-400 font-sans">
-                    W3C Browser Model Context Testing &amp; Dispatch Console
+                    W3C Browser Model Context tools &amp; workflow demos
                   </div>
                 </div>
               </div>
@@ -352,7 +290,7 @@ export default function WebMCPAgentHUD() {
                 }`}
               >
                 <Send className="w-3 h-3 text-cyan-400" />
-                <span>Dispatch Form</span>
+                <span>Contact Route</span>
               </button>
               <button
                 type="button"
@@ -501,153 +439,41 @@ export default function WebMCPAgentHUD() {
                         <Mail className="w-3 h-3 text-purple-400 group-hover:text-black transition-colors" />
                         <span>Send Inquiry</span>
                       </div>
-                      <div className="text-[10px] opacity-70 font-sans mt-0.5">Open Dispatch Form</div>
+                      <div className="text-[10px] opacity-70 font-sans mt-0.5">Open the page contact form</div>
                     </button>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* TAB 2: W3C Declarative Dispatch Form */}
+            {/* TAB 2: Link to the authoritative W3C Declarative Form */}
             {activeTab === 'dispatch' && (
-              <div id="agent-dispatch-panel" role="tabpanel" aria-label="Dispatch form" className="space-y-3.5">
+              <div id="agent-dispatch-panel" role="tabpanel" aria-label="Contact route" className="space-y-3.5">
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
                   <span className="text-[11px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5 font-mono">
                     <Send className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>W3C Declarative Dispatch Console</span>
+                    <span>W3C DECLARATIVE FORM</span>
                   </span>
                   <span className="text-[9px] px-1.5 py-0.5 bg-white/10 text-zinc-300 font-mono">
-                    toolname=&quot;send_inquiry&quot;
+                    send_inquiry
                   </span>
                 </div>
 
-                {/* Autofill quick templates */}
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-zinc-400">Quick Templates:</span>
-                  <button
-                    type="button"
-                    onClick={() => autofillTemplate('recruiter')}
-                    className="px-2 py-1 bg-white/5 hover:bg-white/15 border border-white/10 text-[9px] text-white transition-all cursor-pointer"
-                  >
-                    + Role Opportunity
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => autofillTemplate('collab')}
-                    className="px-2 py-1 bg-white/5 hover:bg-white/15 border border-white/10 text-[9px] text-white transition-all cursor-pointer"
-                  >
-                    + Tech Collab
-                  </button>
-                </div>
-
-                <form
-                  id="hud-inquiry-form"
-                  onSubmit={handleInquirySubmit}
-                  // @ts-expect-error W3C WebMCP Declarative Form Attributes
-                  toolname="send_inquiry"
-                  tooldescription="Send a professional inquiry, role opportunity, or message to Narciso III Javier"
-                  toolautosubmit="true"
-                  className="space-y-2.5 text-xs font-mono"
-                >
-                  <input
-                    name="website"
-                    value={formState.website}
-                    onChange={(e) => setFormState((p) => ({ ...p, website: e.target.value }))}
-                    tabIndex={-1}
-                    autoComplete="off"
-                    aria-hidden="true"
-                    className="absolute -left-[9999px] h-px w-px opacity-0"
-                  />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <div>
-                      <label htmlFor="hud-sender-name" className="block text-[10px] uppercase text-zinc-400 mb-1">
-                        Sender / Organization
-                      </label>
-                      <input
-                        id="hud-sender-name"
-                        name="sender_name"
-                        value={formState.sender_name}
-                        onChange={(e) => setFormState((p) => ({ ...p, sender_name: e.target.value }))}
-                        placeholder="e.g. Sarah Connor / Tech Inc"
-                        // @ts-expect-error W3C WebMCP Parameter Attribute
-                        toolparamdescription="Your full name or recruiting organization"
-                        required
-                        className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="hud-sender-email" className="block text-[10px] uppercase text-zinc-400 mb-1">
-                        Contact Email
-                      </label>
-                      <input
-                        id="hud-sender-email"
-                        name="sender_email"
-                        type="email"
-                        value={formState.sender_email}
-                        onChange={(e) => setFormState((p) => ({ ...p, sender_email: e.target.value }))}
-                        placeholder="sarah@tech.co"
-                        // @ts-expect-error W3C WebMCP Parameter Attribute
-                        toolparamdescription="Your contact email address for correspondence"
-                        required
-                        className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="hud-subject" className="block text-[10px] uppercase text-zinc-400 mb-1">
-                      Subject Line
-                    </label>
-                    <input
-                      id="hud-subject"
-                      name="subject"
-                      value={formState.subject}
-                      onChange={(e) => setFormState((p) => ({ ...p, subject: e.target.value }))}
-                      placeholder="e.g. Backend Go Developer Role"
-                      // @ts-expect-error W3C WebMCP Parameter Attribute
-                      toolparamdescription="Subject line describing the inquiry, role, or proposal"
-                      required
-                      className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="hud-message" className="block text-[10px] uppercase text-zinc-400 mb-1">
-                      Message Body
-                    </label>
-                    <textarea
-                      id="hud-message"
-                      name="message"
-                      value={formState.message}
-                      onChange={(e) => setFormState((p) => ({ ...p, message: e.target.value }))}
-                      placeholder="Message details or interview proposal..."
-                      rows={3}
-                      // @ts-expect-error W3C WebMCP Parameter Attribute
-                      toolparamdescription="Detailed message body"
-                      required
-                      className="w-full bg-[#121218] border border-white/15 text-white p-2 font-mono text-xs focus:outline-none focus:border-white transition-colors resize-none"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between pt-1">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-4 py-2 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-60 text-black font-bold uppercase tracking-wider text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                <div className="border border-white/10 bg-[#0c0c12] p-3.5 space-y-3">
+                  <p className="text-[11px] text-zinc-300 font-sans leading-relaxed">
+                    The live inquiry form is embedded in the Contact section below. This hub keeps the registered WebMCP tools visible without duplicating the submission fields.
+                  </p>
+                  <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-3">
+                    <span className="text-[10px] text-zinc-500 font-mono">SOURCE: #inquiry-form</span>
+                    <a
+                      href="#inquiry-form"
+                      className="inline-flex items-center gap-1.5 bg-emerald-400 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-black transition-colors hover:bg-emerald-300"
                     >
-                      {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                      <span>{isSubmitting ? 'Sending...' : 'Dispatch Inquiry via WebMCP'}</span>
-                    </button>
-
-                    {inquiryStatus && (
-                      <span role="status" aria-live="polite" className={`${inquiryError ? 'text-rose-300' : 'text-emerald-400'} text-xs font-mono flex items-center gap-1.5 animate-pulse`}>
-                        {inquiryError ? <X className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
-                        <span>{inquiryStatus}</span>
-                      </span>
-                    )}
+                      <Send className="h-3 w-3" />
+                      <span>Open Main Form</span>
+                    </a>
                   </div>
-                </form>
+                </div>
               </div>
             )}
 

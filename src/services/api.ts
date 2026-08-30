@@ -6,7 +6,7 @@
 interface ApiRequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
-  body?: any;
+  body?: unknown;
   timeout?: number;
   retries?: number;
   retryDelay?: number;
@@ -187,9 +187,11 @@ export async function apiFetch<T>(
   }
 }
 
-export default {
+const apiService = {
   fetch: apiFetch,
   fetchWithRetry,
   fetchGitHubContributions,
   fetchGitHubStats,
 };
+
+export default apiService;

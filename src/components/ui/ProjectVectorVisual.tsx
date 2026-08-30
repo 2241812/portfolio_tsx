@@ -98,6 +98,8 @@ export const ProjectVectorVisual = memo(function ProjectVectorVisual({
 
           {/* Animated Data Packets */}
           <motion.circle
+            cx={80}
+            cy={60}
             r="3"
             fill="#00B4AB"
             animate={{
@@ -112,6 +114,8 @@ export const ProjectVectorVisual = memo(function ProjectVectorVisual({
             }}
           />
           <motion.circle
+            cx={240}
+            cy={60}
             r="2.5"
             fill="#ffffff"
             animate={{

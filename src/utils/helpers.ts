@@ -165,23 +165,23 @@ export function sortBy<T>(array: T[], key: keyof T, order: 'asc' | 'desc' = 'asc
 // ==================== Object Utilities ====================
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') return obj;
-  if (obj instanceof Date) return new Date(obj.getTime()) as any;
-  if (obj instanceof Array) return obj.map(item => deepClone(item)) as any;
+  if (obj instanceof Date) return new Date(obj.getTime()) as unknown as T;
+  if (obj instanceof Array) return obj.map(item => deepClone(item)) as unknown as T;
   
   const cloned = {} as T;
   for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       cloned[key] = deepClone(obj[key]);
     }
   }
   return cloned;
 }
 
-export function mergeObjects<T extends Record<string, any>>(target: T, source: Partial<T>): T {
+export function mergeObjects<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
   return { ...target, ...source };
 }
 
-export function omit<T extends Record<string, any>>(obj: T, keys: (keyof T)[]): Partial<T> {
+export function omit<T extends Record<string, unknown>>(obj: T, keys: (keyof T)[]): Partial<T> {
   const result = { ...obj };
   keys.forEach(key => delete result[key]);
   return result;
@@ -312,7 +312,7 @@ export function rgbToHex(r: number, g: number, b: number): string {
   }).join('');
 }
 
-export default {
+const helpers = {
   // Date
   getDateRange,
   formatDate,
@@ -355,3 +355,5 @@ export default {
   hexToRgb,
   rgbToHex,
 };
+
+export default helpers;

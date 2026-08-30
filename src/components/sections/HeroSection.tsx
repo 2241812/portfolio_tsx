@@ -66,11 +66,6 @@ export const HeroSection = memo(function HeroSection() {
       {/* Header Meta Bar */}
       <div className="relative z-10 flex flex-wrap items-center justify-between border-b border-white/10 pb-4 mb-8 text-[11px] font-mono text-zinc-400 gap-3">
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>ONLINE</span>
-          </span>
-          <span className="text-zinc-600">/</span>
           <span className="text-zinc-400">BAGUIO CITY, PH [16.40°N, 120.59°E]</span>
         </div>
 

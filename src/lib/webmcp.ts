@@ -188,10 +188,12 @@ export async function registerWebMCPTools(): Promise<void> {
         return { error: 'Please provide a project_name to search for.', available: resumeData.projects.map((p) => p.title) };
       }
       const q = input.project_name.toLowerCase();
-      const project = resumeData.projects.find((p) => p.title.toLowerCase().includes(q));
+      const project = resumeData.projects.find(
+        (p) => p.title.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)
+      );
       const result = project
         ? { ...project, evidence: getProjectEvidence(project.id) }
-        : { error: `No project matching "${input.project_name}".`, available: resumeData.projects.map((p) => p.title) };
+        : { error: `No project matching "${input.project_name}".`, available: resumeData.projects.map((p) => `${p.title} (id: ${p.id})`) };
 
       dispatchWebMCPToolCall({
         tool: 'get_project_details',
@@ -306,7 +308,8 @@ export async function registerWebMCPTools(): Promise<void> {
             p.title.toLowerCase().includes(q) ||
             p.description.toLowerCase().includes(q) ||
             p.role.toLowerCase().includes(q) ||
-            getProjectEvidence(p.id)?.verifiedClaims.some((claim) => claim.toLowerCase().includes(q))
+            getProjectEvidence(p.id)?.verifiedClaims.some((claim) => claim.toLowerCase().includes(q)) ||
+            getProjectEvidence(p.id)?.technologyTags.some((tag) => tag.toLowerCase().includes(q))
         )
         .map((p) => `${p.title} (${p.role})`);
       if (projMatches.length) results.push({ category: 'projects', matches: projMatches });

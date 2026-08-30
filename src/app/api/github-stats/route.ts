@@ -1,5 +1,16 @@
 import { NextResponse } from 'next/server';
 
+// Strict domain allowlist for SVG badge and statistics generators
+const ALLOWED_HOSTS = new Set([
+  'github-readme-stats.vercel.app',
+  'github-readme-streak-stats.herokuapp.com',
+  'github-contributions-api.jogruber.de',
+  'pinned.berrysauce.dev',
+  'api.github.com',
+  'raw.githubusercontent.com',
+  'github.com',
+]);
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
@@ -8,10 +19,25 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
   }
 
+  let parsed: URL;
   try {
-    const response = await fetch(url, {
+    parsed = new URL(url);
+  } catch {
+    return NextResponse.json({ error: 'Invalid URL format' }, { status: 400 });
+  }
+
+  if (parsed.protocol !== 'https:' || !ALLOWED_HOSTS.has(parsed.hostname.toLowerCase())) {
+    return NextResponse.json(
+      { error: 'Forbidden target host. Only verified GitHub stat services are permitted.' },
+      { status: 403 }
+    );
+  }
+
+  try {
+    const response = await fetch(parsed.toString(), {
       headers: {
         'Accept': 'image/*',
+        'User-Agent': 'larp-portfolio-stats-proxy/1.0',
       },
     });
 

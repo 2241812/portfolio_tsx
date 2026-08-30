@@ -49,7 +49,6 @@ export const CyberSerpentPet = memo(function CyberSerpentPet() {
         <span className="flex min-w-0 flex-col leading-none">
           <span className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.16em]">
             <span>WEBMCP</span>
-            {isActive && <span aria-hidden="true" className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-300 motion-reduce:animate-none" />}
           </span>
           <span className="mt-1 text-[9px] uppercase tracking-[0.12em] text-zinc-400 group-hover:text-emerald-300">
             {isActive ? 'Tool active' : 'Open agent hub'}

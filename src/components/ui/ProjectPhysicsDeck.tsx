@@ -52,7 +52,6 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [maxScroll, setMaxScroll] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
@@ -84,19 +83,30 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
     return () => window.removeEventListener('resize', updateConstraints);
   }, [updateConstraints, projects]);
 
-  // Track progress and update button states
+  const progressScale = useTransform(x, [0, -Math.max(1, maxScroll)], [0, 1]);
+
+  // Track progress and update button states (only trigger state when boolean switches)
   useEffect(() => {
+    let prevLeft = false;
+    let prevRight = true;
+
     return x.on('change', (latestX) => {
       if (maxScroll <= 0) {
-        setScrollProgress(0);
-        setCanScrollLeft(false);
-        setCanScrollRight(false);
+        if (prevLeft) { setCanScrollLeft(false); prevLeft = false; }
+        if (prevRight) { setCanScrollRight(false); prevRight = false; }
         return;
       }
-      const progress = Math.min(Math.max(-latestX / maxScroll, 0), 1);
-      setScrollProgress(progress);
-      setCanScrollLeft(latestX < -10);
-      setCanScrollRight(latestX > -maxScroll + 10);
+      const canLeft = latestX < -10;
+      const canRight = latestX > -maxScroll + 10;
+
+      if (canLeft !== prevLeft) {
+        setCanScrollLeft(canLeft);
+        prevLeft = canLeft;
+      }
+      if (canRight !== prevRight) {
+        setCanScrollRight(canRight);
+        prevRight = canRight;
+      }
     });
   }, [x, maxScroll]);
 
@@ -168,7 +178,6 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
       {/* Top Deck Status & Surf Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-400 border-b border-white/10 pb-3">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-white font-bold tracking-wider uppercase text-[11px]">
             SCROLL TO SURF // {projects.length} PROJECTS
           </span>
@@ -182,39 +191,40 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-1.5 text-[10px] text-zinc-400">
             <span>SURF PROGRESS:</span>
-            <div className="w-20 h-1 bg-white/10 overflow-hidden">
-              <div
-                className="h-full bg-white transition-all duration-75"
-                style={{ width: `${Math.round(scrollProgress * 100)}%` }}
+            <div className="w-20 h-1.5 bg-white/10 overflow-hidden" role="progressbar" aria-label="Project deck scroll progress">
+              <motion.div
+                className="h-full bg-white origin-left"
+                style={{ scaleX: progressScale }}
               />
             </div>
-            <span className="text-white font-bold">{Math.round(scrollProgress * 100)}%</span>
           </div>
 
           <div className="flex items-center gap-1">
             <button
               onClick={() => stepScroll('left')}
               disabled={!canScrollLeft}
-              className={`p-1.5 border transition-all cursor-pointer ${
+              className={`min-w-[36px] min-h-[36px] flex items-center justify-center p-2 border transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
                 canScrollLeft
                   ? 'border-white/20 text-white hover:bg-white/10 active:scale-95'
                   : 'border-white/5 text-zinc-600 cursor-not-allowed'
               }`}
+              aria-label="Previous project card"
               title="Previous"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => stepScroll('right')}
               disabled={!canScrollRight}
-              className={`p-1.5 border transition-all cursor-pointer ${
+              className={`min-w-[36px] min-h-[36px] flex items-center justify-center p-2 border transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
                 canScrollRight
                   ? 'border-white/20 text-white hover:bg-white/10 active:scale-95'
                   : 'border-white/5 text-zinc-600 cursor-not-allowed'
               }`}
+              aria-label="Next project card"
               title="Next"
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -253,7 +263,7 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
                     }
                   }
                 }}
-                className={`blk-card p-5 sm:p-6 w-[320px] sm:w-[380px] flex flex-col justify-between shrink-0 group relative select-none transition-all duration-300 ${
+                className={`blk-card flex w-[min(320px,calc(100vw-2rem))] flex-none flex-col justify-between p-5 sm:w-[380px] sm:p-6 group relative select-none transition-all duration-300 ${
                   isExpanded
                     ? 'scale-[1.03] sm:scale-105 z-30 ring-1 ring-white/40 shadow-2xl shadow-black bg-black'
                     : isDimmed
@@ -272,32 +282,30 @@ export const ProjectPhysicsDeck = memo(function ProjectPhysicsDeck({
 
                 <div className="relative z-10 space-y-3.5 pointer-events-auto">
                   {/* Top Corner Metadata Anchors */}
-                  <div className="flex items-center justify-between border-b border-white/10 pb-3 text-xs font-mono">
-                    <div className="flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 bg-white text-black font-bold text-[10px]">
+                  <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3 text-xs font-mono">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="flex-none bg-white px-1.5 py-0.5 text-[10px] font-bold text-black">
                         [{proj.rank}]
                       </span>
-                      <span className="text-[10px] text-zinc-400 uppercase tracking-wider">
+                      <span className="truncate text-[10px] uppercase tracking-wider text-zinc-400">
                         {proj.badge}
                       </span>
                     </div>
 
-                    {/* Corner Telemetry Pill */}
-                    <div className="kokonut-telemetry-pill">
-                      <span
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: proj.telemetry.langColor }}
-                      />
-                      <span>{proj.telemetry.language}</span>
-                      <span className="text-zinc-600">•</span>
-                      <span className="text-zinc-300">{proj.telemetry.status}</span>
+                    {/* Plain project metadata; the language remains data-colored without a decorative pill. */}
+                    <div className="ml-auto flex min-w-0 max-w-[48%] items-center justify-end gap-1.5 whitespace-nowrap text-right text-[9px] uppercase tracking-[0.08em]">
+                      <span className="truncate" style={{ color: proj.telemetry.langColor }}>
+                        {proj.telemetry.language}
+                      </span>
+                      <span aria-hidden="true" className="text-zinc-700">/</span>
+                      <span className="truncate text-zinc-400">{proj.telemetry.status}</span>
                     </div>
                   </div>
 
                   {/* Project Title & Tagline */}
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <div className="p-1 bg-white/5 border border-white/10 text-white shrink-0">
+                      <div className="flex-none border border-white/10 bg-white/5 p-1 text-white">
                         {proj.icon}
                       </div>
                       <h3 className="text-lg sm:text-xl font-bold text-white font-display uppercase tracking-tight truncate">

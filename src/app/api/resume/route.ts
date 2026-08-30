@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(request: NextRequest) {
   try {
-    // Return a JSON with download URL or serve the file directly
-    // For now, we'll return a redirect to the resume file path
-    // You can upload the actual PDF to /public/resume.pdf
-    
-    return NextResponse.json({
-      success: true,
-      message: 'Resume download',
-      downloadUrl: '/resume.pdf'
-    });
+    return NextResponse.redirect(new URL('/resume.pdf', request.url));
   } catch (error) {
     console.error('Resume download error:', error);
     return NextResponse.json(

@@ -122,7 +122,6 @@ export const StudioTopNav = memo(function StudioTopNav() {
           {/* PHT Clock & Coordinates */}
           <div className="hidden xl:flex items-center gap-2 text-zinc-400 text-[11px]">
             <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               <span>{currentTime || '12:00:00 PHT'}</span>
             </span>
             <span className="text-zinc-700">|</span>

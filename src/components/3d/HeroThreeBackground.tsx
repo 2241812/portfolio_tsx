@@ -2,6 +2,7 @@
 import React, { useRef, memo, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { useInView } from '@/hooks/useInView';
 
 function seededRandom(seed: number) {
   const x = Math.sin(seed) * 10000;
@@ -42,7 +43,7 @@ function ParticleField() {
 
   useFrame((state) => {
     if (!pointsRef.current) return;
-    const t = state.clock.getElapsedTime();
+    const t = state.clock.elapsedTime;
     const targetX = state.pointer.x * 0.35;
     const targetY = state.pointer.y * 0.25;
 
@@ -104,7 +105,11 @@ function checkWebGL(): boolean {
   if (typeof window === 'undefined') return true;
   try {
     const canvas = document.createElement('canvas');
-    return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) return false;
+    const loseContext = (gl as WebGLRenderingContext).getExtension('WEBGL_lose_context');
+    if (loseContext) loseContext.loseContext();
+    return true;
   } catch {
     return false;
   }
@@ -112,14 +117,16 @@ function checkWebGL(): boolean {
 
 export const HeroThreeBackground = memo(function HeroThreeBackground() {
   const [hasWebGL] = useState(checkWebGL);
+  const { ref: containerRef, isInView } = useInView({ rootMargin: '200px' });
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-60">
+    <div ref={containerRef} className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-60">
       {hasWebGL ? (
         <Canvas
+          frameloop={isInView ? 'always' : 'never'}
           camera={{ position: [0, 0, 8], fov: 50 }}
           dpr={[1, 1.5]}
-          gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+          gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
           className="w-full h-full"
         >
           <ambientLight intensity={0.5} />

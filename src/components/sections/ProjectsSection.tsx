@@ -141,7 +141,7 @@ export const ProjectsSection = memo(function ProjectsSection({
           </div>
 
           {/* Top-Right Header Anime.js Telemetry HUD Card */}
-          <div className="shrink-0">
+          <div className="w-full lg:w-[330px] lg:max-w-[330px]">
             <AnimeTelemetryCard />
           </div>
         </motion.div>

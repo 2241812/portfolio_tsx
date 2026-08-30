@@ -43,6 +43,19 @@ next-env.d.ts
 .idea/
 *.swp
 *.swo
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 *~
 
 # OS
@@ -52,6 +65,10 @@ Desktop.ini
 # misc config
 monitor_config.json
 *.mp4
+.agents/
+.agents/*
+output/
+output/*
 
 .vercel
 .env*.local

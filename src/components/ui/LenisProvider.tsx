@@ -36,8 +36,8 @@ export default function LenisProvider({ children }: LenisProviderProps) {
         lerp: 0.1, 
         smoothWheel: true, 
         wheelMultiplier: 1,
-        touchMultiplier: 1.5,
-        syncTouch: true,
+        touchMultiplier: 1,
+        syncTouch: false,
         duration: 1.2
       }} 
       autoRaf={true}

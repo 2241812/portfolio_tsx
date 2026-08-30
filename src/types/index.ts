@@ -168,7 +168,7 @@ export interface ApiError {
   code: string;
   message: string;
   status?: number;
-  details?: any;
+  details?: unknown;
 }
 
 export interface ApiResponse<T> {
@@ -264,7 +264,7 @@ export interface ThemeConfig {
     border: string;
   };
   spacing: Record<string, string>;
-  typography: Record<string, any>;
+  typography: Record<string, string | number>;
 }
 
 export interface CSSVariable {

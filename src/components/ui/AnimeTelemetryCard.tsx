@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useRef, useState, memo } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { animate, stagger } from 'animejs';
+import { animate } from 'animejs';
 import { useInView } from '@/hooks/useInView';
 import { Activity, GitCommit, Terminal, ExternalLink, Cpu, Radio, Layers } from 'lucide-react';
 import { useGitHubActivity, useGitHubContributions, useGitHubUser } from '@/hooks/useGitHubData';
+
+const TELEMETRY_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
 
 export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
   const { ref: containerRef, isInView } = useInView({ rootMargin: '100px', once: true });
@@ -12,21 +14,41 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
   const prefersReducedMotion = useReducedMotion();
   const commitCountRef = useRef<HTMLSpanElement>(null);
   const repoCountRef = useRef<HTMLSpanElement>(null);
-  const waveBarsRef = useRef<SVGGElement>(null);
 
   // Details are deliberate: hovering the card never changes its size.
   const isExpanded = isPinnedOpen;
 
   // Real-time GitHub Activity fallback
-  const { events } = useGitHubActivity('narcisoJavier', isInView);
-  const { user } = useGitHubUser('narcisoJavier', isInView);
-  const { contributions } = useGitHubContributions('narcisoJavier', isInView);
+  const { events, isLoading: isActivityLoading, isError: isActivityError } = useGitHubActivity('narcisoJavier', isInView);
+  const { user, isLoading: isUserLoading, isError: isUserError } = useGitHubUser('narcisoJavier', isInView);
+  const { contributions, isLoading: isContributionsLoading, isError: isContributionsError } = useGitHubContributions('narcisoJavier', isInView);
 
   const latestCommit = events?.[0]?.payload?.commits?.[0]?.message || 'No recent public commit available';
   const latestSha = events?.[0]?.payload?.commits?.[0]?.sha?.substring(0, 7) || '—';
   const latestRepo = events?.[0]?.repo?.name?.split('/')[1] || 'GitHub activity';
   const lastYearContributions = contributions?.total?.lastYear;
   const publicRepositoryCount = user?.public_repos;
+  const isSyncing = isInView && (isActivityLoading || isUserLoading || isContributionsLoading);
+  const hasTelemetryData = typeof lastYearContributions === 'number' || typeof publicRepositoryCount === 'number' || events.length > 0;
+  const hasTelemetryError = isActivityError || isUserError || isContributionsError;
+  const telemetryState = !isInView
+    ? 'STANDBY'
+    : isSyncing
+    ? 'SYNCING'
+    : hasTelemetryData
+    ? 'SYNCED'
+    : hasTelemetryError
+    ? 'PARTIAL'
+    : 'NO DATA';
+  const activitySamples = contributions?.contributions?.slice(-8) || [];
+  const maxActivity = Math.max(...activitySamples.map((sample) => sample.count), 1);
+  const signalBars = Array.from({ length: 8 }, (_, index) => {
+    const sample = activitySamples[index];
+    return sample ? Math.max(0.18, Math.min(sample.count / maxActivity, 1)) : 0.18;
+  });
+  const signalPath = signalBars
+    .map((level, index) => `${index * 6 + 1.5},${18 - level * 14}`)
+    .join(' ');
 
   useEffect(() => {
     if (!isInView) return;
@@ -61,24 +83,6 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
       },
     });
 
-    // 2. Continuous kinetic equalizer wave animation using Anime.js
-    if (waveBarsRef.current) {
-      const bars = waveBarsRef.current.querySelectorAll('rect');
-      animate(bars, {
-        scaleY: [
-          () => 0.2 + Math.random() * 0.3,
-          () => 0.7 + Math.random() * 0.3,
-          () => 0.3 + Math.random() * 0.4,
-          () => 0.8 + Math.random() * 0.2,
-        ],
-        transformOrigin: 'bottom',
-        duration: 1200,
-        ease: 'easeInOutSine',
-        delay: stagger(90),
-        loop: true,
-        alternate: true,
-      });
-    }
   }, [isInView, lastYearContributions, prefersReducedMotion, publicRepositoryCount]);
 
   return (
@@ -92,13 +96,13 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
         transition={{
           layout: {
             duration: prefersReducedMotion ? 0 : 0.44,
-            ease: [0.22, 1, 0.36, 1],
+            ease: TELEMETRY_REVEAL_EASE,
           },
         }}
-        className={`blk-card p-3 sm:p-4 relative cursor-pointer group transition-colors duration-300 ${
+        className={`blk-card relative w-full max-w-[330px] cursor-pointer p-3 transition-colors duration-300 sm:p-4 ${
           isExpanded
-            ? 'w-full sm:w-[330px] bg-[#07070b]/98 border-white/30 shadow-2xl shadow-black/90'
-            : 'w-full sm:w-[330px] bg-[#0c0c11]/80 hover:border-white/20'
+            ? 'bg-[#07070b]/98 border-white/30 shadow-2xl shadow-black/90'
+            : 'bg-[#0c0c11]/80 hover:border-white/20'
         }`}
       >
         {/* Corner Crosshairs that smoothly move with the card boundaries */}
@@ -120,82 +124,120 @@ export const AnimeTelemetryCard = memo(function AnimeTelemetryCard() {
           }}
           className="w-full appearance-none border-0 bg-transparent p-0 text-left text-inherit focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400 focus-visible:outline-offset-2"
         >
-          <div className="flex items-center justify-between gap-4 relative z-10">
-          {/* Left: Key Metrics */}
-          <div className="flex items-center gap-4 sm:gap-6 font-mono divide-x divide-white/10">
-            {/* Metric 1: Commits */}
-            <div className="space-y-0.5">
-              <div className="text-[9px] text-zinc-400 uppercase tracking-widest flex items-center gap-1">
-                <Activity className="w-2.5 h-2.5 text-emerald-400" />
-                <span>COMMITS</span>
+          <div className="relative z-10 grid grid-cols-[minmax(0,1fr)_96px] items-center gap-3">
+            {/* Left: Key Metrics */}
+            <div className="grid min-w-0 grid-cols-2 divide-x divide-white/10 font-mono">
+              {/* Metric 1: Commits */}
+              <div className="min-w-0 space-y-0.5 pr-3 sm:pr-5">
+                <div className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-zinc-400">
+                  <Activity className="h-2.5 w-2.5 text-emerald-400" />
+                  <span className="truncate">COMMITS</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span ref={commitCountRef} className="text-lg font-extrabold text-white sm:text-xl">
+                    {typeof lastYearContributions === 'number' ? `${lastYearContributions}` : '—'}
+                  </span>
+                  <span className="truncate text-[8px] text-zinc-500 sm:text-[9px]">LAST YEAR</span>
+                </div>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span ref={commitCountRef} className="text-lg sm:text-xl font-extrabold text-white">
-                  {typeof lastYearContributions === 'number' ? `${lastYearContributions}` : '—'}
-                </span>
-                <span className="text-[9px] text-zinc-500">/ LAST YEAR</span>
+
+              {/* Metric 2: Repos */}
+              <div className="min-w-0 space-y-0.5 pl-3 sm:pl-5">
+                <div className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-zinc-400">
+                  <Layers className="h-2.5 w-2.5 text-cyan-400" />
+                  <span className="truncate">REPOS</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span ref={repoCountRef} className="text-lg font-extrabold text-white sm:text-xl">
+                    {typeof publicRepositoryCount === 'number' ? publicRepositoryCount : '—'}
+                  </span>
+                  <span className="text-[8px] text-zinc-500 sm:text-[9px]">PUBLIC</span>
+                </div>
               </div>
             </div>
 
-            {/* Metric 2: Repos */}
-            <div className="pl-4 sm:pl-6 space-y-0.5">
-              <div className="text-[9px] text-zinc-400 uppercase tracking-widest flex items-center gap-1">
-                <Layers className="w-2.5 h-2.5 text-cyan-400" />
-                <span>REPOSITORIES</span>
+            {/* Right: Functional signal state and recent-activity waveform */}
+            <div className="flex min-w-0 flex-col items-end gap-1">
+              <div className="flex max-w-full items-center gap-1 text-[7px] font-mono tracking-[0.08em] text-zinc-400">
+                <Radio className={`h-2.5 w-2.5 ${isExpanded ? 'text-emerald-400' : 'text-zinc-500'}`} />
+                <span className="truncate">SIGNAL // {telemetryState}</span>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span ref={repoCountRef} className="text-lg sm:text-xl font-extrabold text-white">
-                  {typeof publicRepositoryCount === 'number' ? publicRepositoryCount : '—'}
-                </span>
-                <span className="text-[9px] text-zinc-500">PUBLIC</span>
-              </div>
+              <svg width="48" height="20" viewBox="0 0 48 20" fill="none" className="overflow-visible">
+                <path d="M 0 18 H 48" stroke="rgba(255,255,255,0.12)" strokeWidth="0.6" />
+                {signalBars.map((level, index) => (
+                  <rect
+                    key={index}
+                    x={index * 6}
+                    y={18 - level * 14}
+                    width="3"
+                    height={level * 14}
+                    rx="1"
+                    fill={hasTelemetryData ? index % 3 === 1 ? '#00B4AB' : '#ffffff' : '#71717a'}
+                    fillOpacity={hasTelemetryData ? 0.42 + level * 0.48 : 0.35}
+                  />
+                ))}
+                <motion.polyline
+                  points={signalPath}
+                  fill="none"
+                  stroke={hasTelemetryData ? '#34d399' : '#71717a'}
+                  strokeWidth="0.8"
+                  strokeLinejoin="round"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: isExpanded ? 1 : 0.35, opacity: isExpanded ? 0.95 : 0.5 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.7, ease: TELEMETRY_REVEAL_EASE }}
+                />
+                {isExpanded && !prefersReducedMotion && (
+                  <motion.line
+                    x1="0"
+                    y1="1"
+                    x2="0"
+                    y2="19"
+                    stroke="#d7fff0"
+                    strokeWidth="0.8"
+                    initial={{ x: 0, opacity: 0 }}
+                    animate={{ x: [0, 48], opacity: [0, 0.9, 0] }}
+                    transition={{ duration: 0.9, ease: TELEMETRY_REVEAL_EASE }}
+                  />
+                )}
+              </svg>
             </div>
-          </div>
-
-          {/* Right: Waveform & Live Pulse */}
-          <div className="flex flex-col items-end gap-1 shrink-0">
-            <div className="flex items-center gap-1.5 text-[8px] font-mono text-zinc-400 tracking-wider">
-              <Radio className={`w-2.5 h-2.5 ${isExpanded ? 'text-emerald-400 animate-pulse' : 'text-zinc-500'}`} />
-              <span>TELEMETRY</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            </div>
-            <svg width="48" height="20" viewBox="0 0 48 20" fill="none" className="overflow-visible">
-              <g ref={waveBarsRef}>
-                <rect x="0" y="2" width="3" height="16" rx="1" fill="#ffffff" fillOpacity="0.4" />
-                <rect x="6" y="2" width="3" height="16" rx="1" fill="#00ADD8" fillOpacity="0.8" />
-                <rect x="12" y="2" width="3" height="16" rx="1" fill="#ffffff" fillOpacity="0.6" />
-                <rect x="18" y="2" width="3" height="16" rx="1" fill="#00B4AB" fillOpacity="0.9" />
-                <rect x="24" y="2" width="3" height="16" rx="1" fill="#3572A5" fillOpacity="0.8" />
-                <rect x="30" y="2" width="3" height="16" rx="1" fill="#ffffff" fillOpacity="0.5" />
-                <rect x="36" y="2" width="3" height="16" rx="1" fill="#00ADD8" fillOpacity="0.7" />
-                <rect x="42" y="2" width="3" height="16" rx="1" fill="#ffffff" fillOpacity="0.3" />
-              </g>
-            </svg>
-          </div>
           </div>
         </motion.button>
 
         {/* Details grow out of the compact card instead of appearing as a separate panel. */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {isExpanded && (
             <motion.div
               id="telemetry-intel-details"
+              layout
               initial={{ opacity: 0, height: 0, scaleY: 0.96, y: -6 }}
               animate={{ opacity: 1, height: 'auto', scaleY: 1, y: 0 }}
               exit={{ opacity: 0, height: 0, scaleY: 0.98, y: -3 }}
               transition={{
-                duration: prefersReducedMotion ? 0 : 0.28,
-                ease: [0.22, 1, 0.36, 1],
-                opacity: { duration: prefersReducedMotion ? 0 : 0.2 },
+                height: { duration: prefersReducedMotion ? 0 : 0.48, ease: TELEMETRY_REVEAL_EASE },
+                scaleY: { duration: prefersReducedMotion ? 0 : 0.48, ease: TELEMETRY_REVEAL_EASE },
+                y: { duration: prefersReducedMotion ? 0 : 0.48, ease: TELEMETRY_REVEAL_EASE },
+                opacity: {
+                  duration: prefersReducedMotion ? 0 : 0.22,
+                  delay: prefersReducedMotion ? 0 : 0.06,
+                  ease: 'easeOut',
+                },
               }}
               style={{ transformOrigin: 'top center' }}
               className="overflow-hidden space-y-3 pt-3.5 mt-3 border-t border-white/10 relative z-10"
             >
+              <motion.span
+                aria-hidden="true"
+                className="absolute left-0 top-0 h-px bg-emerald-300 shadow-[0_0_10px_rgba(52,211,153,0.75)]"
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: '100%', opacity: 0.8 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: TELEMETRY_REVEAL_EASE }}
+              />
+
               {/* Origin Status Bar */}
               <div className="flex items-center justify-between text-[10px] font-mono">
                 <span className="text-emerald-400 font-bold flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  TELEMETRY INTEL // LIVE WHEN AVAILABLE
+                  TELEMETRY INTEL // {telemetryState}
                 </span>
                 <span className="text-zinc-400 text-[9px]">BAGUIO CITY</span>
               </div>

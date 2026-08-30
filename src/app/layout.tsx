@@ -85,6 +85,13 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
       <body className="min-h-full">
+        {/* Accessible Skip Navigation Link (WCAG 2.4.1) */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:font-mono focus:text-xs focus:font-bold focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        >
+          Skip to Main Content
+        </a>
         <WebMCPProvider />
         <LenisProvider>{children}</LenisProvider>
       </body>

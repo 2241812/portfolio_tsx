@@ -41,7 +41,7 @@ export function mergeSkillsWithGitHub(gitHubSkills: AnalyzedSkill[]): Record<str
 
       enhancedSkills[category as keyof typeof enhancedSkills].push({
         name: skillName,
-        category: category as any,
+        category: category as EnhancedSkill['category'],
         endorsements: gitHubData?.endorsements || 0,
         description: (resumeData.skillDescriptions as Record<string, string>)?.[skillName] || '',
         verified: !!gitHubData, // Has GitHub evidence
@@ -100,7 +100,7 @@ export function mergeSkillsWithGitHub(gitHubSkills: AnalyzedSkill[]): Record<str
 
       enhancedSkills[categoryKey].push({
         name: gitHubSkill.name,
-        category: targetCategory as any,
+        category: targetCategory as EnhancedSkill['category'],
         endorsements: gitHubSkill.endorsements,
         description: `Detected from ${gitHubSkill.endorsements} repository(ies)`,
         verified: true,

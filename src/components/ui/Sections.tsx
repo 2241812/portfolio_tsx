@@ -3,6 +3,7 @@ import React, { memo } from 'react';
 import {
   HeroSection,
   AboutSection,
+  SkillsSection,
   ProjectsSection,
   ContactSection,
   FooterSection,
@@ -13,6 +14,7 @@ export const Sections = memo(function Sections() {
     <div className="relative z-10 flex flex-col w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-12 space-y-12">
       <HeroSection />
       <AboutSection />
+      <SkillsSection />
       <ProjectsSection />
       <ContactSection />
       <FooterSection />
